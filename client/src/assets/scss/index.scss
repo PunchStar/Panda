@@ -1,0 +1,127 @@
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+@import "node_modules/bootstrap/scss/reboot";
+@import "node_modules/bootstrap/scss/containers";
+@import "node_modules/bootstrap/scss/grid";
+@import "node_modules/bootstrap/scss/utilities";
+@import "node_modules/bootstrap/scss/utilities/api";
+@import "node_modules/bootstrap/scss/forms";
+@import "node_modules/bootstrap/scss/buttons";
+@import "node_modules/bootstrap/scss/tables";
+@import 'reactjs-popup/dist/index.css';
+
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-Light.ttf);
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-LightItalic.ttf);
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-Regular.ttf);
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-Italic.ttf);
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-SemiBold.ttf);
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-SemiBoldItalic.ttf);
+  font-weight: 600;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-Bold.ttf);
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-BoldItalic.ttf);
+  font-weight: 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-ExtraBold.ttf);
+  font-weight: 800;
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url(../fonts/OpenSans-ExtraBoldItalic.ttf);
+  font-weight: 800;
+  font-style: italic;
+}
+
+body {
+  font-family: "Heebo", sans-serif;
+  font-weight: 400;
+}
+// customize tab
+.react-tabs__tab--selected,  .react-tabs__tab:hover{
+  background: #fff;
+  border: 0px!important;
+  border-bottom:2px solid #1652f0!important;
+  font-weight: 500!important;
+  color: #000!important;
+  box-shadow:none!important;
+}
+.react-tabs__tab {
+    background: none;
+    border: 0 solid transparent;
+    color: #aaa;
+    cursor: pointer;
+    font-weight: 400;
+    padding: 1rem 2rem;
+    position: relative;
+    font-size:14.4px;
+    top: 1px;
+}
+ul.two_tabs  {
+  border-bottom: 1px solid #aaa;
+  display: -moz-box;
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.two_tabs li {
+  width: 50%;
+  font-size:16px!important;
+  text-align: center;
+}
+.react-tabs__tab::after{
+  background: none!important;
+}
+// Pagination Customize
+ul.rc-pagination {
+  text-align: center!important;
+  margin:20px;
+}
+.rc-pagination-item, .rc-pagination-next button, li.rc-pagination-item-active , .rc-pagination-prev button{
+  border:none!important;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: 5px;
+  }
+}
+.rc-pagination-item-active a {
+  color: #fff!important;
+  background-color: #1652f0!important;
+  border-radius: 5px;
+}
