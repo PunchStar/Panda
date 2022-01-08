@@ -10,11 +10,13 @@ import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import micVolumeImg from 'src/assets/images/bar-0-8.svg'
-import ReactS3Client from 'react-aws-s3-typescript';
-import { s3Config } from 'src/config/aws';
+import { Config } from 'src/config/aws';
 import { RadarController } from "chart.js";
-
-
+import axios from 'axios';
+const configFormData = {     
+  headers: { 'content-type': 'multipart/form-data' }
+}
+axios.defaults.baseURL = Config.api_url;
 export default function AnswerAudio() {
   const {
     status, startRecording, stopRecording, mediaBlobUrl 
@@ -24,23 +26,20 @@ export default function AnswerAudio() {
   const [questionCount, setQuestionCount] = useState(1);
   let naviage = useNavigate();
   const uploadFile = () => {
-    // const s3 = new ReactS3Client(s3Config);
-    // console.log('s3', s3)
-    // const filename = 'filename-to-be-uploaded';    
-    // console.log('mediablogurl', mediaBlobUrl) 
+    axios.post("/upload/fileUpload", mediaBlobUrl, configFormData)
+      .then(res => {
+        let {data} = res;
+        console.log('result',data)
+        if(!data.success) {
+          let message = `While uploading files, unknown errors was occured!`
+          console.log('dd', message)
+          return;
+        }
+      })
+      .catch(() => {
+      });
     setQuestionCount(questionCount + 1);
     startRecording();
-    // try {
-    //     var reader = new FileReader();
-    //     reader.onloadend = async() => {
-    //       console.log("reasdfdfd", reader.result)
-    //       const res = await s3.uploadFile(reader.result as any, filename);
-    //       console.log('aaa', res);
-    //     }
-    //     startRecording
-    //   } catch (exception) {
-    //     console.log('exception', exception);
-    // }
   }
   const nextQuestionFunc = async() => {
     console.log('status', status);
@@ -70,7 +69,7 @@ export default function AnswerAudio() {
       <CloseImg src={closeImg}/>
       <PandaTalkImg src={pandaTalkingImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
-      <Message>
+      <Message> 
         {question}
       </Message>
       <ArrowImg/>

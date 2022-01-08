@@ -1,7 +1,5 @@
-  export const s3Config = {
-    bucketName: 'pandaaudiodb',
-    albumName: 'audios',
-    region: 'us-east-2',
-    accessKeyId:'AKIA2OCGSJVUXC3PZBG6',
-    secretAccessKey: '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',
+export const Config ={
+api_url: process.env.NODE_ENV === 'production' 
+      ? '..'
+      : 'http://localhost:5000',
 }

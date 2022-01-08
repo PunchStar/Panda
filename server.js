@@ -42,11 +42,6 @@ var mongoose = Mongoose();
 
 
 //Routes
-require('./routes/Admin.routes')(app);
-require('./routes/User.routes')(app);
-require('./routes/PageLink.routes')(app);
-require('./routes/ShortCut.routes')(app);
-require('./routes/Activity.routes')(app);
 require('./routes/FileUpload.routes')(app);
 
 
