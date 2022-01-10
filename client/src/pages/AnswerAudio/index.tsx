@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react"
+import { useNavigate,useLocation } from 'react-router-dom';
 import styled from "styled-components"
 import {useReactMediaRecorder} from "react-media-recorder";
-import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import microphone from 'src/assets/images/microphone-white.svg';
 import microphoneInit from 'src/assets/images/microphone-initial.svg';
 import microphoneActive from 'src/assets/images/microphone-active.svg';
@@ -11,7 +12,6 @@ import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import micVolumeImg from 'src/assets/images/bar-0-8.svg'
 import { Config } from 'src/config/aws';
-import { RadarController } from "chart.js";
 import axios from 'axios';
 const configFormData = {     
   headers: { 'content-type': 'multipart/form-data' }
@@ -24,9 +24,19 @@ export default function AnswerAudio() {
   const [question, setQuestion] = useState("Please tell me what brought you to Datasaur?");
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
+  const [userId, setUserId] = useState(uuidv4());
+  const [blobs, setBlobs] = useState([]);
   let naviage = useNavigate();
-  const uploadFile = () => {
-    axios.post("/upload/fileUpload", mediaBlobUrl, configFormData)
+  const uploadFile = async() => {
+    // const s3 = new ReactS3Client(s3Config);
+    // console.log('s3', s3)
+    // const filename = 'filename-to-be-uploaded';    
+    // console.log('mediablogurl', mediaBlobUrl) 
+    if(!mediaBlobUrl) return;
+    let blob = await fetch(mediaBlobUrl as any).then(r=>r.blob());
+    let formData = new FormData();
+    formData.append(userId +'__' +questionCount, blob);
+    axios.post("/upload/fileUpload", formData, configFormData)
       .then(res => {
         let {data} = res;
         console.log('result',data)
@@ -40,15 +50,15 @@ export default function AnswerAudio() {
       });
     setQuestionCount(questionCount + 1);
     startRecording();
+    if( questionCount >= 4){
+    
+      naviage('/thank-you',{ state: userId })
+    }
   }
   const nextQuestionFunc = async() => {
     console.log('status', status);
     await stopRecording();
     console.log('status11', status);
-    if( questionCount >= 4){
-      console.log('333')
-      naviage('/thank-you')
-    }
 
   }
   useEffect(()=>{

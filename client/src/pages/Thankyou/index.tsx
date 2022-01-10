@@ -3,11 +3,13 @@ import styled from "styled-components"
 import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
+import { useNavigate,useLocation } from 'react-router-dom';
 
 
 export default function Thankyou() {
   const [customsupport, setCusstomSupport] = useState(true);
-  
+  let naviage = useNavigate();
+  let { state }=useLocation();
   return (
     <ThankWrapper>
       <CloseImg src={closeImg}/>
@@ -16,13 +18,39 @@ export default function Thankyou() {
         Got it!<br/>
         We'll share your feedback with customer support and they'll be in touch.
       </Message> : <Message > Thank you for sharing your insights! </Message> }
-      <PandaTalkImg src={pandaTalkingImg}/>
+      <PandaTalkImg src={pandaTalkingImg} />
+      <Button onClick={()=>{naviage('/audio-result',{ state: state })}}>See Result</Button>
       <PoweredBy>
         Powered by PerceptivePanda for {"Datasaur.ai"}
       </PoweredBy>
     </ThankWrapper>
   )
 }
+const Button = styled.span`
+  position: absolute;
+  padding: 5px 0 5px 0;
+  margin: 0 0 0 0;
+  border-radius: 20px;
+  background-color: #4d9ff5;
+  cursor: pointer;
+  text-align: center;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);    
+  font-family: 'Muli', sans-serif;
+  font-weight: 800;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: 0.06px;
+  text-align: center;
+  color: #fff;
+  user-select: none;
+  left: 46px;
+  bottom: 102px;
+  width: 140px;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 20px;
+`
 const ThankWrapper = styled.div`
   position: absolute;
   width: 400px;
