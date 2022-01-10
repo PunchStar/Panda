@@ -36,10 +36,6 @@ app.use(function(req, res, next) {
     );
     next();
 });
-//Connect to mongodb
-var mongo = MongoDB();
-var mongoose = Mongoose();
-
 
 //Routes
 require('./routes/FileUpload.routes')(app);
