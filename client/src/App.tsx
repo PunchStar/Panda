@@ -5,7 +5,6 @@ import {
 import MarketList from "src/pages/MarketList"
 import InputSelector from "src/pages/InputSelector"
 import AnswerAudio from "src/pages/AnswerAudio"
-import MarketDetail from "./pages/MarketDetail/MarketDetail";
 import Thankyou from "./pages/Thankyou";
 import AudioResult from "./pages/AudioResult";
 
@@ -17,7 +16,6 @@ const MainRoute = () => {
     { path: '/audio-result', element: <AudioResult/>},
     { path: "/input-selector", element: <InputSelector />},
     { path: "/input-selector/answer-audio", element: <AnswerAudio />},
-    { path: "/detail", element: <MarketDetail /> },
   ]);
   return routes;
 };
