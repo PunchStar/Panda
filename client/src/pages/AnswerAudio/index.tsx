@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from "styled-components"
 import {useReactMediaRecorder} from "react-media-recorder";
 import { v4 as uuidv4 } from 'uuid';
@@ -10,7 +10,16 @@ import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
+import micVolumeImg1 from 'src/assets/images/bar-1-8.svg'
+import micVolumeImg2 from 'src/assets/images/bar-2-8.svg'
+import micVolumeImg3 from 'src/assets/images/bar-3-8.svg'
+import micVolumeImg4 from 'src/assets/images/bar-4-8.svg'
+import micVolumeImg5 from 'src/assets/images/bar-5-8.svg'
+import micVolumeImg6 from 'src/assets/images/bar-6-8.svg'
+import micVolumeImg7 from 'src/assets/images/bar-7-8.svg'
+import micVolumeImg8 from 'src/assets/images/bar-8-8.svg'
 import micVolumeImg from 'src/assets/images/bar-0-8.svg'
+// declare var MediaRecorder: any;
 import { Config } from 'src/config/aws';
 import axios from 'axios';
 const configFormData = {     
@@ -19,19 +28,116 @@ const configFormData = {
 axios.defaults.baseURL = Config.api_url;
 export default function AnswerAudio() {
   const {
-    status, startRecording, stopRecording, mediaBlobUrl 
+    status, startRecording, stopRecording, mediaBlobUrl ,
+    previewAudioStream
   } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   const [question, setQuestion] = useState("Please tell me what brought you to Datasaur?");
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
   const [userId, setUserId] = useState(uuidv4());
   const [blobs, setBlobs] = useState([]);
+  const [micVolume, setMicVolume] = useState(micVolumeImg);
+  const [redCircle, setRedCircle] = useState(false);
+  let average_volume = 0;
   let naviage = useNavigate();
+  var volume_timer:any = null;
+  let media_recorder:any = null;
+  function get_volume_meter(stream:any) {
+    const audioContext = new AudioContext();
+    const analyser = audioContext.createAnalyser();
+    const microphone = audioContext.createMediaStreamSource(stream);
+    const javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+    analyser.smoothingTimeConstant = 0.8;
+    analyser.fftSize = 1024;
+    microphone.connect(analyser);
+    analyser.connect(javascriptNode);
+    javascriptNode.connect(audioContext.destination);
+    javascriptNode.onaudioprocess = function() {
+        var array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(array);
+        var values = 0;
+  
+        var length = array.length;
+        for (var i = 0; i < length; i++) {
+          values += (array[i]);
+        }
+        average_volume = values / length;
+      }
+  }
+  async function request_recording() {
+    if (navigator.mediaDevices.getUserMedia) {
+      try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+          if (stream) {
+              if (media_recorder == null) {
+                  media_recorder = new MediaRecorder(stream);
+              }
+              get_volume_meter(stream);
+
+              volume_timer = setInterval(function() {
+                  let corrected_vol = average_volume * 2;
+                  if (corrected_vol >= 100) {
+                      corrected_vol = 99;
+                  }
+                  const num = Math.floor(9 * corrected_vol / 100);
+                  // console.log(num);
+                  switch(num){
+                    case 1:
+                      setMicVolume(micVolumeImg1);
+                      break;
+                    case 2:
+                      setMicVolume(micVolumeImg2);
+                      break;
+                    case 3:
+                      setMicVolume(micVolumeImg3);
+                      break;
+                    case 4:
+                      setMicVolume(micVolumeImg4);
+                      break;
+                    case 5:
+                      setMicVolume(micVolumeImg5);
+                      break;
+                    case 6:
+                      setMicVolume(micVolumeImg6);
+                      break;
+                    case 7:
+                      setMicVolume(micVolumeImg7);
+                      break; 
+                    case 8:
+                      setMicVolume(micVolumeImg8);
+                      break;
+                    default:
+                      setMicVolume(micVolumeImg);
+                      break;
+                  }
+                  if (num == 0) {
+                    setRedCircle(true);
+                    setHidden(false);
+                } else {
+                  setRedCircle(false);
+                  setHidden(true);
+                }
+              }, 100);
+
+              return true;
+          } else {
+              return false;
+          }
+      } catch (e) {
+              console.error('Unrecognized error getting device', e);
+          return false;
+      }
+  } else {
+      // getUserMedia NOT supported. Yikes.
+      console.log('getUserMedia NOT supported');
+      return false;
+  }
+  }
+  useEffect(()=>{
+     
+  })
   const uploadFile = async() => {
-    // const s3 = new ReactS3Client(s3Config);
-    // console.log('s3', s3)
-    // const filename = 'filename-to-be-uploaded';    
-    // console.log('mediablogurl', mediaBlobUrl) 
     if(!mediaBlobUrl) return;
     let blob = await fetch(mediaBlobUrl as any).then(r=>r.blob());
     let formData = new FormData();
@@ -42,7 +148,6 @@ export default function AnswerAudio() {
         console.log('result',data)
         if(!data.success) {
           let message = `While uploading files, unknown errors was occured!`
-          console.log('dd', message)
           return;
         }
       })
@@ -51,20 +156,21 @@ export default function AnswerAudio() {
     setQuestionCount(questionCount + 1);
     startRecording();
     if( questionCount >= 4){
-    
+      // clearInterval(volume_timer as  any)
+      if (volume_timer) {
+        clearInterval(volume_timer);
+        volume_timer = null;
+      }
       naviage('/thank-you',{ state: userId })
     }
   }
   const nextQuestionFunc = async() => {
-    console.log('status', status);
     await stopRecording();
-    console.log('status11', status);
-
   }
   useEffect(()=>{
     if(status == 'idle'){
+      request_recording();
       startRecording();
-      console.log('33')
     }
   },[])
   useEffect(()=>{
@@ -86,11 +192,11 @@ export default function AnswerAudio() {
       {hidden && <BlueCircle hidden>
          <img src={microphone} />
       </BlueCircle>}
-      <Circle>
+      <Circle redCircle>
         <img src={microphoneInit} />
         {hidden && <img src={microphoneActive} />}
       </Circle>
-      <MicVolume src={micVolumeImg}/>
+      <MicVolume src={micVolume}/>
       <Bottom>
         <LabelProgress>Progress</LabelProgress>
         <ProgressBar>
@@ -189,7 +295,7 @@ const BlueCircle = styled.div`
     top: 15px;
   }
 `
-const Circle = styled.div`
+const Circle = styled.div<{redCircle:boolean}>`
   position: absolute;
   left: 83px;
   top: 223px;
@@ -202,6 +308,7 @@ const Circle = styled.div`
     left: 6px;
     top: 6px;
   }
+  ${(props) => props.redCircle && `border: 0px solid #f56f4d;`}   
 `
 const MicVolume = styled.img`
   position: absolute;

@@ -23,7 +23,7 @@ export default function InputSelector() {
       setIsActive(!isActive);
     }
   useEffect(() => {
-    if(status == 'recording'){
+    if(status === 'recording'){
       naviage('/input-selector/answer-audio');
     }
   },[status]);
