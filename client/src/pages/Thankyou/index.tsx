@@ -3,15 +3,15 @@ import styled from "styled-components"
 import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
-import { useNavigate,useLocation } from 'react-router-dom';
 
-
-export default function Thankyou() {
+interface ThankyouProps {
+  onNextClick: (step:number) => void;
+}
+export default function Thankyou(props: ThankyouProps) {
+  const {onNextClick} = props;
   const [customsupport, setCusstomSupport] = useState(true);
-  let naviage = useNavigate();
-  let { state }=useLocation();
   return (
-    <ThankWrapper>
+    <>
       <CloseImg src={closeImg}/>
       <SpeechBubbleImg src={SpeechBubbleCenter}/>
       {customsupport ? <Message customsupport={customsupport}>
@@ -19,11 +19,11 @@ export default function Thankyou() {
         We'll share your feedback with customer support and they'll be in touch.
       </Message> : <Message > Thank you for sharing your insights! </Message> }
       <PandaTalkImg src={pandaTalkingImg} />
-      <Button onClick={()=>{naviage('/audio-result',{ state: state })}}>See Result</Button>
+      <Button onClick={()=>{onNextClick(3);}}>See Result</Button>
       <PoweredBy>
         Powered by PerceptivePanda for {"Datasaur.ai"}
       </PoweredBy>
-    </ThankWrapper>
+    </>
   )
 }
 const Button = styled.span`
@@ -42,7 +42,7 @@ const Button = styled.span`
   font-style: normal;
   letter-spacing: 0.06px;
   text-align: center;
-  color: #fff;
+  color: #fff!important;
   user-select: none;
   left: 46px;
   bottom: 102px;
@@ -50,22 +50,6 @@ const Button = styled.span`
   text-decoration: none;
   font-size: 13px;
   line-height: 20px;
-`
-const ThankWrapper = styled.div`
-  position: absolute;
-  width: 400px;
-  height: 450px;
-  padding: 0;
-  top: 50%;
-  left: 50%;
-  margin: -225px 0 0 -200px;
-  background-color: #e6eefd;
-  opacity: 1.0;
-  border-radius: 10px;
-  box-shadow: 0 0 12.5px -1px rgba(0, 0, 0, 0.1);    
-  @media(min-width: 1000px){
-    transform: scale(1.7);
-  }
 `
 const SpeechBubbleImg = styled.img`
   position: absolute;

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom';
 import styled from "styled-components"
 import {useReactMediaRecorder} from "react-media-recorder";
 import { v4 as uuidv4 } from 'uuid';
@@ -26,20 +25,30 @@ const configFormData = {
   headers: { 'content-type': 'multipart/form-data' }
 }
 axios.defaults.baseURL = Config.api_url;
-export default function AnswerAudio() {
+
+interface AnswerAudioProps {
+  onNextClick: (step:number,userId:string) => void;
+}
+export default function AnswerAudio(props:AnswerAudioProps) {
+  const {onNextClick} = props;
   const {
     status, startRecording, stopRecording, mediaBlobUrl ,
     previewAudioStream
   } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   const [question, setQuestion] = useState("Please tell me what brought you to Datasaur?");
+  const questionArr = [ 
+    "",
+    "Please tell me what brought you to Datasaur?",
+    "What type of project are you working on here?",
+    "What seems challenging about using Datasaur?",
+    "What features here are the most useful to you?"
+  ];
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
   const [userId, setUserId] = useState(uuidv4());
-  const [blobs, setBlobs] = useState([]);
   const [micVolume, setMicVolume] = useState(micVolumeImg);
   const [redCircle, setRedCircle] = useState(false);
   let average_volume = 0;
-  let naviage = useNavigate();
   var volume_timer:any = null;
   let media_recorder:any = null;
   function get_volume_meter(stream:any) {
@@ -134,9 +143,6 @@ export default function AnswerAudio() {
       return false;
   }
   }
-  useEffect(()=>{
-     
-  })
   const uploadFile = async() => {
     if(!mediaBlobUrl) return;
     let blob = await fetch(mediaBlobUrl as any).then(r=>r.blob());
@@ -161,7 +167,7 @@ export default function AnswerAudio() {
         clearInterval(volume_timer);
         volume_timer = null;
       }
-      naviage('/thank-you',{ state: userId })
+      onNextClick(2,userId);
     }
   }
   const nextQuestionFunc = async() => {
@@ -180,13 +186,13 @@ export default function AnswerAudio() {
     }
   },[mediaBlobUrl])
   return (
-    <AnswerAudioWrapper>
+    <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg src={closeImg}/>
       <PandaTalkImg src={pandaTalkingImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <Message> 
-        {question}
+        {questionArr[questionCount>4?4:questionCount]}
       </Message>
       <ArrowImg/>
       {hidden && <BlueCircle hidden>
@@ -215,25 +221,9 @@ export default function AnswerAudio() {
       <PoweredBy>
         Powered by PerceptivePanda for {"Datasaur.ai"}
       </PoweredBy>
-    </AnswerAudioWrapper>
+    </>
   )
 }
-const AnswerAudioWrapper = styled.div`
-    position: absolute;
-    width: 400px;
-    height: 450px;
-    padding: 0;
-    top: 50%;
-    left: 50%;
-    margin: -225px 0 0 -200px;
-    opacity: 1.0;
-    border-radius: 10px;
-    box-shadow: 0 0 12.5px -1px rgb(0 0 0 / 10%);       
-    background-color: #e6eefd;
-    @media(min-width: 1000px){
-        transform: scale(1.7);
-    }
-`
 const PandaTalkImg = styled.img`
   position: absolute;
   left: 220px;
@@ -345,7 +335,7 @@ const LabelProgress = styled.span`
 const ProgressBar = styled.div`
   display: flex;
   margin-left: 35px;
-  margin-top: 18px;
+  margin-top: 25px;
 `
 const StepCircle = styled.div<{active?:boolean}>`
   background-color: #b1bdd4;
@@ -382,7 +372,7 @@ const Button = styled.span`
   font-style: normal;
   letter-spacing: 0.06px;
   text-align: center;
-  color: #fff;
+  color: #fff!important;
   user-select: none;
   left: 230px;
   top: 25px;

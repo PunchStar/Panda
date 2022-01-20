@@ -7,12 +7,17 @@ import microphone from 'src/assets/images/microphone.svg';
 import microphoneDisable from 'src/assets/images/microphone-disabled.svg';
 import pencilpaper from 'src/assets/images/pencil-paper.svg'
 import closeImg from 'src/assets/images/x.svg'
+import AnswerAudio from "../AnswerAudio";
+import AudioResult from "../AudioResult";
+import Thankyou from "../Thankyou";
 
 export default function InputSelector() {
   const { status, startRecording, stopRecording } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   let naviage = useNavigate();
   const [isActive, setIsActive] = useState(false);
   const [micFlag, setMicFlag] = useState(true);
+  const [userId, setUserID] = useState('')
+  const [step,setStep] = useState(0);
   const onClick = () => {
      if(!isActive){
       startRecording();
@@ -24,13 +29,14 @@ export default function InputSelector() {
     }
   useEffect(() => {
     if(status === 'recording'){
-      naviage('/input-selector/answer-audio');
+      // naviage('/input-selector/answer-audio');
+      setStep(1);
     }
   },[status]);
   
   return (
     <InputSelectorWrapper>
-      <CloseImg src={closeImg}/>
+      {step === 0 ? <><CloseImg src={closeImg}/>
       <PandaImg src={panda}/>
       <HowTalk>How should we talk?</HowTalk>
       <SpeakButton onClick={onClick}>
@@ -44,7 +50,15 @@ export default function InputSelector() {
       <PoweredBy>
       *All feedback is recorded.<br/>
       Powered by PerceptivePanda for {"Datasaur.ai"}
-      </PoweredBy>
+      </PoweredBy></>: step === 1 ?
+       <AnswerAudio onNextClick={(step,value) => {
+        setStep(step);
+        setUserID(value);
+      }}/>: step === 2 ?
+      <Thankyou onNextClick={(step) => {
+        setStep(step);
+      }}/>: <AudioResult  userId={userId}/>
+      }
     </InputSelectorWrapper>
   )
 }
