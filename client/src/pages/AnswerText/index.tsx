@@ -6,6 +6,8 @@ import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import { Config } from 'src/config/aws';
+// import { useParams } from "react-router-dom";
+
 import axios from 'axios';
 const configFormData = {     
   headers: { 'content-type': 'multipart/form-data' }
@@ -19,6 +21,8 @@ export default function AnswerText(props:AnswerTextProps) {
   const {onNextClick} = props;
   const [commetText, setCommentText] = useState('');
   const [question, setQuestion] = useState("If you were giving Jobox a report card, what would score most highly?");
+  // const { partnerId } = useParams();
+  // const questionArr = Config.partner.filter(item => item.partner === partnerId)
   const questionArr = [ 
     "",
     "If you were giving Jobox a report card, what would score most highly?",

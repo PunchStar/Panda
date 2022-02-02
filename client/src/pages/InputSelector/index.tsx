@@ -11,10 +11,12 @@ import AnswerAudio from "../AnswerAudio";
 import AudioResult from "../AudioResult";
 import Thankyou from "../Thankyou";
 import AnswerText from "../AnswerText";
+import { useParams } from "react-router-dom";
 
 export default function InputSelector() {
   const { status, startRecording, stopRecording } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   let naviage = useNavigate();
+  const { partnerId } = useParams();
   const [isActive, setIsActive] = useState(false);
   const [isTextActive, setIsTextActive] = useState(false);
   const [micFlag, setMicFlag] = useState(true);
