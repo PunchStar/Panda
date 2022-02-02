@@ -18,6 +18,8 @@ import micVolumeImg6 from 'src/assets/images/bar-6-8.svg'
 import micVolumeImg7 from 'src/assets/images/bar-7-8.svg'
 import micVolumeImg8 from 'src/assets/images/bar-8-8.svg'
 import micVolumeImg from 'src/assets/images/bar-0-8.svg'
+import { useParams } from "react-router-dom";
+
 // declare var MediaRecorder: any;
 import { Config } from 'src/config/aws';
 import axios from 'axios';
@@ -35,19 +37,23 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     status, startRecording, stopRecording, mediaBlobUrl ,
     previewAudioStream
   } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
-  const [question, setQuestion] = useState("Please tell me what brought you to Datasaur?");
-  const questionArr = [ 
-    "",
-    "Please tell me what brought you to Datasaur?",
-    "What type of project are you working on here?",
-    "What seems challenging about using Datasaur?",
-    "What features here are the most useful to you?"
-  ];
+  const { partnerId } = useParams();
+  
+  // const [question, setQuestion] = useState("Please tell me what brought you to Datasaur?");
+  // const questionArr = [ 
+  //   "",
+  //   "Please tell me what brought you to Datasaur?",
+  //   "What type of project are you working on here?",
+  //   "What seems challenging about using Datasaur?",
+  //   "What features here are the most useful to you?"
+  // ];
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
   const [userId, setUserId] = useState(uuidv4());
   const [micVolume, setMicVolume] = useState(micVolumeImg);
   const [redCircle, setRedCircle] = useState(false);
+  const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][0]['questions'];
+
   let average_volume = 0;
   var volume_timer:any = null;
   let media_recorder:any = null;
@@ -161,7 +167,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       });
     setQuestionCount(questionCount + 1);
     startRecording();
-    if( questionCount >= 4){
+    if( questionCount >= questionArrObj.length){
       // clearInterval(volume_timer as  any)
       if (volume_timer) {
         clearInterval(volume_timer);
@@ -192,7 +198,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       <PandaTalkImg src={pandaTalkingImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <Message> 
-        {questionArr[questionCount>4?4:questionCount]}
+        {questionArrObj[questionCount>questionArrObj.length?questionArrObj.length:questionCount]['text']}
       </Message>
       <ArrowImg/>
       {hidden && <BlueCircle hidden>
@@ -209,12 +215,14 @@ export default function AnswerAudio(props:AnswerAudioProps) {
             <StepCircle active={1 <= questionCount}>1</StepCircle>
             <StepBar  active={2 <= questionCount}/>
             <StepCircle active={2 <= questionCount}>2</StepCircle>
-            <StepBar  active={3 <= questionCount}/>
-            <StepCircle active={3 <= questionCount}>3</StepCircle>
-            <StepBar  active={4 <= questionCount}/>
-            <StepCircle active={4 <= questionCount}>4</StepCircle>
+            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount}/> }
+            {questionArrObj.length > 2 && <StepCircle active={3 <= questionCount}>3</StepCircle> }
+            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount}/> }
+            {questionArrObj.length > 3 && <StepCircle active={4 <= questionCount}>4</StepCircle> }
+            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount}/> }
+            {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}>5</StepCircle> }
         </ProgressBar>
-        {questionCount !== 4 ?<Button onClick={nextQuestionFunc}>Next Question →</Button> :
+        {questionCount !== questionArrObj.length ?<Button onClick={nextQuestionFunc}>Next Question →</Button> :
           <Button onClick={nextQuestionFunc}>Finish</Button>
         }
       </Bottom>

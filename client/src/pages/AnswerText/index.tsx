@@ -6,7 +6,7 @@ import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import { Config } from 'src/config/aws';
-// import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import axios from 'axios';
 const configFormData = {     
@@ -20,15 +20,17 @@ interface AnswerTextProps {
 export default function AnswerText(props:AnswerTextProps) {
   const {onNextClick} = props;
   const [commetText, setCommentText] = useState('');
-  const [question, setQuestion] = useState("If you were giving Jobox a report card, what would score most highly?");
-  // const { partnerId } = useParams();
-  // const questionArr = Config.partner.filter(item => item.partner === partnerId)
-  const questionArr = [ 
-    "",
-    "If you were giving Jobox a report card, what would score most highly?",
-    "Where is Jobox falling short on understanding your needs?",
-    "Is Jobox the primary way you manage all your jobs? If not, what could Jobox do to become your primary way?",
-  ];
+  // const [question, setQuestion] = useState("");
+  const { partnerId } = useParams();
+  const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][0]['questions'];
+  console.log(questionArrObj,'333');
+  
+  // const questionArr = [ 
+  //   "",
+  //   "If you were giving Jobox a report card, what would score most highly?",
+  //   "Where is Jobox falling short on understanding your needs?",
+  //   "Is Jobox the primary way you manage all your jobs? If not, what could Jobox do to become your primary way?",
+  // ];
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
   const [userId, setUserId] = useState(uuidv4());
@@ -51,7 +53,7 @@ export default function AnswerText(props:AnswerTextProps) {
       .catch(() => {
       });
     setQuestionCount(questionCount + 1);
-    if( questionCount >= 3){
+    if( questionCount >= questionArrObj.length){
       onNextClick(2,userId);
     }
   }
@@ -67,7 +69,7 @@ export default function AnswerText(props:AnswerTextProps) {
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <AnswerBubble>
         <Message> 
-          {questionArr[questionCount>3?3:questionCount]}
+          {questionArrObj[questionCount>3?3:questionCount]['text']}
         </Message>
         <ArrowImg/>
       </AnswerBubble>
@@ -80,10 +82,14 @@ export default function AnswerText(props:AnswerTextProps) {
             <StepCircle active={1 <= questionCount}>1</StepCircle>
             <StepBar  active={2 <= questionCount}/>
             <StepCircle active={2 <= questionCount}>2</StepCircle>
-            <StepBar  active={3 <= questionCount}/>
-            <StepCircle active={3 <= questionCount}>3</StepCircle>
+            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount}/> }
+            {questionArrObj.length > 2 && <StepCircle active={3 <= questionCount}>3</StepCircle> }
+            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount}/> }
+            {questionArrObj.length > 3 && <StepCircle active={4 <= questionCount}>4</StepCircle> }
+            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount}/> }
+            {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}>5</StepCircle> }
         </ProgressBar>
-        {questionCount !== 3 ?<Button onClick={nextQuestionFunc}>Next Question →</Button> :
+        {questionCount !== questionArrObj.length ?<Button onClick={nextQuestionFunc}>Next Question →</Button> :
           <Button onClick={nextQuestionFunc}>Finish</Button>
         }
       </Bottom>

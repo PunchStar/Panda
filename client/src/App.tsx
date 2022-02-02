@@ -10,8 +10,7 @@ import AudioResult from "./pages/AudioResult";
 
 const MainRoute = () => {
   let routes = useRoutes([
-    // { path: "/input-selector/:partnerId", element: <InputSelector/>},
-    { path: "/input-selector", element: <InputSelector/>},
+    { path: "/input-selector/:partnerId", element: <InputSelector/>},
   ]);
   return routes;
 };
