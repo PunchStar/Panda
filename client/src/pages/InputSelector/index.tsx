@@ -10,11 +10,13 @@ import closeImg from 'src/assets/images/x.svg'
 import AnswerAudio from "../AnswerAudio";
 import AudioResult from "../AudioResult";
 import Thankyou from "../Thankyou";
+import AnswerText from "../AnswerText";
 
 export default function InputSelector() {
   const { status, startRecording, stopRecording } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   let naviage = useNavigate();
   const [isActive, setIsActive] = useState(false);
+  const [isTextActive, setIsTextActive] = useState(false);
   const [micFlag, setMicFlag] = useState(true);
   const [userId, setUserID] = useState('')
   const [step,setStep] = useState(0);
@@ -27,6 +29,10 @@ export default function InputSelector() {
         stopRecording();
       setIsActive(!isActive);
     }
+  const onTextClick = () => {
+      setIsTextActive(!isTextActive);
+      setStep(1);
+  }
   useEffect(() => {
     if(status === 'recording'){
       // naviage('/input-selector/answer-audio');
@@ -43,7 +49,7 @@ export default function InputSelector() {
           <MicrophoneImg src={micFlag ? microphone : microphoneDisable}/>
       </SpeakButton>
       <SpeakText>Press To Speak</SpeakText>
-      <WriteButton>
+      <WriteButton onClick={onTextClick}>
         <PencilPaperImg src={pencilpaper} />
       </WriteButton>
       <WriteText>Press To Write</WriteText>
@@ -51,13 +57,19 @@ export default function InputSelector() {
       *All feedback is recorded.<br/>
       Powered by PerceptivePanda for {"Datasaur.ai"}
       </PoweredBy></>: step === 1 ?
+      isTextActive?
+      <AnswerText onNextClick={(step,value) => {
+        setStep(step);
+        setUserID(value);
+      }}
+      />:
        <AnswerAudio onNextClick={(step,value) => {
         setStep(step);
         setUserID(value);
       }}/>: step === 2 ?
       <Thankyou onNextClick={(step) => {
         setStep(step);
-      }}/>: <AudioResult  userId={userId}/>
+      }}/>: <AudioResult  userId={userId} text={isTextActive}/>
       }
     </InputSelectorWrapper>
   )
