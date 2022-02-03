@@ -69,7 +69,7 @@ export default function AnswerText(props:AnswerTextProps) {
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <AnswerBubble>
         <Message> 
-          {questionArrObj[questionCount>3?3:questionCount]['text']}
+          {questionArrObj[questionCount>3 ? 3 : questionCount - 1]['text']}
         </Message>
         <ArrowImg/>
       </AnswerBubble>
