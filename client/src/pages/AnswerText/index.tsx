@@ -40,7 +40,7 @@ export default function AnswerText(props:AnswerTextProps) {
     setCommentText('');
     let formData = new FormData();
     formData.append(userId +'__' +questionCount, file);
-    axios.post("/upload/fileTextUpload", formData, configFormData)
+    axios.post("https://panda-audio.herokuapp.com/upload/fileUpload", formData, configFormData)
       .then(res => {
         let {data} = res;
         console.log('result',data)
