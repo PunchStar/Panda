@@ -1,6 +1,2 @@
 node_modules
 /client/node_modules
-/client/build/recordings
-/client/build/text
-/client/public/recordings
-/client/public/text
