@@ -1,6 +1,6 @@
 export const Config ={
 api_url: process.env.NODE_ENV === 'production' 
-      ? '..'
+      ? 'https://panda-audio.herokuapp.com'
       : 'http://localhost:5000',
 partner:[
             {

@@ -155,7 +155,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     let formData = new FormData();
     formData.append(userId +'__' +questionCount, blob);
     // axios.post("/upload/fileUpload", formData, configFormData)
-    axios.post("https://panda-audio.herokuapp.com/upload/fileUpload", formData, configFormData)
+    axios.post("/upload/fileUpload", formData, configFormData)
       .then(res => {
         let {data} = res;
         console.log('result',data)
