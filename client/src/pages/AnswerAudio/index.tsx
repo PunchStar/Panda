@@ -29,7 +29,7 @@ const configFormData = {
 axios.defaults.baseURL = Config.api_url;
 
 interface AnswerAudioProps {
-  onNextClick: (step:number,userId:string) => void;
+  onNextClick: (step:number,userId:string, arrCount:number) => void;
 }
 export default function AnswerAudio(props:AnswerAudioProps) {
   const {onNextClick} = props;
@@ -53,7 +53,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const [micVolume, setMicVolume] = useState(micVolumeImg);
   const [redCircle, setRedCircle] = useState(false);
   const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][0]['questions'];
-
+  console.log(questionArrObj)
   let average_volume = 0;
   var volume_timer:any = null;
   let media_recorder:any = null;
@@ -167,13 +167,13 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       });
     setQuestionCount(questionCount + 1);
     startRecording();
-    if( questionCount >= questionArrObj.length){
+    if( questionCount  >= questionArrObj.length){
       // clearInterval(volume_timer as  any)
       if (volume_timer) {
         clearInterval(volume_timer);
         volume_timer = null;
       }
-      onNextClick(2,userId);
+      onNextClick(2,userId, questionArrObj.length);
     }
   }
   const nextQuestionFunc = async() => {
@@ -198,7 +198,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       <PandaTalkImg src={pandaTalkingImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <Message> 
-        {questionArrObj[questionCount>questionArrObj.length?questionArrObj.length:questionCount]['text']}
+        {questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}
       </Message>
       <ArrowImg/>
       {hidden && <BlueCircle hidden>

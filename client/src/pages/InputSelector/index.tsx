@@ -20,6 +20,7 @@ export default function InputSelector() {
   const [micFlag, setMicFlag] = useState(true);
   const [userId, setUserID] = useState('')
   const [step,setStep] = useState(0);
+  const [arrCount,setArrCount] = useState(0);
   const onClick = () => {
      if(!isActive){
       startRecording();
@@ -58,18 +59,20 @@ export default function InputSelector() {
       Powered by PerceptivePanda for {"Datasaur.ai"}
       </PoweredBy></>: step === 1 ?
       isTextActive?
-      <AnswerText onNextClick={(step,value) => {
+      <AnswerText onNextClick={(step,value,arrCount) => {
         setStep(step);
+        setArrCount(arrCount);
         setUserID(value);
       }}
       />:
-       <AnswerAudio onNextClick={(step,value) => {
+       <AnswerAudio onNextClick={(step,value,arrCount) => {
         setStep(step);
+        setArrCount(arrCount);
         setUserID(value);
       }}/>: step === 2 ?
       <Thankyou onNextClick={(step) => {
         setStep(step);
-      }}/>: <AudioResult  userId={userId} text={isTextActive}/>
+      }}/>: <AudioResult  userId={userId} text={isTextActive} count={arrCount}/>
       }
     </InputSelectorWrapper>
   )

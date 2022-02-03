@@ -15,7 +15,7 @@ const configFormData = {
 axios.defaults.baseURL = Config.api_url;
 
 interface AnswerTextProps {
-  onNextClick: (step:number,userId:string) => void;
+  onNextClick: (step:number,userId:string, arrCount:number) => void;
 }
 export default function AnswerText(props:AnswerTextProps) {
   const {onNextClick} = props;
@@ -23,7 +23,6 @@ export default function AnswerText(props:AnswerTextProps) {
   // const [question, setQuestion] = useState("");
   const { partnerId } = useParams();
   const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][0]['questions'];
-  console.log(questionArrObj,'333');
   
   // const questionArr = [ 
   //   "",
@@ -54,7 +53,7 @@ export default function AnswerText(props:AnswerTextProps) {
       });
     setQuestionCount(questionCount + 1);
     if( questionCount >= questionArrObj.length){
-      onNextClick(2,userId);
+      onNextClick(2,userId, questionArrObj.length);
     }
   }
   const nextQuestionFunc = async() => {
@@ -69,7 +68,7 @@ export default function AnswerText(props:AnswerTextProps) {
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <AnswerBubble>
         <Message> 
-          {questionArrObj[questionCount>3 ? 3 : questionCount - 1]['text']}
+          {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
         </Message>
         <ArrowImg/>
       </AnswerBubble>
