@@ -1,6 +1,5 @@
 exports.fileUpload = async (req, res) =>  {
     console.log("fileupload")
-    console.log('req,res',req.files)
     const files = Object.entries(req.files);
     let data = [];
     for(let i = 0 ; i < files.length ; i ++) {
@@ -21,7 +20,6 @@ exports.fileUpload = async (req, res) =>  {
  
 exports.fileTextUpload = async (req, res) =>  {
     console.log("filetextupload")
-    console.log('req,res',req.files)
     const files = Object.entries(req.files);
     let data = [];
     for(let i = 0 ; i < files.length ; i ++) {
