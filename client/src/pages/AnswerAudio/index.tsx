@@ -37,7 +37,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     status, startRecording, stopRecording, mediaBlobUrl ,
     previewAudioStream
   } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
-  const { partnerId } = useParams();
+  const { partnerId, interviewId } = useParams();
   
   // const [question, setQuestion] = useState("Please tell me what brought you to Datasaur?");
   // const questionArr = [ 
@@ -52,7 +52,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const [userId, setUserId] = useState(uuidv4());
   const [micVolume, setMicVolume] = useState(micVolumeImg);
   const [redCircle, setRedCircle] = useState(false);
-  const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][0]['questions'];
+  const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][Number(interviewId) - 1]['questions'];
   console.log(questionArrObj)
   let average_volume = 0;
   var volume_timer:any = null;

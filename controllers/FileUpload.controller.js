@@ -5,7 +5,7 @@ exports.fileUpload = async (req, res) =>  {
     let data = [];
     for(let i = 0 ; i < files.length ; i ++) {
         let file = files[i][1];
-        if (window.location.hostname == 'localhost')
+        if(process.env.NODE_ENV !== 'production')
             file.mv('./client/public/recording/'+ files[i][0] + '.ogg');
         else
             file.mv('./client/build/recording/'+ files[i][0] + '.ogg');
@@ -26,7 +26,7 @@ exports.fileTextUpload = async (req, res) =>  {
     let data = [];
     for(let i = 0 ; i < files.length ; i ++) {
         let file = files[i][1];
-        if (window.location.hostname == 'localhost')
+        if(process.env.NODE_ENV !== 'production')
             file.mv('./client/public/text/'+ files[i][0] + '.txt');
         else
             file.mv('./client/build/text/'+ files[i][0] + '.txt');

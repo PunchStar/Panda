@@ -21,8 +21,8 @@ export default function AnswerText(props:AnswerTextProps) {
   const {onNextClick} = props;
   const [commetText, setCommentText] = useState('');
   // const [question, setQuestion] = useState("");
-  const { partnerId } = useParams();
-  const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][0]['questions'];
+  const { partnerId, interviewId } = useParams();
+  const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][Number(interviewId) - 1 ]['questions'];
   
   // const questionArr = [ 
   //   "",
