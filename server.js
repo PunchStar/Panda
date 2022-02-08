@@ -2,8 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const dotenv = require('dotenv');
-const Mongoose = require('./config/mongoose');
-const MongoDB = require('./config/mongodb');
 const cors = require('cors');
 const app = express();
 const fileUpload = require('express-fileupload');
@@ -50,5 +48,5 @@ require('./routes/FileUpload.routes')(app);
 require('./routes/User.routes')(app);
 
 
-const port = process.env.PORT || 5000;  //process.env.port is Heroku's port if you choose to deplay the app there
+const port = process.env.PORT || 5005;  //process.env.port is Heroku's port if you choose to deplay the app there
 app.listen(port, () => console.log("Server up and running on port " + port));
