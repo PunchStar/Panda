@@ -3,14 +3,27 @@ import {
   useRoutes,
 } from "react-router-dom";
 import InputSelector from "src/pages/InputSelector"
-import AnswerAudio from "src/pages/AnswerAudio"
-import Thankyou from "./pages/Thankyou";
-import AudioResult from "./pages/AudioResult";
-
+import Login from "./components/Login/Login";
+import Admin from "./pages/Admin/admin";
+import Interview from "./pages/Admin/userLayout";
+import UserLayout from "./pages/Admin/userLayout";
+import useToken from './useToken';
 
 const MainRoute = () => {
+  const {token, setToken} = useToken();
   let routes = useRoutes([
     { path: "/input-selector/:partnerId/:interviewId", element: <InputSelector/>},
+    // { 
+    //   path: "/admin", element: <Admin/>
+    // }
+    {
+      path: "admin",
+      children:[
+        {path:"", element:<Admin/>},
+        {path:"user-inputs", element:<UserLayout/>},
+        {path:"interviews", element:<Interview/>}
+      ]
+    }
   ]);
   return routes;
 };

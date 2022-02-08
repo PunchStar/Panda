@@ -7,9 +7,17 @@ const MongoDB = require('./config/mongodb');
 const cors = require('cors');
 const app = express();
 const fileUpload = require('express-fileupload');
+const config_question =  require('./config/config_question');
 
 dotenv.config();
-
+const partners = {};
+config_question.partner.forEach((elem) => {
+	partners[elem.partner] = elem;
+	elem.interview_obj = {};
+	elem.interviews.forEach((i_elem)=> {
+		elem.interview_obj[i_elem.name] = i_elem;
+	});
+});
 //Bodyparser middleware
 app.use(
     bodyParser.urlencoded({
@@ -39,6 +47,7 @@ app.use(function(req, res, next) {
 
 //Routes
 require('./routes/FileUpload.routes')(app);
+require('./routes/User.routes')(app);
 
 
 const port = process.env.PORT || 5000;  //process.env.port is Heroku's port if you choose to deplay the app there
