@@ -1,5 +1,5 @@
-module.exports = { 
-    partner:[
+export default 
+[
     {
         "partner_name": "Test",
         "partner": "TEST",
@@ -243,4 +243,4 @@ module.exports = {
     }
 ]
 
-};
+;

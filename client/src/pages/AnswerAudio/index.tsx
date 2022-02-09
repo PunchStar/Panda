@@ -26,13 +26,14 @@ import axios from 'axios';
 const configFormData = {     
   headers: { 'content-type': 'multipart/form-data' }
 }
-axios.defaults.baseURL = Config.api_url;
+
 
 interface AnswerAudioProps {
-  onNextClick: (step:number,userId:string, arrCount:number) => void;
+  onNextClick: (step:number,userId:string, arrCount:number, urlArr:never[]) => void;
 }
 export default function AnswerAudio(props:AnswerAudioProps) {
   const {onNextClick} = props;
+  const [url, setUrl] = useState([]);
   const {
     status, startRecording, stopRecording, mediaBlobUrl ,
     previewAudioStream
@@ -52,8 +53,8 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const [userId, setUserId] = useState(uuidv4());
   const [micVolume, setMicVolume] = useState(micVolumeImg);
   const [redCircle, setRedCircle] = useState(false);
-  const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][Number(interviewId) - 1]['questions'];
-  console.log(questionArrObj)
+  const interviewArr =  Config.partner.filter(item => item.partner === partnerId)[0]['interviews'];
+  const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   let average_volume = 0;
   var volume_timer:any = null;
   let media_recorder:any = null;
@@ -149,46 +150,105 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       return false;
   }
   }
+  const createSigned = async() =>{
+    axios.defaults.baseURL = Config.api_url;
+    axios.post("/input-selector/answer-audio", {
+      partner:partnerId,
+      interview:interviewId,
+      user:userId,
+      question_number:questionCount
+    })
+    .then(res => {
+      let {data} = res;
+      console.log('result114441',data)
+      if(!data.success) {
+        let message = `While uploading files, unknown errors was occured!`
+        return;
+      }
+      if(data.url){
+        let tempUrl : any= url;
+        tempUrl.push(data.url);
+        setUrl(tempUrl);
+        
+      }
+    })
+    .catch(() => {
+    });
+  }
   const uploadFile = async() => {
     if(!mediaBlobUrl) return;
     let blob = await fetch(mediaBlobUrl as any).then(r=>r.blob());
-    let formData = new FormData();
-    formData.append(userId +'__' +questionCount, blob);
+    // let formData = new FormData();
+    // formData.append(userId +'__' +questionCount, blob);
     // axios.post("/upload/fileUpload", formData, configFormData)
-    axios.post("/upload/fileUpload", formData, configFormData)
-      .then(res => {
-        let {data} = res;
-        console.log('result',data)
-        if(!data.success) {
-          let message = `While uploading files, unknown errors was occured!`
-          return;
-        }
-      })
-      .catch(() => {
-      });
-    setQuestionCount(questionCount + 1);
-    startRecording();
-    if( questionCount  >= questionArrObj.length){
-      // clearInterval(volume_timer as  any)
-      if (volume_timer) {
-        clearInterval(volume_timer);
-        volume_timer = null;
+    //   .then(res => {
+    //     let {data} = res;
+    //     console.log('result',data)
+    //     if(!data.success) {
+    //       let message = `While uploading files, unknown errors was occured!`
+    //       return;
+    //     }
+    //   })
+    //   .catch(() => {
+    //   });
+    axios.defaults.baseURL = Config.api_url;
+    axios.post("/input-selector/answer-audio", {
+      partner:partnerId,
+      interview:interviewId,
+      user:userId,
+      question_number:questionCount
+    })
+    .then(res => {
+      let {data} = res;
+      console.log('result114441',data)
+      if(!data.success) {
+        let message = `While uploading files, unknown errors was occured!`
+        return;
       }
-      onNextClick(2,userId, questionArrObj.length);
-    }
+      if(data.url){
+        let tempUrl : any= url;
+        tempUrl.push(data.url);
+        setUrl(tempUrl);
+        axios.defaults.baseURL = '';
+        axios.put(data.url, blob).then(res =>{
+          console.log('3333333')
+          console.log(res);
+          console.log('3333333')
+        })
+        setQuestionCount(questionCount + 1);
+        startRecording();
+        if( questionCount  >= questionArrObj.length){
+          // clearInterval(volume_timer as  any)
+          if (volume_timer) {
+            clearInterval(volume_timer);
+            volume_timer = null;
+          }
+          onNextClick(2,userId, questionArrObj.length, url);
+        }
+      }
+    })
+    .catch(() => {
+    });
+    
   }
   const nextQuestionFunc = async() => {
     await stopRecording();
   }
   useEffect(()=>{
+    console.log('444')
     if(status == 'idle'){
       request_recording();
       startRecording();
-    }
+     }
   },[])
+  // useEffect(()=>{
+  //   console.log('333')
+  //   if( questionCount  < questionArrObj.length)
+  //     createSigned();
+  // },[questionCount]);
   useEffect(()=>{
     if(mediaBlobUrl && status == 'stopped'){
-      console.log("444", questionCount,mediaBlobUrl )
+      console.log("555", questionCount,mediaBlobUrl )
       uploadFile();
     }
   },[mediaBlobUrl])

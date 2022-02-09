@@ -19,6 +19,7 @@ export default function InputSelector() {
   const [isTextActive, setIsTextActive] = useState(false);
   const [micFlag, setMicFlag] = useState(true);
   const [userId, setUserID] = useState('')
+ const [urlArr, setUrlArr] = useState([]);
   const [step,setStep] = useState(0);
   const [arrCount,setArrCount] = useState(0);
   const onClick = () => {
@@ -59,20 +60,22 @@ export default function InputSelector() {
       Powered by PerceptivePanda for {"Datasaur.ai"}
       </PoweredBy></>: step === 1 ?
       isTextActive?
-      <AnswerText onNextClick={(step,value,arrCount) => {
+      <AnswerText onNextClick={(step,value,arrCount,urlArr) => {
         setStep(step);
         setArrCount(arrCount);
         setUserID(value);
+        setUrlArr(urlArr);
       }}
       />:
-       <AnswerAudio onNextClick={(step,value,arrCount) => {
+       <AnswerAudio onNextClick={(step,value,arrCount,urlArr) => {
         setStep(step);
         setArrCount(arrCount);
+        setUrlArr(urlArr);
         setUserID(value);
       }}/>: step === 2 ?
       <Thankyou onNextClick={(step) => {
         setStep(step);
-      }}/>: <AudioResult  userId={userId} text={isTextActive} count={arrCount}/>
+      }}/>: <AudioResult  userId={userId} text={isTextActive} count={arrCount} url={urlArr}/>
       }
     </InputSelectorWrapper>
   )

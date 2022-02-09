@@ -12,17 +12,18 @@ import axios from 'axios';
 const configFormData = {     
   headers: { 'content-type': 'multipart/form-data' }
 }
-axios.defaults.baseURL = Config.api_url;
+
 
 interface AnswerTextProps {
-  onNextClick: (step:number,userId:string, arrCount:number) => void;
+  onNextClick: (step:number,userId:string, arrCount:number, urlArr:never[]) => void;
 }
 export default function AnswerText(props:AnswerTextProps) {
   const {onNextClick} = props;
   const [commetText, setCommentText] = useState('');
   // const [question, setQuestion] = useState("");
   const { partnerId, interviewId } = useParams();
-  const questionArrObj = Config.partner.filter(item => item.partner === partnerId)[0]['interviews'][Number(interviewId) - 1 ]['questions'];
+  const interviewArr =  Config.partner.filter(item => item.partner === partnerId)[0]['interviews'];
+  const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   
   // const questionArr = [ 
   //   "",
@@ -33,27 +34,63 @@ export default function AnswerText(props:AnswerTextProps) {
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
   const [userId, setUserId] = useState(uuidv4());
-  
+  const [url, setUrl] = useState([]);
+  const createSigned = async() =>{
+    axios.defaults.baseURL = Config.api_url;
+    axios.post("/input-selector/answer-text", {
+      partner:partnerId,
+      interview:interviewId,
+      user:userId,
+      question_number:questionCount
+    })
+    .then(res => {
+      let {data} = res;
+      console.log('result111',data)
+      if(!data.success) {
+        let message = `While uploading files, unknown errors was occured!`
+        return;
+      }
+      if(data.url){
+        let tempUrl : any= url;
+        tempUrl.push(data.url);
+        setUrl(tempUrl);
+        
+      }
+    })
+    .catch(() => {
+    });
+  }
+  useEffect(()=>{
+    console.log('333')
+    createSigned();
+  },[questionCount]);
   const uploadFile = async() => {
-    // let blob = await fetch(mediaBlobUrl as any).then(r=>r.blob());
-    const file = new Blob([commetText], {type:'text.plain'});
+    // const file = new Blob([commetText], {type:'text.plain'});
+    // setCommentText('');
+    // let formData = new FormData();
+    // formData.append(userId +'__' +questionCount, file);
+    // axios.post("/upload/fileTextUpload", formData, configFormData)
+    //   .then(res => {
+    //     let {data} = res;
+    //     console.log('result',data)
+    //     if(!data.success) {
+    //       let message = `While uploading files, unknown errors was occured!`
+    //       return;
+    //     }
+    //   })
+    //   .catch(() => {
+    //   });
+    console.log("upload", url);
+    axios.defaults.baseURL = '';
+    axios.put(url[questionCount - 1], commetText).then(res =>{
+      console.log('3333333')
+      console.log(res);
+      console.log('3333333')
+    })
     setCommentText('');
-    let formData = new FormData();
-    formData.append(userId +'__' +questionCount, file);
-    axios.post("/upload/fileTextUpload", formData, configFormData)
-      .then(res => {
-        let {data} = res;
-        console.log('result',data)
-        if(!data.success) {
-          let message = `While uploading files, unknown errors was occured!`
-          return;
-        }
-      })
-      .catch(() => {
-      });
     setQuestionCount(questionCount + 1);
     if( questionCount >= questionArrObj.length){
-      onNextClick(2,userId, questionArrObj.length);
+      onNextClick(2,userId, questionArrObj.length, url);
     }
   }
   const nextQuestionFunc = async() => {
