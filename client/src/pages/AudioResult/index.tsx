@@ -26,6 +26,10 @@ export default function AudioResult(props: AudioResultProps) {
       let {data} = res;
       console.log('result555',data)
       setResultVal(data.data);
+      if(!text){
+        const blob = new Blob([data.data], {type:'audio/ogg'});
+        setResultVal(URL.createObjectURL(blob));
+      }
       setResult(true);
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
@@ -49,7 +53,8 @@ export default function AudioResult(props: AudioResultProps) {
         </>:
         <>
           <p>Result</p>
-          <h1>{text?resultVal:'dddd'}</h1>
+          {text&&<h1>{resultVal}</h1>}
+          {!text && <audio controls><source src={resultVal} type="audio/ogg"/></audio>}
           <br/>
           <a onClick={()=>{setResult(false); setResultVal('');}}>Back</a>
         </>

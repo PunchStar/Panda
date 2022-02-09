@@ -178,6 +178,9 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const uploadFile = async() => {
     if(!mediaBlobUrl) return;
     let blob = await fetch(mediaBlobUrl as any).then(r=>r.blob());
+    // const blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' });
+    const file = new File([blob], 'audio.ogg', { type: 'audio/ogg; codecs=opus' });
+        
     // let formData = new FormData();
     // formData.append(userId +'__' +questionCount, blob);
     // axios.post("/upload/fileUpload", formData, configFormData)
@@ -210,7 +213,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         tempUrl.push(data.url);
         setUrl(tempUrl);
         axios.defaults.baseURL = '';
-        axios.put(data.url, blob).then(res =>{
+        axios.put(data.url, file).then(res =>{
           console.log('3333333')
           console.log(res);
           console.log('3333333')
