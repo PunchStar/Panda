@@ -90,8 +90,8 @@ app.post('/input-selector/getobject', async function(req, res) {
     console.log(data)
     if (!req.body.text) {
 		res.setHeader('content-type', 'audio/ogg; codecs=opus');
-        res.send(data);
-        //   return res.json({success: true, data: data});
+        // res.send(data);
+        return res.json({success: true, data: data});
 	} else  {
 		data = data.toString("utf8");
 		return res.json({success: true, data: data });
@@ -113,13 +113,14 @@ const get_interviews_media = async(req, res, orig_list) => {
     console.log("--2---",list.length)
     // console.log('list',list)
 	const users_obj = {};
-	for( let i = 0; i < 100; i++) {
+    let coun_i = list.length > 100 ? 100: list.length;
+	for( let i = 0; i < coun_i; i++) {
 		let elem = list[i];
 		users_obj[elem.user] = users_obj[elem.user] || [];
 		const [question_num, ts, file_type] = elem.filename.split(/\./);
 		const d = new Date(parseInt(ts));
 		const datetime = d.toLocaleString();
-		const transcript_filename = file_type == 'ogg' ? `${env}/${req.params.partner}/${req.params.interview}/${elem.user}/${question_num}.${ts}.txt` : ``;
+		const transcript_filename = file_type == 'ogg' ? `${env}/${req.body.partner}/${req.body.interview}/${elem.user}/${question_num}.${ts}.txt` : ``;
 
 		let data = null;
 		let transcript_exist = 0;
@@ -144,8 +145,8 @@ const get_interviews_media = async(req, res, orig_list) => {
 				type: file_type === 'ogg' ? 'Audio' : 'Text',
 				is_audio: file_type === 'ogg' ? 1 : 0,
 				transcript_exist,
-				url: `/admin/media-download/${req.params.partner}/${req.params.interview}/${elem.user}/${elem.filename}`,
-				transcript_url: `/admin/media-download/${req.params.partner}/${req.params.interview}/${elem.user}/${question_num}.${ts}.txt`,
+				url: `/admin/media-download/${req.body.partner}/${req.body.interview}/${elem.user}/${elem.filename}`,
+				transcript_url: `/admin/media-download/${req.body.partner}/${req.body.interview}/${elem.user}/${question_num}.${ts}.txt`,
 				transcript_file_dest
 			});
 		}
@@ -162,7 +163,6 @@ const get_interviews_media = async(req, res, orig_list) => {
     console.log("--4---")
 
 	users.sort((a, b) => parseInt(b.files[0].ts) - parseInt(a.files[0].ts));
-    console.log('users',users)
     return res.json({success: true, users: users});
 	// res.render('admin/user-media', { layout: 'admin', title: 'Perceptive Panda Admin', partner: req.params.partner, interview: req.params.interview, users });
 }
@@ -170,6 +170,34 @@ app.post('/admin/user-input/get-media', async function(req, res) {
     console.log("<< admin - user-media >>");
 	const orig_list = await listBucket(`${env}/${req.body.partner}/${req.body.interview}`);
 	await get_interviews_media(req, res, orig_list);
+});
+app.get('/admin/media-download/:partner/:interview/:user/:filename', async function(req, res) {
+	console.log("<< admin - media-download >>");
+	const [question_num, ts, file_type] = req.params.filename.split(/\./);
+
+	if (file_type !== 'ogg' && file_type !== 'txt') {
+		return res.sendStatus(404);
+	}
+	const filename = `${env}/${req.params.partner}/${req.params.interview}/${req.params.user}/${req.params.filename}`;
+
+	let data = null;
+	try {
+		data = await getObject(filename);
+	} catch(e) {
+		return res.sendStatus(404);
+	}
+
+	if (!data) {
+		return res.sendStatus(404);
+	}
+
+	if (file_type === 'ogg') {
+		res.setHeader('content-type', 'audio/ogg; codecs=opus');
+		res.send(data);
+	} else if (file_type === 'txt') {
+		data = data.toString("utf8");
+		res.send(data);
+	} 
 });
 const port = process.env.PORT || 5005;  //process.env.port is Heroku's port if you choose to deplay the app there
 app.listen(port, () => console.log("Server up and running on port " + port));

@@ -10,6 +10,7 @@ export default function UserLayout() {
     const partners = Config.partner;
     const [sepcPartner, setSepcPartner] = useState('');
     const [interviewActive, setInterviewActive] = useState(false)
+    const [users,setUsers]= useState<any[]>([]);
     if(!token ){
         return <Login setToken = {setToken} />
     }
@@ -23,6 +24,7 @@ export default function UserLayout() {
         .then(res => {
           let {data} = res;
           console.log('result114441',data)
+            setUsers(data.users);
           if(!data.success) {
             let message = `While uploading files, unknown errors was occured!`
             return;
@@ -34,6 +36,7 @@ export default function UserLayout() {
     return(
         <UserLayoutWrapper>
             <h1>Perceptive Panda Admin</h1>
+            {!interviewActive ? <>
             <h3>User Inputs</h3>
             <h5>Partners and Interviews</h5>
             {partners.map((element, index)=> (sepcPartner=='' || sepcPartner == element.partner) &&<li key={index}>
@@ -41,6 +44,14 @@ export default function UserLayout() {
                 <ol>&nbsp;&nbsp;&nbsp;{element.interviews.map(subelement => <li onClick={()=>onClickInterview(element.partner, subelement.name)}>Interview: {subelement.name}</li>)}
                 </ol>
             </li>)}
+            </>:<ul>
+                {users.map((uElement, index)=><div>
+                    <p>Users: {uElement['user']}</p>
+                    <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => <li>Question: {subelement1.question} - {subelement1.type} - {subelement1.datetime} - <a href={'http://localhost:5005' +subelement1.url}>Download</a></li> )}
+                </div>
+                </div>)}
+            </ul>
+            }
         </UserLayoutWrapper>
 
     )

@@ -16,17 +16,22 @@ export default function AudioResult(props: AudioResultProps) {
   const [result, setResult] = useState(false);
   const [resultVal, setResultVal] = useState('')
   console.log(url)
+  console.log()
   const createSigned = async(qCount:number,url:string) =>{
     axios.defaults.baseURL=Config.api_url;
     axios.post("/input-selector/getobject", {
-      filename: url.slice(url.indexOf('dev'),url.indexOf('?')),
+      filename: url.slice(url.indexOf('dev') + 4,url.indexOf('?')),
       text:text
     })
     .then(res => {
       let {data} = res;
       console.log('result555',data)
       setResultVal(data.data);
-      if(!text){
+      if(!text){  // this code right?
+//this is mine . as u can see, this is react part.
+// know it. wanted to confirm this block is showing ogg file?
+// just a moment. i'll show one thing
+
         const blob = new Blob([data.data], {type:'audio/ogg'});
         setResultVal(URL.createObjectURL(blob));
       }
@@ -39,26 +44,25 @@ export default function AudioResult(props: AudioResultProps) {
     })
     .catch(() => {
     });
-  }
-  const urlItems = url.map((element, index)=><div key={index}>
-    <span>Question {index + 1}&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <a onClick={()=>createSigned(index + 1, element)}>Download</a>
-  </div>)
+  } 
   return (
     <AudioResultWrapper>
-      {!result ?
         <>
           <p>User - {userId}</p>
-          {urlItems}
-        </>:
-        <>
-          <p>Result</p>
-          {text&&<h1>{resultVal}</h1>}
-          {!text && <audio controls><source src={resultVal} type="audio/ogg"/></audio>}
-          <br/>
-          <a onClick={()=>{setResult(false); setResultVal('');}}>Back</a>
+          {url.map((element, index)=><div key={index}>
+    <span>Question {index + 1}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <a href={'http://localhost:5005/admin/media-download' + element.slice(element.indexOf('dev') + 3,element.indexOf('?'))} target="_blank">Download</a>
+  </div>)}
         </>
-        }
+        {/* // :
+        // <>
+        //   <p>Result</p>
+        //   {text&&<h1>{resultVal}</h1>}
+        //   {!text && <audio controls><source src={resultVal} type="audio/ogg"/></audio>}
+        //   <br/>
+        //   <a onClick={()=>{setResult(false); setResultVal('');}}>Back</a>
+        // </>
+        } */}
       
       {/*<div>
         <span>Question {1}&nbsp;&nbsp;&nbsp;&nbsp;</span>

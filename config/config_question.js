@@ -1,5 +1,4 @@
-export default 
-[
+export default [
     {
         "partner_name": "Test",
         "partner": "TEST",
@@ -241,6 +240,4 @@ export default
             "josh@perceptivepanda.com"
         ]
     }
-]
-
-;
+];
