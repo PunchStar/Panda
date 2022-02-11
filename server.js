@@ -206,8 +206,8 @@ app.get('/admin/media-download/:partner/:interview/:user/:filename', async funct
 app.post('/send-audio-generated-email', async function(req, res) {
 	console.log("---- send email -----");
 	const email_to = partners[req.body.partner].email || [];
-	// email_to.push('andre@perceptivepanda.com');
-	email_to.push('superpunch727@gmail.com');
+	email_to.push('andre@perceptivepanda.com');
+	// email_to.push('superpunch727@gmail.com');
 	let site_url = `http://localhost:3000`;
 	if (env === 'dev') {
 		site_url = `https://dev.perceptivepanda.com`;
