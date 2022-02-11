@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import path from "path";
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { send_email } from './lib/awsses.js';
 import { createSignedUrl, listBucket, getObject }  from './lib/awssigned.js';
 import confg_question from './config/config_question.js';
 const app = express();
@@ -11,6 +12,7 @@ const app = express();
 dotenv.config();
 const env = 'dev';
 const partners = {};
+let partner_userID = null;
 console.log(partners);
 
 confg_question.forEach((elem) => {
@@ -55,6 +57,7 @@ app.post('/input-selector/answer-audio', async function(req, res) {
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
 	const ts = +new Date();
 	const filename = `${env}/${req.body.partner}/${req.body.interview}/${req.body.user}/${req.body.question_number}.${ts}.ogg`;
+	partner_userID = req.body.user || "Not Applicable";
 
 	let url = '';
     url = await createSignedUrl(filename, 'audio/ogg; codecs=opus');
@@ -67,6 +70,7 @@ app.post('/input-selector/answer-text', async function(req, res) {
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
 	const ts = +new Date();
 	const filename = `${env}/${req.body.partner}/${req.body.interview}/${req.body.user}/${req.body.question_number}.${ts}.txt`;
+	partner_userID = req.body.user || "Not Applicable";
 
 	let url = '';
 	if (env !== 'local') {
@@ -198,6 +202,39 @@ app.get('/admin/media-download/:partner/:interview/:user/:filename', async funct
 		data = data.toString("utf8");
 		res.send(data);
 	} 
+});
+app.post('/send-audio-generated-email', async function(req, res) {
+	console.log("---- send email -----");
+	const email_to = partners[req.body.partner].email || [];
+	// email_to.push('andre@perceptivepanda.com');
+	email_to.push('superpunch727@gmail.com');
+	let site_url = `http://localhost:3000`;
+	if (env === 'dev') {
+		site_url = `https://dev.perceptivepanda.com`;
+	} else if (env === 'prod') {
+		site_url = `https://www.perceptivepanda.com`;
+	}
+	const link = `${site_url}/admin/user-media/${req.body.partner}/${partners[req.body.partner].interview_obj[req.body.interview].name}/${req.body.user}/`;
+
+	if (env !== 'local') {
+		// if (req.body.customer_support == 0) {
+			await send_email(
+				'support@perceptivepanda.com', 
+				email_to, 
+				'New interview!', 
+				`<p>A new user interview session was just generated through PerceptivePanda.</p><p>Click here for all the session data: ${link}</p>`, 
+				`A new user interview session was just generated through PerceptivePanda.\n\nClick here for all the session data: ${link}`);
+		// }
+		//  else {
+		// 	await send_email(
+		// 		'support@perceptivepanda.com', 
+		// 		email_to, 
+		// 		'Request for customer support', 
+		// 		`<p>A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.</p><p>PerceptivePanda Generated SessionID: ${req.body.user}</p><p>Partner Generated UserID: ${partner_userID}</p>`, 
+		// 		`A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.\n\PerceptivePanda Generated SessionID: ${req.body.user}\n\nPartner Generated UserID: ${partner_userID}`);
+		// }
+		res.json({success:true, data:'done'});
+	}
 });
 const port = process.env.PORT || 5005;  //process.env.port is Heroku's port if you choose to deplay the app there
 app.listen(port, () => console.log("Server up and running on port " + port));

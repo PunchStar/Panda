@@ -10,12 +10,15 @@ export default function UserLayout() {
     const partners = Config.partner;
     const [sepcPartner, setSepcPartner] = useState('');
     const [interviewActive, setInterviewActive] = useState(false)
+    const [sepcInterview, setSpecInterview] = useState('');
     const [users,setUsers]= useState<any[]>([]);
     if(!token ){
         return <Login setToken = {setToken} />
     }
     const onClickInterview = (partner:any, interview:any) => {
         setInterviewActive(true);
+        setSepcPartner(partner);
+        setSpecInterview(interview);
         axios.defaults.baseURL = Config.api_url;
         axios.post("/admin/user-input/get-media", {
           partner:partner,
@@ -44,13 +47,17 @@ export default function UserLayout() {
                 <ol>&nbsp;&nbsp;&nbsp;{element.interviews.map(subelement => <li onClick={()=>onClickInterview(element.partner, subelement.name)}>Interview: {subelement.name}</li>)}
                 </ol>
             </li>)}
-            </>:<ul>
+            </>:<div>
+                <h2>User Media</h2>    
+                <h4>Partner:{sepcPartner}</h4>
+                <h4>Interview:{sepcInterview}</h4>
+            <ul>
                 {users.map((uElement, index)=><div>
                     <p>Users: {uElement['user']}</p>
                     <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => <li>Question: {subelement1.question} - {subelement1.type} - {subelement1.datetime} - <a href={'http://localhost:5005' +subelement1.url}>Download</a></li> )}
                 </div>
                 </div>)}
-            </ul>
+            </ul></div>
             }
         </UserLayoutWrapper>
 
@@ -62,5 +69,12 @@ const UserLayoutWrapper = styled.div`
         color:blue!important:
         text-decoration: underline!important;
         cursor:pointer!important;
+        margin-left: 40px;
+    }
+    ul {
+        p {
+             padding-top: 20px;
+        margin-bottom: 0px;
+     }
     }
 `

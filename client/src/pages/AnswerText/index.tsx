@@ -22,7 +22,7 @@ export default function AnswerText(props:AnswerTextProps) {
   const [commetText, setCommentText] = useState('');
   // const [question, setQuestion] = useState("");
   const { partnerId, interviewId } = useParams();
-  const interviewArr =  Config.partner.filter(item => item.partner === partnerId)[0]['interviews'];
+  const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   
   // const questionArr = [ 
@@ -38,7 +38,7 @@ export default function AnswerText(props:AnswerTextProps) {
   const createSigned = async() =>{
     axios.defaults.baseURL = Config.api_url;
     axios.post("/input-selector/answer-text", {
-      partner:partnerId,
+      partner:partnerId?.toUpperCase(),
       interview:interviewId,
       user:userId,
       question_number:questionCount
@@ -93,7 +93,21 @@ export default function AnswerText(props:AnswerTextProps) {
       onNextClick(2,userId, questionArrObj.length, url);
     }
   }
-  const nextQuestionFunc = async() => {
+  const nextQuestionFunc = async(flag:number) => {
+    if(flag == 1){
+      axios.defaults.baseURL = Config.api_url;
+      axios.post("/send-audio-generated-email", {
+          partner:partnerId?.toUpperCase(),
+          interview:interviewId,
+          user:userId 
+        })
+        .then(res => {
+          let {data} = res;
+          console.log('result-sendemail',data)
+        })
+        .catch(() => {
+        });
+      }
     uploadFile();
     // await stopRecording();
   }
@@ -125,8 +139,8 @@ export default function AnswerText(props:AnswerTextProps) {
             {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount}/> }
             {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}>5</StepCircle> }
         </ProgressBar>
-        {questionCount !== questionArrObj.length ?<Button onClick={nextQuestionFunc}>Next Question →</Button> :
-          <Button onClick={nextQuestionFunc}>Finish</Button>
+        {questionCount !== questionArrObj.length ?<Button onClick={()=>nextQuestionFunc(0)}>Next Question →</Button> :
+          <Button onClick={()=>nextQuestionFunc(1)}>Finish</Button>
         }
       </Bottom>
       <PoweredBy>

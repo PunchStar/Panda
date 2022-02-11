@@ -53,7 +53,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const [userId, setUserId] = useState(uuidv4());
   const [micVolume, setMicVolume] = useState(micVolumeImg);
   const [redCircle, setRedCircle] = useState(false);
-  const interviewArr =  Config.partner.filter(item => item.partner === partnerId)[0]['interviews'];
+  const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   let average_volume = 0;
   var volume_timer:any = null;
@@ -153,7 +153,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const createSigned = async() =>{
     axios.defaults.baseURL = Config.api_url;
     axios.post("/input-selector/answer-audio", {
-      partner:partnerId,
+      partner:partnerId?.toUpperCase(),
       interview:interviewId,
       user:userId,
       question_number:questionCount
@@ -196,7 +196,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     //   });
     axios.defaults.baseURL = Config.api_url;
     axios.post("/input-selector/answer-audio", {
-      partner:partnerId,
+      partner:partnerId?.toUpperCase(),
       interview:interviewId,
       user:userId,
       question_number:questionCount
@@ -234,7 +234,21 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     });
     
   }
-  const nextQuestionFunc = async() => {
+  const nextQuestionFunc = async(flag:number) => {
+    if(flag == 1){
+    axios.defaults.baseURL = Config.api_url;
+    axios.post("/send-audio-generated-email", {
+        partner:partnerId?.toUpperCase(),
+        interview:interviewId,
+        user:userId 
+      })
+      .then(res => {
+        let {data} = res;
+        console.log('result-sendemail',data)
+      })
+      .catch(() => {
+      });
+    }
     await stopRecording();
   }
   useEffect(()=>{
@@ -286,8 +300,8 @@ export default function AnswerAudio(props:AnswerAudioProps) {
             {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount}/> }
             {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}>5</StepCircle> }
         </ProgressBar>
-        {questionCount !== questionArrObj.length ?<Button onClick={nextQuestionFunc}>Next Question →</Button> :
-          <Button onClick={nextQuestionFunc}>Finish</Button>
+        {questionCount !== questionArrObj.length ?<Button onClick={()=>nextQuestionFunc(0)}>Next Question →</Button> :
+          <Button onClick={()=>nextQuestionFunc(1)}>Finish</Button>
         }
       </Bottom>
       <PoweredBy>
