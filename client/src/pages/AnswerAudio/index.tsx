@@ -22,17 +22,19 @@ import { useParams } from "react-router-dom";
 
 // declare var MediaRecorder: any;
 import { Config } from 'src/config/aws';
-import axios from 'axios';
-const configFormData = {     
-  headers: { 'content-type': 'multipart/form-data' }
-}
+  import axios from 'axios';
+  const configFormData = {     
+    headers: { 'content-type': 'multipart/form-data' }
+  }
 
 
 interface AnswerAudioProps {
   onNextClick: (step:number,userId:string, arrCount:number, urlArr:never[]) => void;
+  onLogClick: (flag:number,questionNumber:number) => void;
+  onClosesClick: (flag:boolean) => void;
 }
 export default function AnswerAudio(props:AnswerAudioProps) {
-  const {onNextClick} = props;
+  const {onNextClick, onLogClick, onClosesClick} = props;
   const [url, setUrl] = useState([]);
   const {
     status, startRecording, stopRecording, mediaBlobUrl ,
@@ -55,9 +57,11 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const [redCircle, setRedCircle] = useState(false);
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
+  const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   let average_volume = 0;
   var volume_timer:any = null;
   let media_recorder:any = null;
+
   function get_volume_meter(stream:any) {
     const audioContext = new AudioContext();
     const analyser = audioContext.createAnalyser();
@@ -150,6 +154,12 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       return false;
   }
   }
+  const onCloseClick = () => {
+    if(CObj['x_button'] == '1')
+      onClosesClick(false);
+    else
+      onClosesClick(true);
+  }
   const createSigned = async() =>{
     axios.defaults.baseURL = Config.api_url;
     axios.post("/input-selector/answer-audio", {
@@ -235,6 +245,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     
   }
   const nextQuestionFunc = async(flag:number) => {
+    onLogClick(flag,questionCount);
     if(flag == 1){
     axios.defaults.baseURL = Config.api_url;
     axios.post("/send-audio-generated-email", {
@@ -272,7 +283,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   return (
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
-      <CloseImg src={closeImg}/>
+      <CloseImg onClick={onCloseClick}src={closeImg}/>
       <PandaTalkImg src={pandaTalkingImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <Message> 
@@ -305,7 +316,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         }
       </Bottom>
       <PoweredBy>
-        Powered by PerceptivePanda for {"Datasaur.ai"}
+        Powered by PerceptivePanda for {partnerId?.toUpperCase()}
       </PoweredBy>
     </>
   )

@@ -16,14 +16,17 @@ const configFormData = {
 
 interface AnswerTextProps {
   onNextClick: (step:number,userId:string, arrCount:number, urlArr:never[]) => void;
+  onClosesClick: (flag:boolean) => void;
+  onLogClick: (flag:number,questionNumber:number) => void;
 }
 export default function AnswerText(props:AnswerTextProps) {
-  const {onNextClick} = props;
+  const {onNextClick, onLogClick,onClosesClick} = props;
   const [commetText, setCommentText] = useState('');
   // const [question, setQuestion] = useState("");
   const { partnerId, interviewId } = useParams();
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
+  const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   
   // const questionArr = [ 
   //   "",
@@ -64,6 +67,12 @@ export default function AnswerText(props:AnswerTextProps) {
     console.log('333')
     createSigned();
   },[questionCount]);
+  const onCloseClick = () => {
+    if(CObj['x_button'] == '1')
+      onClosesClick(false);
+    else
+      onClosesClick(true);
+  }
   const uploadFile = async() => {
     // const file = new Blob([commetText], {type:'text.plain'});
     // setCommentText('');
@@ -94,6 +103,7 @@ export default function AnswerText(props:AnswerTextProps) {
     }
   }
   const nextQuestionFunc = async(flag:number) => {
+    onLogClick(flag,questionCount);
     if(flag == 1){
       axios.defaults.baseURL = Config.api_url;
       axios.post("/send-audio-generated-email", {
@@ -114,7 +124,7 @@ export default function AnswerText(props:AnswerTextProps) {
   return (
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
-      <CloseImg src={closeImg}/>
+      <CloseImg onClick={onCloseClick}src={closeImg}/>
       <PandaTalkImg src={pandaTalkingImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <AnswerBubble>
@@ -144,7 +154,7 @@ export default function AnswerText(props:AnswerTextProps) {
         }
       </Bottom>
       <PoweredBy>
-        Powered by PerceptivePanda for {"Datasaur.ai"}
+        Powered by PerceptivePanda for {partnerId?.toUpperCase()}
       </PoweredBy>
     </>
   )

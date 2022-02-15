@@ -11,18 +11,33 @@ import AnswerAudio from "../AnswerAudio";
 import AudioResult from "../AudioResult";
 import Thankyou from "../Thankyou";
 import AnswerText from "../AnswerText";
-
+import { useParams } from "react-router-dom";
+import { Config } from 'src/config/aws';
+import * as actions from '../../actions';
+import axios from 'axios';
 export default function InputSelector() {
   const { status, startRecording, stopRecording } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   let naviage = useNavigate();
+  const [closeFlag, setCloseFlag] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isTextActive, setIsTextActive] = useState(false);
   const [micFlag, setMicFlag] = useState(true);
   const [userId, setUserID] = useState('')
  const [urlArr, setUrlArr] = useState([]);
   const [step,setStep] = useState(0);
+  const { partnerId, interviewId } = useParams();
+  const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
+  const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   const [arrCount,setArrCount] = useState(0);
+  const onCloseClick = () => {
+    setStep(2);
+    if(CObj['x_button'] == '1')
+      setCloseFlag(false);
+    else
+      setCloseFlag(true);
+  }
   const onClick = () => {
+    log_event('input-selector', '', '2', partnerId?.toUpperCase(), interviewId, userId)
      if(!isActive){
       startRecording();
       // stopRecording();
@@ -32,9 +47,46 @@ export default function InputSelector() {
       setIsActive(!isActive);
     }
   const onTextClick = () => {
-      setIsTextActive(!isTextActive);
-      setStep(1);
+    log_event('input-selector', '', '3', partnerId?.toUpperCase(), interviewId, userId)
+    setIsTextActive(!isTextActive);
+    setStep(1);
   }
+  const xmit_event = (event_name:any, partner:any, user:any, interview:any) => {
+    axios.defaults.baseURL = Config.api_url;
+    axios.post("/event", {
+        e: event_name,
+        p: partner,
+        u: user,
+        i: interview,
+        q: '',
+        c: ''
+      })
+      .then(res => {
+        let {data} = res;
+        console.log('result-event-xmit',data)
+      })
+      .catch(() => {
+      });
+
+}
+
+const log_event = (event_name:any, question_number:any, code:any, partner:any, interview:any, user:any) => {
+  axios.defaults.baseURL = Config.api_url;
+  axios.post("/event", {
+      e: event_name,
+      p: partner,
+      u: user,
+      i: interview,
+      q: question_number,
+      c: code
+    })
+    .then(res => {
+      let {data} = res;
+      console.log('result-event-log',data)
+    })
+    .catch(() => {
+    });
+}
   useEffect(() => {
     if(status === 'recording'){
       // naviage('/input-selector/answer-audio');
@@ -44,7 +96,8 @@ export default function InputSelector() {
   
   return (
     <InputSelectorWrapper>
-      {step === 0 ? <><CloseImg src={closeImg}/>
+      {step === 0 ? <>
+      <CloseImg onClick={onCloseClick} src={closeImg}/>
       <PandaImg src={panda}/>
       <HowTalk>How should we talk?</HowTalk>
       <SpeakButton onClick={onClick}>
@@ -57,7 +110,7 @@ export default function InputSelector() {
       <WriteText>Press To Write</WriteText>
       <PoweredBy>
       *All feedback is recorded.<br/>
-      Powered by PerceptivePanda for {"Datasaur.ai"}
+      Powered by PerceptivePanda for {partnerId?.toUpperCase()}
       </PoweredBy></>: step === 1 ?
       isTextActive?
       <AnswerText onNextClick={(step,value,arrCount,urlArr) => {
@@ -65,6 +118,14 @@ export default function InputSelector() {
         setArrCount(arrCount);
         setUserID(value);
         setUrlArr(urlArr);
+      }}onLogClick={(flag, questionNumber)=>{
+        if(flag == 0)
+          log_event('answer-audio', questionNumber, '2', partnerId, interviewId, userId);      
+        else
+          log_event('answer-audio', questionNumber, '3', partnerId, interviewId, userId);      
+      }} onClosesClick={(flag)=>{
+        setStep(2);
+        setCloseFlag(flag);
       }}
       />:
        <AnswerAudio onNextClick={(step,value,arrCount,urlArr) => {
@@ -72,10 +133,19 @@ export default function InputSelector() {
         setArrCount(arrCount);
         setUrlArr(urlArr);
         setUserID(value);
+      }} onLogClick={(flag, questionNumber)=>{
+        if(flag == 0)
+          log_event('answer-audio', questionNumber, '2', partnerId, interviewId, userId);      
+        else
+          log_event('answer-audio', questionNumber, '3', partnerId, interviewId, userId);      
+      }} onClosesClick={(flag)=>{
+        setStep(2);
+        setCloseFlag(flag);
       }}/>: step === 2 ?
-      <Thankyou onNextClick={(step) => {
+      <Thankyou partner={partnerId as any} onNextClick={(step) => {
         setStep(step);
-      }}/>: <AudioResult  userId={userId} text={isTextActive} count={arrCount} url={urlArr}/>
+        log_event('thank-you', 3 , '0', partnerId, interviewId, userId);    
+      }} closeFlag={closeFlag as boolean}/>: <AudioResult  userId={userId} text={isTextActive} count={arrCount} url={urlArr}/>
       }
     </InputSelectorWrapper>
   )

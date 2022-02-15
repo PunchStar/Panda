@@ -13,7 +13,13 @@ dotenv.config();
 const env = 'dev';
 const partners = {};
 let partner_userID = null;
-console.log(partners);
+let mixpanel = null;
+switch(env) {
+	case 'prod': mixpanel = Mixpanel.init('1f47670881f7c33899deeaaf7cc94524'); break;
+	case 'dev': mixpanel = Mixpanel.init('820fb47d4ab8cd1e52bf879add08313c'); break;
+	default:
+	case 'local': mixpanel = Mixpanel.init('c9fad51e49059dcb80d838121b7f4d72'); break;
+}
 
 confg_question.forEach((elem) => {
 	partners[elem.partner] = elem;
@@ -235,6 +241,67 @@ app.post('/send-audio-generated-email', async function(req, res) {
 		// }
 		res.json({success:true, data:'done'});
 	}
+});
+// MixPanel
+app.post('/event', async function(req, res) {
+	console.log('- event -');
+	const { e, p, u, i, q, c } = req.body;
+
+	if (!e || !p || !u || !i || !partners[p] || !partners[p].interview_obj || !partners[p].interview_obj[i]) {
+		return res.sendStatus(404);
+	}
+
+	const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+	const ua = req.get('User-Agent');
+	const url = (e == 'popup-generated') ? req.headers.referer : '';
+	const question = q;
+	const code = c;
+	let os = '';
+
+	if (ua.includes("Win") || ua.includes("Mac"))
+		os = "Desktop";
+	else {
+		if (ua.includes("iPhone") || ua.includes("iPad") || ua.includes("iPod"))
+			os = "iOS";
+		else
+			os = "Android";
+	}
+	if (partner_userID === "Not Applicable")
+		partner_userID = u;
+	console.log(req.body);return;
+
+	mixpanel.track(e, {
+		distinct_id: `${p}🐼${u}🐼${i}`,
+		$os: os,
+		partner: p,
+		partner_user: `${p}🐼${partner_userID}`,
+		partner_interview: `${p}🐼${i}`,
+		user: partner_userID,
+		interview: i,
+		ip_address: ip,
+		ua,
+		url,
+		question,
+		code
+	});
+
+	if (partners[p].event_url) {
+		axios.post(partners[p].event_url, {
+			event: e,
+			os: os,
+			partner: p,
+			user: u,
+			interview: i,
+			ip,
+			ua,
+			url,
+			question,
+			code
+		});
+		// Ignore the return. Don't await it. Since it's fire and forget.
+	}
+
+	res.sendStatus(204);
 });
 const port = process.env.PORT || 5005;  //process.env.port is Heroku's port if you choose to deplay the app there
 app.listen(port, () => console.log("Server up and running on port " + port));

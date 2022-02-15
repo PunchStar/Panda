@@ -5,23 +5,24 @@ import closeImg from 'src/assets/images/x.svg'
 import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
 
 interface ThankyouProps {
+  partner: any;
+  closeFlag: boolean;
   onNextClick: (step:number) => void;
 }
 export default function Thankyou(props: ThankyouProps) {
-  const {onNextClick} = props;
+  const {onNextClick, partner, closeFlag} = props;
   const [customsupport, setCusstomSupport] = useState(true);
   return (
     <>
-      <CloseImg src={closeImg}/>
       <SpeechBubbleImg src={SpeechBubbleCenter}/>
       {customsupport ? <Message customsupport={customsupport}>
         Got it!<br/>
         We'll share your feedback with customer support and they'll be in touch.
       </Message> : <Message > Thank you for sharing your insights! </Message> }
       <PandaTalkImg src={pandaTalkingImg} />
-      <Button onClick={()=>{onNextClick(3);}}>See Result</Button>
+      {!closeFlag && <Button onClick={()=>{onNextClick(3);}}>See Result</Button>}
       <PoweredBy>
-        Powered by PerceptivePanda for {"Datasaur.ai"}
+      Powered by PerceptivePanda for {partner?.toUpperCase()}
       </PoweredBy>
     </>
   )
