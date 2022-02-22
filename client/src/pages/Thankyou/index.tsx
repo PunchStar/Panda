@@ -103,7 +103,7 @@ const PoweredBy = styled.span`
   position: absolute;
   height: 15px;
   width: 400px;
-  top: 445px;
+  top: 425px;
   left: 0px;
   font-size: 10px!important;
   font-weight: normal!important;
