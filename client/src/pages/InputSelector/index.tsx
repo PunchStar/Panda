@@ -103,11 +103,11 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
       <SpeakButton onClick={onClick}>
           <MicrophoneImg src={micFlag ? microphone : microphoneDisable}/>
       </SpeakButton>
-      <SpeakText>Press To Speak</SpeakText>
+      <SpeakText>Press to speak</SpeakText>
       <WriteButton onClick={onTextClick}>
         <PencilPaperImg src={pencilpaper} />
       </WriteButton>
-      <WriteText>Press To Write</WriteText>
+      <WriteText>Press to write</WriteText>
       <PoweredBy>
       *All feedback is recorded.<br/>
       Powered by PerceptivePanda for {partnerId?.toUpperCase()}
