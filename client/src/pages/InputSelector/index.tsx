@@ -95,7 +95,7 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
   },[status]);
   
   return (
-    <InputSelectorWrapper>
+    <InputSelectorWrapper step={step}>
       {step === 0 ? <>
       <CloseImg onClick={onCloseClick} src={closeImg}/>
       <PandaImg src={panda}/>
@@ -150,7 +150,7 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
     </InputSelectorWrapper>
   )
 }
-const InputSelectorWrapper = styled.div`
+const InputSelectorWrapper = styled.div<{step:number}>`
     position: absolute;
     width: 400px;
     height: 450px;
@@ -158,11 +158,11 @@ const InputSelectorWrapper = styled.div`
     top: 50%;
     left: 50%;
     margin: -225px 0 0 -200px;
-    background-color: #e6eefd;
+    ${(props) => props.step !== 0 && `background-color: #e6eefd;`}   
     opacity: 1.0;
     border-radius: 10px;
     box-shadow: 0 0 12.5px -1px rgba(0, 0, 0, 0.1);   
-    background-color: #fff;
+    ${(props) => props.step === 0 && `background-color:#fff;`}   
     span {
       text-align: center;
       font-family: 'Muli', sans-serif;

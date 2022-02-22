@@ -208,6 +208,7 @@ const Message = styled.div`
   line-height: 1.2;
   text-align: left;
   font-size: 12px;
+  font-weight: 900;
   background-color: #ffffff;
   border-radius: 15px;
   border: 1px solid #c4c4c4;
@@ -268,20 +269,20 @@ const Bottom = styled.div`
   border-top: solid 1px #ccc;
 `
 const LabelProgress = styled.span`
-  position: absolute;
-  left: 35px;
-  top: 5px;
-  width: 90px;
-  font-family: 'Muli', sans-serif;
-  font-size: 8px;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 1.29;
-  letter-spacing: 0.31px;
-  text-align: left;
-  color: #a5a5a5;
-  text-transform: uppercase;
+  position: absolute!important;
+  left: 35px!important;
+  top: 5px!important;
+  width: 90px!important;
+  font-family: 'Muli', sans-serif!important;
+  font-size: 8px!important;
+  font-weight: bold!important;
+  font-stretch: normal!important;
+  font-style: normal!important;
+  line-height: 1.29!important;
+  letter-spacing: 0.31px!important;
+  text-align: left!important;
+  color: #a5a5a5!important;
+  text-transform: uppercase!important;
 `
 const ProgressBar = styled.div`
   display: flex;
