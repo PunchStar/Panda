@@ -14,12 +14,12 @@ const env = 'dev';
 const partners = {};
 let partner_userID = null;
 let mixpanel = null;
-switch(env) {
-	case 'prod': mixpanel = Mixpanel.init('1f47670881f7c33899deeaaf7cc94524'); break;
-	case 'dev': mixpanel = Mixpanel.init('820fb47d4ab8cd1e52bf879add08313c'); break;
-	default:
-	case 'local': mixpanel = Mixpanel.init('c9fad51e49059dcb80d838121b7f4d72'); break;
-}
+// switch(env) {
+// 	case 'prod': mixpanel = Mixpanel.init('1f47670881f7c33899deeaaf7cc94524'); break;
+// 	case 'dev': mixpanel = Mixpanel.init('820fb47d4ab8cd1e52bf879add08313c'); break;
+// 	default:
+// 	case 'local': mixpanel = Mixpanel.init('c9fad51e49059dcb80d838121b7f4d72'); break;
+// }
 
 confg_question.forEach((elem) => {
 	partners[elem.partner] = elem;

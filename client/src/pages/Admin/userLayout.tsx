@@ -48,13 +48,16 @@ export default function UserLayout() {
                 </ol>
             </li>)}
             </>:<div>
-                <h2>User Media</h2>    
+                <h2>User Interviews</h2>    
                 <h4>Partner:{sepcPartner}</h4>
                 <h4>Interview:{sepcInterview}</h4>
             <ul>
                 {users.map((uElement, index)=><div>
                     <p>Users: {uElement['user']}</p>
-                    <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => <li>Question: {subelement1.question} - {subelement1.type} - {subelement1.datetime} - <a href={'http://localhost:5005' +subelement1.url}>Download</a></li> )}
+                    <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => 
+                    {   
+                        var tempDate = new Date(subelement1.datetime);
+                        return(<li>Question: {subelement1.question} - {subelement1.type} - {tempDate.toLocaleDateString()} (GMT{tempDate.getTimezoneOffset()< 0?'+':'-'} {Math.abs(tempDate.getTimezoneOffset())/60}) - <a href={'http://localhost:5005' +subelement1.url}>Download</a></li>)})}
                 </div>
                 </div>)}
             </ul></div>
@@ -74,7 +77,7 @@ const UserLayoutWrapper = styled.div`
     ul {
         p {
              padding-top: 20px;
-        margin-bottom: 0px;
+         margin-bottom: 0px;
      }
     }
 `
