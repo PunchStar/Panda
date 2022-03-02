@@ -6,6 +6,7 @@ import cors from 'cors';
 import { send_email } from './lib/awsses.js';
 import { createSignedUrl, listBucket, getObject }  from './lib/awssigned.js';
 import confg_question from './config/config_question.js';
+// import auth from 'basic-auth';
 const app = express();
 // const fileUpload = require('express-fileupload');
 
@@ -58,6 +59,15 @@ app.use(function(req, res, next) {
 //Routes
 // require('./routes/FileUpload.routes')(app);
 // require('./routes/User.routes')(app);
+app.post('/login', async function(req, res) {
+    console.log('login');
+    console.log('req', req.body);
+    if(req.body.userName == 'admin' && req.body.password == '99ppPass') {
+        res.json({success:true, token:'true'})
+    }
+    else
+        return res.json({success:false})
+});
 app.post('/input-selector/answer-audio', async function(req, res) {
 	console.log('- answer-audio -');
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
@@ -123,7 +133,7 @@ const get_interviews_media = async(req, res, orig_list) => {
     console.log("--2---",list.length)
     // console.log('list',list)
 	const users_obj = {};
-    let coun_i = list.length > 100 ? 100: list.length;
+    let coun_i = list.length > 40 ? 40: list.length;
 	for( let i = 0; i < coun_i; i++) {
 		let elem = list[i];
 		users_obj[elem.user] = users_obj[elem.user] || [];
@@ -176,6 +186,28 @@ const get_interviews_media = async(req, res, orig_list) => {
     return res.json({success: true, users: users});
 	// res.render('admin/user-media', { layout: 'admin', title: 'Perceptive Panda Admin', partner: req.params.partner, interview: req.params.interview, users });
 }
+// const admin_logged_in_middleware = function (req, res, next) {
+// 	console.log("--admin -- logo --")
+// 	let user = auth(req);
+// 	if (user && user.name && user.pass) {
+// 		// Admin always works.
+// 		if (user.name.toLowerCase() === 'admin' && user.pass.toLowerCase() === '99ppPass'.toLowerCase()) {
+// 			return next();
+// 		}
+// 		// If the user is a partner, and the requested part of the admin is for that partner.
+// 		if (user && user.name && user.pass && partners[user.name.toUpperCase()] && partners[user.name.toUpperCase()].password.toLowerCase() === user.pass.toLowerCase() && req.params.partner.toLowerCase() === user.name.toLowerCase()) {
+// 			return next();
+// 		}
+// 	}
+
+// 	res.set({
+// 		'WWW-Authenticate': 'Basic realm="Perceptive Panda Admin"'
+// 	}).sendStatus(401);
+// };
+// app.get('/admin_logo', admin_logged_in_middleware, function(req, res) {
+// 	res.render('admin/index', { layout: 'admin', title: 'Perceptive Panda Admin' });
+// });
+
 app.post('/admin/user-input/get-media', async function(req, res) {
     console.log("<< admin - user-media >>");
 	const orig_list = await listBucket(`${env}/${req.body.partner}/${req.body.interview}`);

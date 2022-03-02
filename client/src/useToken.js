@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 export default function useToken(){
     const getToken = () =>{
+        localStorage.clear();
         const tokenString = localStorage.getItem('token');
         // console.log('ddd')
         // console.log(tokenString)
