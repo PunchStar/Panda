@@ -5,7 +5,7 @@ import styled from "styled-components"
 import brandLogoImg from 'src/assets/images/panda@3x.png'
 import axios from 'axios';
 import { Config } from 'src/config/aws';
-import auth from 'basic-auth';
+
 export default function Admin() {
     const { token, setToken} = useToken();
     if(!token ){

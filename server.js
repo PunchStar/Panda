@@ -6,7 +6,8 @@ import cors from 'cors';
 import { send_email } from './lib/awsses.js';
 import { createSignedUrl, listBucket, getObject }  from './lib/awssigned.js';
 import confg_question from './config/config_question.js';
-// import auth from 'basic-auth';
+import Mixpanel from 'mixpanel';
+
 const app = express();
 // const fileUpload = require('express-fileupload');
 
@@ -81,6 +82,7 @@ app.post('/input-selector/answer-audio', async function(req, res) {
     return res.json({success: true, url: url});
 	
 });
+
 app.post('/input-selector/answer-text', async function(req, res) {
 	console.log('- answer-text -');
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
@@ -97,6 +99,7 @@ app.post('/input-selector/answer-text', async function(req, res) {
     return res.json({success: true, url: url});
 	
 });
+
 app.post('/input-selector/getobject', async function(req, res) {
 	console.log('- /input-selector/get-object -');
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
@@ -115,9 +118,9 @@ app.post('/input-selector/getobject', async function(req, res) {
 	} else  {
 		data = data.toString("utf8");
 		return res.json({success: true, data: data });
-	} 
-	
+	}
 });
+
 const get_interviews_media = async(req, res, orig_list) => {
 	console.log('- get interview media -');
 
@@ -133,7 +136,8 @@ const get_interviews_media = async(req, res, orig_list) => {
     console.log("--2---",list.length)
     // console.log('list',list)
 	const users_obj = {};
-    let coun_i = list.length > 40 ? 40: list.length;
+	let coun_i = list.length > 40 ? 40: list.length;
+
 	for( let i = 0; i < coun_i; i++) {
 		let elem = list[i];
 		users_obj[elem.user] = users_obj[elem.user] || [];
@@ -213,6 +217,7 @@ app.post('/admin/user-input/get-media', async function(req, res) {
 	const orig_list = await listBucket(`${env}/${req.body.partner}/${req.body.interview}`);
 	await get_interviews_media(req, res, orig_list);
 });
+
 app.get('/admin/media-download/:partner/:interview/:user/:filename', async function(req, res) {
 	console.log("<< admin - media-download >>");
 	const [question_num, ts, file_type] = req.params.filename.split(/\./);
@@ -241,6 +246,7 @@ app.get('/admin/media-download/:partner/:interview/:user/:filename', async funct
 		res.send(data);
 	} 
 });
+
 app.post('/send-audio-generated-email', async function(req, res) {
 	console.log("---- send email -----");
 	const email_to = partners[req.body.partner].email || [];
@@ -274,6 +280,7 @@ app.post('/send-audio-generated-email', async function(req, res) {
 		res.json({success:true, data:'done'});
 	}
 });
+
 // MixPanel
 app.post('/event', async function(req, res) {
 	console.log('- event -');
@@ -335,5 +342,6 @@ app.post('/event', async function(req, res) {
 
 	res.sendStatus(204);
 });
+
 const port = process.env.PORT || 5005;  //process.env.port is Heroku's port if you choose to deplay the app there
 app.listen(port, () => console.log("Server up and running on port " + port));

@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 import { Config } from 'src/config/aws';
 import * as actions from '../../actions';
 import axios from 'axios';
+
 export default function InputSelector() {
   const { status, startRecording, stopRecording } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   let naviage = useNavigate();

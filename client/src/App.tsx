@@ -12,10 +12,7 @@ import useToken from './useToken';
 const MainRoute = () => {
   const {token, setToken} = useToken();
   let routes = useRoutes([
-    { path: "/input-selector/:partnerId/:interviewId", element: <InputSelector/>},
-    // { 
-    //   path: "/admin", element: <Admin/>
-    // }
+    { path: "/input-selector/:partnerId/:interviewId", element: <InputSelector/> },
     {
       path: "admin",
       children:[
