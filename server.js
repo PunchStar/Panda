@@ -143,7 +143,7 @@ const get_interviews_media = async(req, res, orig_list) => {
 		users_obj[elem.user] = users_obj[elem.user] || [];
 		const [question_num, ts, file_type] = elem.filename.split(/\./);
 		const d = new Date(parseInt(ts));
-		const datetime = d.toLocaleString();
+		// const datetime = d.toLocaleString();
 		const transcript_filename = file_type == 'ogg' ? `${env}/${req.body.partner}/${req.body.interview}/${elem.user}/${question_num}.${ts}.txt` : ``;
 
 		let data = null;
@@ -160,10 +160,13 @@ const get_interviews_media = async(req, res, orig_list) => {
 				transcript_exist = 1;
 			}
 		}
-
+		var datetime = new Date(parseInt(ts)).toLocaleString("en-US",{timezone:'PST8PDT'});
+		const questionsArr = partners[req.body.partner].interview_obj[req.body.interview].questions;
 		if (!users_obj[elem.user].length || users_obj[elem.user][0].type === 'Text' || (users_obj[elem.user][0].type === 'Audio' && file_type === 'ogg')) {
 			users_obj[elem.user].push({
 				question: parseInt(question_num),
+				questionContent:questionsArr[parseInt(question_num - 1)]?.text ?questionsArr[parseInt(question_num - 1)].text :'',
+				questionContentRe:questionsArr[parseInt(question_num - 1)]?.text ?'' :'Removed',
 				ts,
 				datetime,
 				type: file_type === 'ogg' ? 'Audio' : 'Text',

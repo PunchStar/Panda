@@ -85,24 +85,28 @@ export default function UserLayout() {
                     <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => 
                     {   
                         var tempDate = new Date(subelement1.datetime);
-                        return(<li key={subelement1.url}>Question: {subelement1.question} - {subelement1.type} - {tempDate.toLocaleDateString()} (GMT{tempDate.getTimezoneOffset()< 0?'+':'-'} {Math.abs(tempDate.getTimezoneOffset())/60}) -
-                         {/* <a href={'http://localhost:5005' +subelement1.url}>Download</a> */}
-                         <a onClick={()=>checkData( subelement1.url)}>Download</a>
+                        return(<li key={subelement1.url}>Question: {subelement1.question} - {subelement1.type} - {subelement1.type=="Text" && subelement1.questionContent} 
+                        {subelement1.type=="Text" && <RemovedSpan>{subelement1.questionContentRe}</RemovedSpan>}
+                        
+                        {/* {tempDate.toLocaleDateString()} (GMT{tempDate.getTimezoneOffset()< 0?'+':'-'} {Math.abs(tempDate.getTimezoneOffset())/60}) - */}
+                        {subelement1.datetime} (PST) -
+                         <a href={Config.api_url +subelement1.url}>Download</a>
+                         {/* <a onClick={()=>checkData( subelement1.url)}>Download</a> */}
                          {/* {Object.keys(answer as any).forEach((key1)=>{
                             let tempObj : any = answer;
                             if(key1 == subelement1.url)
-                                return (<span>{tempObj.key1}</span>)
+                                return (<span>{tempObj.ke   y1}</span>)
                         })} as*/}
                         {/* {Object.entries(answer).map(([key, value1])=>{
                             if(key == subelement1.url)
                                 return(<span>{value1 as string}</span>);
                         })} */}
-                        {answer.map((subanswer, answerIndex) =>{
+                        {/* {answer.map((subanswer, answerIndex) =>{
                             if(subanswer == subelement1.url){
                                 console.log("dddd")
                                 return(<span>{answer[answerIndex+1]}</span>)
                             }
-                        })}
+                        })} */}
                          </li>)})}
                 </div>
                 </div>)}
@@ -112,6 +116,9 @@ export default function UserLayout() {
 
     )
 }
+const RemovedSpan = styled.span`
+    color:red;
+`
 const UserLayoutWrapper = styled.div`
     padding:20px;
     li {

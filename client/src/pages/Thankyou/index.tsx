@@ -11,16 +11,18 @@ interface ThankyouProps {
 }
 export default function Thankyou(props: ThankyouProps) {
   const {onNextClick, partner, closeFlag} = props;
-  const [customsupport, setCusstomSupport] = useState(true);
+  // const [customsupport, setCusstomSupport] = useState(true);
   return (
     <>
       <SpeechBubbleImg src={SpeechBubbleCenter}/>
-      {customsupport ? <Message customsupport={customsupport}>
+      {/* {customsupport ? <Message customsupport={customsupport}>
         Got it!<br/>
         We'll share your feedback with customer support and they'll be in touch.
-      </Message> : <Message > Thank you for sharing your insights! </Message> }
+      </Message> :  */}
+      <Message > Thank you for sharing your insights! </Message> 
+      {/* } */}
       <PandaTalkImg src={pandaTalkingImg} />
-      {!closeFlag && <Button onClick={()=>{onNextClick(3);}}>See Result</Button>}
+      {/* {!closeFlag && <Button onClick={()=>{onNextClick(3);}}>See Result</Button>} */}
       <PoweredBy>
       Powered by PerceptivePanda for {partner?.toUpperCase()}
       </PoweredBy>
@@ -65,8 +67,8 @@ const SpeechBubbleImg = styled.img`
 `
 const PandaTalkImg = styled.img`
   position: absolute;
-  left: 220px;
-  top: 180px;
+  left: 116px;
+  top: 174px;
   width: auto;
   height: 224px;
 `
@@ -79,7 +81,7 @@ const CloseImg = styled.img`
   opacity: 0.5;
   cursor: pointer;
 `
-const Message = styled.div<{customsupport?:boolean}>`
+const Message = styled.div`
   position: absolute;
   overflow: hidden;
   font-family: 'Muli', sans-serif;
@@ -89,15 +91,13 @@ const Message = styled.div<{customsupport?:boolean}>`
   font-style: normal;
   letter-spacing: normal;
   text-align: center;
-  left: 76px;
-  top: 80px;
+  left: 69px;
+  top: 50px;
   width: 250px;
   height: 65px;
   line-height: 1.15;
   text-align: center;
-  color: #000;
-  ${(props) => props.customsupport && `    top: 33px;
-  height: 100px;`}   
+  color: #000;  
 `
 const PoweredBy = styled.span`
   position: absolute;

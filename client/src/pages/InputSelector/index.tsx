@@ -236,8 +236,8 @@ const WriteButton = styled.div`
 `
 const MicrophoneImg = styled.img`
   position: absolute;
-  left: 26px;
-  top: 20px;
+  left: 24px;
+  top: 17px;
 `
 const SpeakText = styled.span`
   position: absolute;
