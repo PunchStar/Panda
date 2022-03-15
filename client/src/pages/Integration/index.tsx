@@ -35,11 +35,11 @@ export default function Integration() {
               let event_url = btoa(data.data.host_event_uri);
               let event_uuid = btoa(data.data.event_uuid);
               let invitee_uuid = btoa(data.data.invitee_uuid);
-              naviage("/input-selector/"+partner+"/"+data.interview+"/"+data.user+"/" + event_url + "/" + event_uuid + "/" + invitee_uuid);
+              naviage("/input-selector/"+partner+"/"+interview);
                   axios.post("/input-selector/event", {
-                    partner:data.partner,
-                    interview:data.interview,
-                    user:data.user,
+                    partner:partner,
+                    interview:interview,
+                    user:user,
                     event_link:event_url,
                     event_uuid,
                     invitee_uuid,
