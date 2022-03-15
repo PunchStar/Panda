@@ -7,6 +7,7 @@ import { send_email } from './lib/awsses.js';
 import { createSignedUrl, listBucket, getObject }  from './lib/awssigned.js';
 import confg_question from './config/config_question.js';
 import Mixpanel from 'mixpanel';
+import axios from "axios";
 
 const app = express();
 // const fileUpload = require('express-fileupload');
@@ -14,7 +15,12 @@ const app = express();
 dotenv.config();
 const env = 'dev';
 const partners = {};
+let email_send = null;
 let partner_userID = null;
+let integration_type = null;
+let intergration_result = null;
+let event_uuid = null;
+let invitee_uuid = null;
 let mixpanel = null;
 // switch(env) {
 // 	case 'prod': mixpanel = Mixpanel.init('1f47670881f7c33899deeaaf7cc94524'); break;
@@ -262,7 +268,38 @@ app.post('/send-audio-generated-email', async function(req, res) {
 		site_url = `https://www.perceptivepanda.com`;
 	}
 	const link = `${site_url}/admin/user-media/${req.body.partner}/${partners[req.body.partner].interview_obj[req.body.interview].name}/${req.body.user}/`;
-
+	intergration_result = intergration_result || "";
+	event_uuid = event_uuid || "";
+	invitee_uuid = invitee_uuid || "";
+	if (partners[partner].integration) {
+		if (env !== 'local') {
+			if (integration_type == "calendly") {
+				axios.get('https://hooks.zapier.com/hooks/catch/11643492/bi7hcl9/silent/', {
+					params: {
+						e_uri: event_uuid,
+						i_uri: invitee_uuid,
+						mid: link
+					}
+				})
+				.then(function(response) {
+					if (email_send) {
+						send_email(
+							'support@perceptivepanda.com', 
+							email_to, 
+							'Newly scheduled demo with interview', 
+							`<p>You have a newly scheduled interview.</p><p>See calendar event here: ${intergration_result}</p><p>See interview here: ${link}</p>`, 
+							`You have a newly scheduled interview.\n\nSee calendar event here: ${intergration_result}\n\nSee interview here: ${link}`);
+							console.log('integration')
+						return res.sendStatus(200);
+					}
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			}
+		}
+	}
+	else {
 	if (env !== 'local') {
 		// if (req.body.customer_support == 0) {
 			await send_email(
@@ -282,8 +319,58 @@ app.post('/send-audio-generated-email', async function(req, res) {
 		// }
 		res.json({success:true, data:'done'});
 	}
+	}
 });
+app.post('/integration/get', function(req, res) {
+	if (!req.body.partner) {
+		return res.sendStatus(404);
+	}
+	let user = req.body.user;
+	let partner = req.body.partner;
+	let interview = req.body.interview;
+	partner_userID = req.body.user || "Not Applicable";
+	integration_type = req.body.integration_type;
 
+	res.json(
+		{
+			partner,
+			user,
+			interview,
+			integration: partners[partner].integration || false,
+			x_button: partners[partner].x_button || 0,
+			datasaur_data: req.query.t == '1' ? { name: req.query.name, 
+				firstname: req.query.firstname, 
+				lastname: req.query.lastname, 
+				email: req.query.email
+			} : {}
+		});
+});
+app.post('/input-selector/event', function(req, res) {
+	if (!req.body.partner) {
+		return res.sendStatus(404);
+	}
+	partner_userID = req.body.user || "Not Applicable";
+	email_send = partners[req.body.partner].email_send == undefined ? true : partners[req.body.partner].email_send;
+	intergration_result = Buffer.from(req.body.event_link || "", 'base64').toString("utf-8");
+	event_uuid = Buffer.from(req.body.event_uuid || "", 'base64').toString("utf-8");
+	invitee_uuid = Buffer.from(req.body.invitee_uuid || "", 'base64').toString("utf-8");
+
+	if (intergration_result != undefined || event_uuid != undefined || invitee_uuid != undefined)
+		integration_type = "calendly";
+
+	res.json(
+		{
+			partner:req.body.partner,
+			user:req.body.user,
+			interview:req.body.interview,
+			answer_text_url: `/answer-text/${req.body.partner}/${req.body.interview}/${req.body.user}/1`, 
+			answer_audio_url: `/answer-audio/${req.body.partner}/${req.body.interview}/${req.body.user}/1`,
+			partner_name: partners[req.body.partner].partner_name,
+			input_selector_type: partners[req.body.partner].input_selector_type === 'b' ? true : false,
+			input_selector_text: partners[req.body.partner].input_selector_text || '',
+			x_button: partners[req.body.partner].x_button || 0
+		});
+});
 // MixPanel
 app.post('/event', async function(req, res) {
 	console.log('- event -');
