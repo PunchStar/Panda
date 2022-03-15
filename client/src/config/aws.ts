@@ -24,9 +24,9 @@ export const Config = {
                     "duration": 180
                 }
             ],
-            "email": ["andrevanier@gmail.com",
-                "mike@perceptivepanda.com",
-                "josh@perceptivepanda.com"
+            "email": ["andre@perceptivepanda.com",
+                "josh@perceptivepanda.com",
+                "aaron@perceptivepanda.com"
             ]
         },
         {
@@ -50,12 +50,13 @@ export const Config = {
                     "duration": 180
                 }
             ],
-            "email": ["andrevanier@gmail.com",
-                "mike@perceptivepanda.com",
-                "josh@perceptivepanda.com"
+            "email": ["andre@perceptivepanda.com",
+                "josh@perceptivepanda.com",
+                "aaron@perceptivepanda.com"
             ]
         },
         {
+            "public_name": "Jobox",
             "partner_name": "Jobox",
             "partner": "A973V2",
             "interviews": [
@@ -64,13 +65,10 @@ export const Config = {
                     "initial_question": "Do you have a minute to talk about your experience with Jobox?",
                     "questions": [
                         {
-                            "text": "If you were giving Jobox a report card, what would score most highly?"
+                            "text": "How satisfied are you with the Jobox app?"
                         },
                         {
-                            "text": "Where is Jobox falling short on understanding your needs?"
-                        },
-                        {
-                            "text": "Is Jobox the primary way you manage all your jobs? If not, what could Jobox do to become your primary way?"
+                            "text": "What new functionality do you wish to have in the Jobox App?"
                         }
                     ],
                     "duration": 180
@@ -80,16 +78,10 @@ export const Config = {
                     "initial_question": "Do you have a minute to talk about the jobs you're being matched with?",
                     "questions": [
                         {
-                            "text": "How good of a match are the jobs you're seeing from Jobox Connect?"
+                            "text": "How relevant are the jobs that are matched to you?"
                         },
                         {
-                            "text": "What are the typical reasons why you don't accept the jobs you decline?"
-                        },
-                        {
-                            "text": "What's been the most challenging part about closing these jobs?"
-                        },
-                        {
-                            "text": "What are the other main ways you get jobs, and how do they compare with what you're seeing here?"
+                            "text": "What is your biggest challenge while closing jobs?"
                         }
                     ],
                     "duration": 180
@@ -98,12 +90,12 @@ export const Config = {
             "password": "joboxrocks",
             "email": ["viviana@jobox.ai",
                 "andre@perceptivepanda.com",
-                "mike@perceptivepanda.com",
-                "andrevanier@gmail.com",
-                "josh@perceptivepanda.com"
+                "josh@perceptivepanda.com",
+                "aaron@perceptivepanda.com"
             ]
         },
         {
+            "public_name": "Triangle IP",
             "partner_name": "Triangle IP",
             "partner": "TV799A3",
             "interviews": [
@@ -176,12 +168,13 @@ export const Config = {
             "password": "triangleiprocks",
             "email": ["nidhi@triangleip.com",
                 "sarthak.jain@greyb.com",
-                "andrevanier@gmail.com",
-                "mike@perceptivepanda.com",
+                "andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
+                "aaron@perceptivepanda.com"
             ]
         },
         {
+            "public_name": "Datasaur.ai",
             "partner_name": "Datasaur.ai",
             "partner": "DATASAUR",
             "interviews": [
@@ -203,18 +196,36 @@ export const Config = {
                         }
                     ],
                     "duration": 180
+                },
+                {
+                    "name": "2",
+                    "initial_question": "We'd appreciate feedback about your experience with Datasaur so far.",
+                    "questions": [
+                        {
+                            "text": "I'm ready now!  Which of your needs are you hoping Datasaur can address?"
+                        },
+                        {
+                            "text": "Do you currently have a text labeling tool? If so, what are your current challenges?"
+                        }
+                    ],
+                    "duration": 180
                 }
             ],
             "customer_support": "Thank you for sharing your feedback. Would you like customer support to follow up with you?",
+            "email_send": false,
+            "integration": true,
+            "input_selector_type": "b",
+            "input_selector_text": "Which of your needs are you hoping Datasaur can address?",
             "password": "datasaur.rocks",
             "email": ["nabila@datasaur.ai",
-                "andrevanier@gmail.com",
-                "mike@perceptivepanda.com",
-                "josh@perceptivepanda.com"
+                "andre@perceptivepanda.com",
+                "josh@perceptivepanda.com",
+                "aaron@perceptivepanda.com"
             ],
             "x_button": "1"
         },
         {
+            "public_name": "Seeti",
             "partner_name": "Seeti",
             "partner": "SEETI",
             "interviews": [
@@ -242,11 +253,83 @@ export const Config = {
                 }
             ],
             "password": "Seeti.rocks",
-            "email": ["andrevanier@gmail.com",
-                "mike@perceptivepanda.com",
-                "josh@perceptivepanda.com"
+            "email": ["andre@perceptivepanda.com",
+                "josh@perceptivepanda.com",
+                "aaron@perceptivepanda.com"
             ]
-        },{
+        },
+        {
+            "public_name": "Project Management Software Survey",
+            "partner_name": "",
+            "partner": "PMSS9",
+            "interviews": [
+                {
+                    "name": "1",
+                    "initial_question": "Today we’re asking for your opinion about project management software.",
+                    "questions": [
+                        {
+                            "text": "What work project management tool (e.g. Asana, Monday, Airtable, Smarsheet, Basecamp, etc) does your team use the most?"
+                        },
+                        {
+                            "text": "How well has this project management tool been meeting your team’s needs?"
+                        },
+                        {
+                            "text": "How likely are you to recommend this project management tool? Please use a scale from 1 to 10 where 10 is very likely and 1 is not at all likely."
+                        },
+                        {
+                            "text": "What are the main reasons for your rating?"
+                        }
+                    ],
+                    "duration": 180
+                },
+                {
+                    "name": "2",
+                    "initial_question": "Today we’re asking for your opinion about project management software.",
+                    "questions": [
+                        {
+                            "text": "What work project management tool (e.g. Asana, Monday, Airtable, Smarsheet, Basecamp, etc) does your team use the most?"
+                        },
+                        {
+                            "text": "How well has this project management tool been meeting your team’s needs?"
+                        },
+                        {
+                            "text": "How likely are you to recommend this project management tool? Please use a scale from 1 to 10 where 10 is very likely and 1 is not at all likely."
+                        },
+                        {
+                            "text": "What are the main reasons for your rating?"
+                        }
+                    ],
+                    "thank_you_text": "Thank you for sharing your insights. We’ll be donating $10 to Develop for Good.",
+                    "duration": 180
+                },
+                {
+                    "name": "3",
+                    "initial_question": "Today we’re asking for your opinion about project management software.",
+                    "questions": [
+                        {
+                            "text": "What work project management tool (e.g. Asana, Monday, Airtable, Smarsheet, Basecamp, etc) does your team use the most?"
+                        },
+                        {
+                            "text": "How well has this project management tool been meeting your team’s needs?"
+                        },
+                        {
+                            "text": "How likely are you to recommend this project management tool? Please use a scale from 1 to 10 where 10 is very likely and 1 is not at all likely."
+                        },
+                        {
+                            "text": "What are the main reasons for your rating?"
+                        }
+                    ],
+                    "thank_you_text": "Thank you for sharing your insights. Please enter your email to receive our market research study.",
+                    "duration": 180
+                }
+            ],
+            "password": "PMSS9.rocks",
+            "email": ["andre@perceptivepanda.com",
+                "josh@perceptivepanda.com",
+                "aaron@perceptivepanda.com"
+            ]
+        },
+        {
             "public_name": "Consider.com",
             "partner_name": "",
             "partner": "ABRR1",
