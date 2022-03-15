@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { v4 as uuidv4 } from 'uuid';
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
+import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
 import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
@@ -27,6 +28,7 @@ export default function AnswerText(props:AnswerTextProps) {
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
+  const [circleWidth, setCircleWidth] =useState(33);
   
   // const questionArr = [ 
   //   "",
@@ -63,6 +65,12 @@ export default function AnswerText(props:AnswerTextProps) {
     .catch(() => {
     });
   }
+  useEffect(()=>{
+    console.log('circlewidth', circleWidth)
+    let totalWidth = 200 - questionArrObj.length * 20;
+    totalWidth /= questionArrObj.length-1;
+    setCircleWidth(totalWidth);
+  },[questionArrObj])
   useEffect(()=>{
     console.log('333')
     createSigned();
@@ -125,7 +133,7 @@ export default function AnswerText(props:AnswerTextProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick}src={closeImg}/>
-      <PandaTalkImg src={pandaTalkingImg}/>
+      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaTalkingImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <AnswerBubble>
         <Message> 
@@ -140,13 +148,13 @@ export default function AnswerText(props:AnswerTextProps) {
         <LabelProgress>Progress</LabelProgress>
         <ProgressBar>
             <StepCircle active={1 <= questionCount}>1</StepCircle>
-            <StepBar  active={2 <= questionCount}/>
+            <StepBar  active={2 <= questionCount}  circleWidth={circleWidth}/>
             <StepCircle active={2 <= questionCount}>2</StepCircle>
-            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount}/> }
+            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount} circleWidth={circleWidth}/> }
             {questionArrObj.length > 2 && <StepCircle active={3 <= questionCount}>3</StepCircle> }
-            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount}/> }
+            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount} circleWidth={circleWidth}/> }
             {questionArrObj.length > 3 && <StepCircle active={4 <= questionCount}>4</StepCircle> }
-            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount}/> }
+            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount} circleWidth={circleWidth}/> }
             {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}>5</StepCircle> }
         </ProgressBar>
         {questionCount !== questionArrObj.length ?<Button onClick={()=>nextQuestionFunc(0)}>Next Question →</Button> :
@@ -300,13 +308,14 @@ const StepCircle = styled.div<{active?:boolean}>`
   text-align: center;
   ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
 `
-const StepBar = styled.div<{active?:boolean}>`
+const StepBar = styled.div<{active?:boolean, circleWidth?:number}>`
   background-color: #b1bdd4;
   height: 3px;
-  width: 33.333333333333336px;
+  // width: 33.333333333333336px;
   margin-top: auto;
   margin-bottom: auto;
   ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
+  ${(props) => props.circleWidth && `width: ${props.circleWidth}px;`}   
 `
 const Button = styled.span`
   position: absolute;
@@ -326,12 +335,13 @@ const Button = styled.span`
   text-align: center;
   color: #fff!important;
   user-select: none;
-  left: 230px;
-  top: 25px;
+  left: 247px;
+  top: 33px;
   width: 140px;
   text-decoration: none;
   font-size: 13px;
-  line-height: 20px;
+  line-height: 20px; 
+
 `
 const PoweredBy = styled.span`
   position: absolute;

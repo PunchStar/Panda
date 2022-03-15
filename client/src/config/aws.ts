@@ -246,6 +246,35 @@ export const Config = {
                 "mike@perceptivepanda.com",
                 "josh@perceptivepanda.com"
             ]
+        },{
+            "public_name": "Consider.com",
+            "partner_name": "",
+            "partner": "ABRR1",
+            "interviews": [
+                {
+                    "name": "1",
+                    "initial_question": "",
+                    "questions": [
+                        {
+                            "text": "Now I’m ready! Which of your business needs are you hoping Consider.com can address?"
+                        },
+                        {
+                            "text": "What else would you like to focus on during the meeting?"
+                        }
+                    ],
+                    "thank_you_text": "Thanks!<br/>You should now have received an appointment confirmation email.",
+                    "duration": 180
+                }
+            ],
+            "integration": true,
+            "input_selector_type": "b",
+            "input_selector_text": "To help us prepare for your appointment, please mention which business needs you’re hoping Consider.com can address.",
+            "x_button": "1",
+            "password": "ABRR1.rocks",
+            "email": ["andre@perceptivepanda.com",
+                "josh@perceptivepanda.com",
+                "aaron@perceptivepanda.com"
+            ]
         }
     ]
 }
