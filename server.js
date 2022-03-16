@@ -155,6 +155,14 @@ const get_interviews_media = async(req, res, orig_list) => {
 		let data = null;
 		let transcript_exist = 0;
 		let transcript_file_dest = ``;
+		let dataText = '';
+		if(file_type === 'txt'){
+			try {
+				dataText = await getObject(`${env}/${req.body.partner}/${req.body.interview}/${elem.user}/${elem.filename}`);
+			} catch(e) {
+			}
+		}
+		
 		if (transcript_filename != ``) {
 			try {
 				data = await getObject(transcript_filename);
@@ -178,6 +186,7 @@ const get_interviews_media = async(req, res, orig_list) => {
 				type: file_type === 'ogg' ? 'Audio' : 'Text',
 				is_audio: file_type === 'ogg' ? 1 : 0,
 				transcript_exist,
+				textResult: dataText.toString("utf8"),
 				url: `/admin/media-download/${req.body.partner}/${req.body.interview}/${elem.user}/${elem.filename}`,
 				transcript_url: `/admin/media-download/${req.body.partner}/${req.body.interview}/${elem.user}/${question_num}.${ts}.txt`,
 				transcript_file_dest
@@ -193,7 +202,7 @@ const get_interviews_media = async(req, res, orig_list) => {
 			files: users_obj[elem]
 		});
 	});
-    console.log("--4---")
+    // console.log("--4---",users)
 
 	users.sort((a, b) => parseInt(b.files[0].ts) - parseInt(a.files[0].ts));
     return res.json({success: true, users: users});
@@ -260,7 +269,7 @@ app.post('/send-audio-generated-email', async function(req, res) {
 	console.log("---- send email -----");
 	const email_to = partners[req.body.partner].email || [];
 	email_to.push('andre@perceptivepanda.com');
-	// email_to.push('superpunch727@gmail.com');
+
 	let site_url = `http://localhost:3000`;
 	if (env === 'dev') {
 		site_url = `https://dev.perceptivepanda.com`;
@@ -271,7 +280,7 @@ app.post('/send-audio-generated-email', async function(req, res) {
 	intergration_result = intergration_result || "";
 	event_uuid = event_uuid || "";
 	invitee_uuid = invitee_uuid || "";
-	if (partners[partner].integration) {
+	if (partners[req.body.partner].integration) {
 		if (env !== 'local') {
 			if (integration_type == "calendly") {
 				axios.get('https://hooks.zapier.com/hooks/catch/11643492/bi7hcl9/silent/', {
@@ -289,7 +298,6 @@ app.post('/send-audio-generated-email', async function(req, res) {
 							'Newly scheduled demo with interview', 
 							`<p>You have a newly scheduled interview.</p><p>See calendar event here: ${intergration_result}</p><p>See interview here: ${link}</p>`, 
 							`You have a newly scheduled interview.\n\nSee calendar event here: ${intergration_result}\n\nSee interview here: ${link}`);
-							console.log('integration')
 						return res.sendStatus(200);
 					}
 				})
@@ -300,31 +308,33 @@ app.post('/send-audio-generated-email', async function(req, res) {
 		}
 	}
 	else {
-	if (env !== 'local') {
-		// if (req.body.customer_support == 0) {
-			await send_email(
-				'support@perceptivepanda.com', 
-				email_to, 
-				'New interview!', 
-				`<p>A new user interview session was just generated through PerceptivePanda.</p><p>Click here for all the session data: ${link}</p>`, 
-				`A new user interview session was just generated through PerceptivePanda.\n\nClick here for all the session data: ${link}`);
-		// }
-		//  else {
-		// 	await send_email(
-		// 		'support@perceptivepanda.com', 
-		// 		email_to, 
-		// 		'Request for customer support', 
-		// 		`<p>A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.</p><p>PerceptivePanda Generated SessionID: ${req.body.user}</p><p>Partner Generated UserID: ${partner_userID}</p>`, 
-		// 		`A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.\n\PerceptivePanda Generated SessionID: ${req.body.user}\n\nPartner Generated UserID: ${partner_userID}`);
-		// }
-		res.json({success:true, data:'done'});
-	}
+		if (env !== 'local') {
+			// if (req.body.customer_support == 0) {
+				await send_email(
+					'support@perceptivepanda.com', 
+					email_to, 
+					'New interview!', 
+					`<p>A new user interview session was just generated through PerceptivePanda.</p><p>Click here for all the session data: ${link}</p>`, 
+					`A new user interview session was just generated through PerceptivePanda.\n\nClick here for all the session data: ${link}`);
+			// }
+			//  else {
+			// 	await send_email(
+			// 		'support@perceptivepanda.com', 
+			// 		email_to, 
+			// 		'Request for customer support', 
+			// 		`<p>A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.</p><p>PerceptivePanda Generated SessionID: ${req.body.user}</p><p>Partner Generated UserID: ${partner_userID}</p>`, 
+			// 		`A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.\n\PerceptivePanda Generated SessionID: ${req.body.user}\n\nPartner Generated UserID: ${partner_userID}`);
+			// }
+			res.json({success:true, data:'done'});
+		}
 	}
 });
+
 app.post('/integration/get', function(req, res) {
 	if (!req.body.partner) {
 		return res.sendStatus(404);
 	}
+
 	let user = req.body.user;
 	let partner = req.body.partner;
 	let interview = req.body.interview;
@@ -334,7 +344,7 @@ app.post('/integration/get', function(req, res) {
 	res.json(
 		{
 			partner,
-			user,
+			user: partner_userID,
 			interview,
 			integration: partners[partner].integration || false,
 			x_button: partners[partner].x_button || 0,
@@ -345,10 +355,12 @@ app.post('/integration/get', function(req, res) {
 			} : {}
 		});
 });
+
 app.post('/input-selector/event', function(req, res) {
 	if (!req.body.partner) {
 		return res.sendStatus(404);
 	}
+
 	partner_userID = req.body.user || "Not Applicable";
 	email_send = partners[req.body.partner].email_send == undefined ? true : partners[req.body.partner].email_send;
 	intergration_result = Buffer.from(req.body.event_link || "", 'base64').toString("utf-8");
@@ -371,6 +383,7 @@ app.post('/input-selector/event', function(req, res) {
 			x_button: partners[req.body.partner].x_button || 0
 		});
 });
+
 // MixPanel
 app.post('/event', async function(req, res) {
 	console.log('- event -');

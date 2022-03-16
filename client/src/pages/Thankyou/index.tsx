@@ -8,9 +8,11 @@ interface ThankyouProps {
   partner: any;
   closeFlag: boolean;
   onNextClick: (step:number) => void;
+  thank_you_text: string;
+  partner_name: string;
 }
 export default function Thankyou(props: ThankyouProps) {
-  const {onNextClick, partner, closeFlag} = props;
+  const {onNextClick, partner, closeFlag, thank_you_text, partner_name} = props;
   // const [customsupport, setCusstomSupport] = useState(true);
   return (
     <>
@@ -19,12 +21,13 @@ export default function Thankyou(props: ThankyouProps) {
         Got it!<br/>
         We'll share your feedback with customer support and they'll be in touch.
       </Message> :  */}
-      <Message > Thank you for sharing your insights! </Message> 
+      {/* <Message > Thank you for sharing your insights! </Message>  */}
+      <Message > {thank_you_text} </Message> 
       {/* } */}
       <PandaTalkImg src={pandaTalkingImg} />
       {/* {!closeFlag && <Button onClick={()=>{onNextClick(3);}}>See Result</Button>} */}
       <PoweredBy>
-      Powered by PerceptivePanda for {partner?.toUpperCase()}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
       </PoweredBy>
     </>
   )
@@ -59,7 +62,7 @@ const SpeechBubbleImg = styled.img`
   left: 40px;
   top: -10px;
   width: 300px;
-  height: 187px;
+  height: 220px;
   margin: 4px 10px 81px 2.5px;
   padding: 26.5px 7.5px 38px;
   object-fit: contain;
@@ -94,10 +97,11 @@ const Message = styled.div`
   left: 69px;
   top: 50px;
   width: 250px;
-  height: 65px;
+  height: 80px;
   line-height: 1.15;
   text-align: center;
-  color: #000;  
+  color: #000;
+  white-space: pre-wrap;
 `
 const PoweredBy = styled.span`
   position: absolute;

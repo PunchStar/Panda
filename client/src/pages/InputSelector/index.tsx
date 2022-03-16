@@ -14,6 +14,7 @@ import AnswerText from "../AnswerText";
 import { useParams } from "react-router-dom";
 import { Config } from 'src/config/aws';
 import * as actions from '../../actions';
+import {v4 as uuidv4} from 'uuid';
 import axios from 'axios';
 
 export default function InputSelector() {
@@ -23,12 +24,14 @@ export default function InputSelector() {
   const [isActive, setIsActive] = useState(false);
   const [isTextActive, setIsTextActive] = useState(false);
   const [micFlag, setMicFlag] = useState(true);
-  const [userId, setUserID] = useState('')
- const [urlArr, setUrlArr] = useState([]);
+  const [urlArr, setUrlArr] = useState([]);
   const [step,setStep] = useState(0);
-  const { partnerId, interviewId } = useParams();
+  const { partnerId, interviewId, user } = useParams();
+  const [userId, setUserID] = useState(user == undefined ? uuidv4() : user);
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
+  const thank_you_text = interviewArr.filter(item => item.name === interviewId)[0].thank_you_text || "Thank you for sharing your insights!";
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
+  const partner_name = CObj.partner_name;
   const [arrCount,setArrCount] = useState(0);
   const onCloseClick = () => {
     setStep(2);
@@ -99,7 +102,9 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
     <InputSelectorWrapper step={step}>
       {step === 0 ? <>
       <CloseImg onClick={onCloseClick} src={closeImg}/>
-      <PandaImg src={panda}/>
+      { CObj.input_selector_type != "b" ?
+      <PandaImg src={panda}/> : <InputSelectorText>{CObj.input_selector_text}</InputSelectorText>
+      }
       <HowTalk>How should we talk?</HowTalk>
       <SpeakButton onClick={onClick}>
           <MicrophoneImg src={micFlag ? microphone : microphoneDisable}/>
@@ -110,8 +115,8 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
       </WriteButton>
       <WriteText>Press to write</WriteText>
       <PoweredBy>
-      *All feedback is recorded.<br/>
-      Powered by PerceptivePanda for {partnerId?.toUpperCase()}
+        *All feedback is recorded.<br/>
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
       </PoweredBy></>: step === 1 ?
       isTextActive?
       <AnswerText onNextClick={(step,value,arrCount,urlArr) => {
@@ -146,7 +151,7 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
       <Thankyou partner={partnerId as any} onNextClick={(step) => {
         setStep(step);
         log_event('thank-you', 3 , '0', partnerId, interviewId, userId);    
-      }} closeFlag={closeFlag as boolean}/>: <AudioResult  userId={userId} text={isTextActive} count={arrCount} url={urlArr}/>
+      }} closeFlag={closeFlag as boolean} thank_you_text={thank_you_text} partner_name={partner_name} />: <AudioResult  userId={userId} text={isTextActive} count={arrCount} url={urlArr}/>
       }
     </InputSelectorWrapper>
   )
@@ -197,6 +202,17 @@ const CloseImg = styled.img`
   opacity: 0.5;
   cursor: pointer;
 `
+const InputSelectorText = styled.div`
+  position: absolute;
+  top: 70px !important;
+  left: 110px !important;
+  width: 180px;
+  height: auto;
+  font-family: 'Muli', sans-serif;
+  font-weight: 900;
+  text-align: center;
+`
+
 const HowTalk = styled.div`
   position: absolute;
   top: 230px;

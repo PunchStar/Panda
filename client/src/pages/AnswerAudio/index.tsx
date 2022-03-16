@@ -59,6 +59,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
+  const partner_name = CObj.partner_name;
   let average_volume = 0;
   var volume_timer:any = null;
   let media_recorder:any = null;
@@ -276,7 +277,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     totalWidth /= questionArrObj.length-1;
     setCircleWidth(totalWidth);
   },[questionArrObj])
-  
+
   // useEffect(()=>{
   //   console.log('333')
   //   if( questionCount  < questionArrObj.length)
@@ -292,7 +293,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick}src={closeImg}/>
-      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaTalkingImg}/>
+      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaListeningImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <Message> 
         {questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}
@@ -324,7 +325,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         }
       </Bottom>
       <PoweredBy>
-        Powered by PerceptivePanda for {partnerId?.toUpperCase()}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
       </PoweredBy>
     </>
   )

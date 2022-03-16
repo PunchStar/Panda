@@ -7,11 +7,12 @@ import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { Config } from 'src/config/aws';
 import { useNavigate } from 'react-router-dom';
+import {v4 as uuidv4} from 'uuid';
 
 export default function Integration() {
   const { integrationType, partnerId, interviewId } = useParams();
   let naviage = useNavigate();
-  const [user, setUser]= useState('');
+  const [user, setUser]= useState(uuidv4());
   const [integrationFlag,setIntegrationFlag] = useState(false);
   getIntegration(integrationType, partnerId,interviewId);
   function getIntegration (integrationType:any, partner:any, interview:any){
@@ -19,27 +20,28 @@ export default function Integration() {
     axios.post("/integration/get", {
       partner:partnerId,
       interview:interviewId,
-      integrationType:integrationType
+      integrationType:integrationType,
+      user
     })
     .then(res => {
       let {data} = res;
       if(!data.integration)
-        naviage('/input-selector/'+ data.partner + '/' + data.interview );
+        naviage('/input-selector/'+ data.partner + '/' + data.interview + '/' + data.user);
       else{
         setIntegrationFlag(true);
         setUser(data.user);
         window.addEventListener('message', function(e) {
           // message that was passed from iframe page
-          let data = e.data;
-          if (data.event_id == "smpldv_message") {
-              let event_url = btoa(data.data.host_event_uri);
-              let event_uuid = btoa(data.data.event_uuid);
-              let invitee_uuid = btoa(data.data.invitee_uuid);
-              naviage("/input-selector/"+partner+"/"+interview);
+          let e_data = e.data;
+          if (e_data.event_id == "smpldv_message") {
+              let event_url = btoa(e_data.data.host_event_uri);
+              let event_uuid = btoa(e_data.data.event_uuid);
+              let invitee_uuid = btoa(e_data.data.invitee_uuid);
+              naviage("/input-selector/"+data.partner+"/"+data.interview+"/"+data.user+"/"+event_url+"/"+event_uuid+"/"+invitee_uuid);
                   axios.post("/input-selector/event", {
-                    partner:partner,
-                    interview:interview,
-                    user:user,
+                    partner:data.partner,
+                    interview:data.interview,
+                    user:data.user,
                     event_link:event_url,
                     event_uuid,
                     invitee_uuid,

@@ -21,6 +21,7 @@ export const Config = {
                             "text": "What features here seem most useful to you?"
                         }
                     ],
+                    "thank_you_text": "",
                     "duration": 180
                 }
             ],
@@ -47,6 +48,7 @@ export const Config = {
                             "text": "What do you like most about the interview tool you're using right now?"
                         }
                     ],
+                    "thank_you_text": "",
                     "duration": 180
                 }
             ],
@@ -208,17 +210,17 @@ export const Config = {
                             "text": "Do you currently have a text labeling tool? If so, what are your current challenges?"
                         }
                     ],
+                    "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
                     "duration": 180
                 }
             ],
-            "customer_support": "Thank you for sharing your feedback. Would you like customer support to follow up with you?",
+            // "customer_support": "Thank you for sharing your feedback. Would you like customer support to follow up with you?",
             "email_send": false,
             "integration": true,
             "input_selector_type": "b",
             "input_selector_text": "Which of your needs are you hoping Datasaur can address?",
             "password": "datasaur.rocks",
-            "email": ["nabila@datasaur.ai",
-                "andre@perceptivepanda.com",
+            "email": ["andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
                 "aaron@perceptivepanda.com"
             ],
@@ -345,7 +347,7 @@ export const Config = {
                             "text": "What else would you like to focus on during the meeting?"
                         }
                     ],
-                    "thank_you_text": "Thanks!<br/>You should now have received an appointment confirmation email.",
+                    "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
                     "duration": 180
                 }
             ],

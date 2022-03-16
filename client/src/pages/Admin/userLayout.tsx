@@ -5,15 +5,28 @@ import styled from "styled-components"
 import { Config } from 'src/config/aws';
 import axios from 'axios';
 import brandLogoImg from 'src/assets/images/panda@3x.png'
+import { useParams } from "react-router-dom";
 
 export default function UserLayout() {
     const { token, setToken} = useToken();
     const partners = Config.partner;
+    const { partnerId, interviewId,user } = useParams();
     const [sepcPartner, setSepcPartner] = useState('');
     const [interviewActive, setInterviewActive] = useState(false)
     const [sepcInterview, setSpecInterview] = useState('');
+    const[specUser, setSpecUser] = useState('');
     const [users,setUsers]= useState<any[]>([]);
     const [answer,setAnswer] = useState<any[]>(['']);
+    useEffect(()=>{
+        if(partnerId || interviewId)
+            onClickInterview(partnerId?.toUpperCase(),interviewId)
+        if(user){
+            onClickInterview(partnerId?.toUpperCase(),interviewId)
+            setInterviewActive(true);
+            setSpecUser(user);    
+
+        }
+    },[ partnerId, interviewId,user]) 
     if(!token ){
         return <Login setToken = {setToken} />
     }
@@ -29,7 +42,7 @@ export default function UserLayout() {
         .then(res => {
           let {data} = res;
           console.log('result114441',data)
-            setUsers(data.users);
+        setUsers(data.users);
           if(!data.success) {
             let message = `While uploading files, unknown errors was occured!`
             return;
@@ -38,32 +51,6 @@ export default function UserLayout() {
         .catch(() => {
         });
     }
-    const  checkData= (url:string)=>{
-        axios.defaults.baseURL = Config.api_url;
-        axios.get(url)
-        .then(res => {
-            let {data} = res;
-            // let tempObj:any = answer;
-            // tempObj[url] = 'Answer: ' + data;
-            // setAnswer(tempObj);
-            let tempArr:string[] = answer;
-            tempArr.push(url);
-            tempArr.push('Answer: ' + data);
-            setAnswer(tempArr);
-            console.log('answer',answer);
-        })
-        .catch(() => {
-        });
-        
-    }
-    // const showAnswer = (url:string)=>{
-    //     let tempObj:any= answer
-    //     Object.keys(tempObj).forEach((key)=>{
-    //         if(key == url)
-    //             return tempObj[key];
-    //     })
-    //     return '';
-    // }
     return(
         <UserLayoutWrapper>
             <LogoImg src={brandLogoImg}/> <h1>Perceptive Panda Admin</h1>
@@ -80,33 +67,17 @@ export default function UserLayout() {
                 <h4>Partner:{sepcPartner}</h4>
                 <h4>Interview:{sepcInterview}</h4>
             <ul>
-                {users.map((uElement, index)=><div>
+                {users.map((uElement, index)=> (specUser=='' || specUser == uElement['user']) &&<div>
                     <p>Users: {uElement['user']}</p>
                     <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => 
                     {   
-                        var tempDate = new Date(subelement1.datetime);
+                        // var tempDate = new Date(subelement1.datetime);
                         return(<li key={subelement1.url}>Question: {subelement1.question} - {subelement1.type} - {subelement1.type=="Text" && subelement1.questionContent} 
                         {subelement1.type=="Text" && <RemovedSpan>{subelement1.questionContentRe}</RemovedSpan>}
-                        
-                        {/* {tempDate.toLocaleDateString()} (GMT{tempDate.getTimezoneOffset()< 0?'+':'-'} {Math.abs(tempDate.getTimezoneOffset())/60}) - */}
-                        {subelement1.datetime} (PST) -
+                         - {subelement1.datetime} (PST) -
                          <a href={Config.api_url +subelement1.url}>Download</a>
-                         {/* <a onClick={()=>checkData( subelement1.url)}>Download</a> */}
-                         {/* {Object.keys(answer as any).forEach((key1)=>{
-                            let tempObj : any = answer;
-                            if(key1 == subelement1.url)
-                                return (<span>{tempObj.ke   y1}</span>)
-                        })} as*/}
-                        {/* {Object.entries(answer).map(([key, value1])=>{
-                            if(key == subelement1.url)
-                                return(<span>{value1 as string}</span>);
-                        })} */}
-                        {/* {answer.map((subanswer, answerIndex) =>{
-                            if(subanswer == subelement1.url){
-                                console.log("dddd")
-                                return(<span>{answer[answerIndex+1]}</span>)
-                            }
-                        })} */}
+                         <br/>
+                         <span>Response: &nbsp;&nbsp;{subelement1.textResult}</span>
                          </li>)})}
                 </div>
                 </div>)}
@@ -126,6 +97,8 @@ const UserLayoutWrapper = styled.div`
         text-decoration: underline!important;
         cursor:pointer!important;
         margin-left: 40px;
+        padding-top:5px;
+        padding-bottom:5px;
     }
     ul {
         p {

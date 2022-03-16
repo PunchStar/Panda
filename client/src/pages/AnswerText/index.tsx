@@ -28,6 +28,7 @@ export default function AnswerText(props:AnswerTextProps) {
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
+  const partner_name = CObj.partner_name;
   const [circleWidth, setCircleWidth] =useState(33);
   
   // const questionArr = [ 
@@ -133,7 +134,7 @@ export default function AnswerText(props:AnswerTextProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick}src={closeImg}/>
-      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaTalkingImg}/>
+      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaListeningImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       <AnswerBubble>
         <Message> 
@@ -162,7 +163,7 @@ export default function AnswerText(props:AnswerTextProps) {
         }
       </Bottom>
       <PoweredBy>
-        Powered by PerceptivePanda for {partnerId?.toUpperCase()}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
       </PoweredBy>
     </>
   )

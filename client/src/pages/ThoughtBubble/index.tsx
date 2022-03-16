@@ -22,6 +22,7 @@ export default function ThoughtBubble() {
   const { partnerId, interviewId } = useParams();
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
+  const partner_name = CObj.partner_name;
   const [arrCount,setArrCount] = useState(0);
   const onCloseClick = () => {
     if(CObj['x_button'] == '1')
@@ -34,7 +35,7 @@ export default function ThoughtBubble() {
       <CloseImg onClick={onCloseClick} src={closeImg}/>
       <ThoughBubbleImg src={thought}/>
       <Message>
-        Do you have a minute to talk about your experience with Jobox?
+        {interviewArr.filter(item => item.name === interviewId)[0].initial_question}
       </Message>
       <PandaImg src={panda}/>
       <Initial_cta>
@@ -43,7 +44,7 @@ export default function ThoughtBubble() {
         </a>
       </Initial_cta>
       <PoweredBy>
-        Powered by PerceptivePanda for Jobox
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
       </PoweredBy>
     </ThoughtBubbleWrapper>
   )

@@ -15,6 +15,8 @@ const MainRoute = () => {
   const {token, setToken} = useToken();
   let routes = useRoutes([
     { path: "/input-selector/:partnerId/:interviewId", element: <InputSelector/> },
+    { path: "/input-selector/:partnerId/:interviewId/:user", element: <InputSelector/> },
+    { path: "/input-selector/:partnerId/:interviewId/:user/:event_link/:event_uuid/:invitee_uuid", element: <InputSelector/> },
     { path: "/integration/:integrationType/:partnerId/:interviewId", element: <Integration/> },
     { path: "/thought-bubble/:partnerId/:interviewId", element: <ThoughtBubble/> },
     {
@@ -22,6 +24,11 @@ const MainRoute = () => {
       children:[
         {path:"", element:<Admin/>},
         {path:"user-inputs", element:<UserLayout/>},
+        {path:"user-inputs/:partnerId/:interviewId", element:<UserLayout/>},
+        {path:"user-inputs/:partnerId/:interviewId/:user", element:<UserLayout/>},
+        {path:"user-media", element:<UserLayout/>},
+        {path:"user-media/:partnerId/:interviewId", element:<UserLayout/>},
+        {path:"user-media/:partnerId/:interviewId/:user", element:<UserLayout/>},
         {path:"interviews", element:<Interview/>}
       ]
     }
