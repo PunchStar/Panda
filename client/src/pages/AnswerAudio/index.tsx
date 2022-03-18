@@ -24,6 +24,7 @@ import { useParams } from "react-router-dom";
 // declare var MediaRecorder: any;
 import { Config } from 'src/config/aws';
   import axios from 'axios';
+import { setFlagsFromString } from "v8";
   const configFormData = {     
     headers: { 'content-type': 'multipart/form-data' }
   }
@@ -62,9 +63,12 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const partner_name = CObj.partner_name;
   let average_volume = 0;
   var volume_timer:any = null;
+  const[volumeTimer,setVolumeTimer] = useState();
   // const [media_recorder, setMediaRecorder] = useState<MediaRecorder>();
 
   function get_volume_meter(stream:any) {
+    console.log('---average_volume----')
+
     const audioContext = new AudioContext();
     const analyser = audioContext.createAnalyser();
     const microphone = audioContext.createMediaStreamSource(stream);
@@ -87,25 +91,14 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       }
   }
   async function request_recording() {
-    // if (navigator.mediaDevices.getUserMedia) {
-    //   try {
-    //       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-    //       if (stream) {
-              // if (media_recorder == null) {
-              //     let temp_recorder = new MediaRecorder(stream);
-              //     setMediaRecorder(temp_recorder);
-              // }
               get_volume_meter(previewAudioStream);
 
               volume_timer = setInterval(function() {
-
                   let corrected_vol = average_volume * 2;
                   if (corrected_vol >= 100) {
                       corrected_vol = 99;
                   }
                   const num = Math.floor(9 * corrected_vol / 100);
-                  // console.log(num);
                   switch(num){
                     case 1:
                       setMicVolume(micVolumeImg1);
@@ -143,7 +136,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
                   setHidden(true);
                 }
               }, 100);
-
+              setVolumeTimer(volume_timer);
               return true;
       //     } 
       //     else {
@@ -165,50 +158,11 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     else
       onClosesClick(true);
   }
-  const createSigned = async() =>{
-    axios.defaults.baseURL = Config.api_url;
-    axios.post("/input-selector/answer-audio", {
-      partner:partnerId?.toUpperCase(),
-      interview:interviewId,
-      user:userId,
-      question_number:questionCount
-    })
-    .then(res => {
-      let {data} = res;
-      console.log('result114441',data)
-      if(!data.success) {
-        let message = `While uploading files, unknown errors was occured!`
-        return;
-      }
-      if(data.url){
-        // let tempUrl : any= url;
-        // tempUrl.push(data.url);
-        // setUrl(tempUrl);
-        
-      }
-    })
-    .catch(() => {
-    });
-  }
   const uploadFile = async() => {
     if(!mediaBlobUrl) return;
     let blob = await fetch(mediaBlobUrl as any).then(r=>r.blob());
     // const blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' });
     const file = new File([blob], 'audio.ogg', { type: 'audio/ogg; codecs=opus' });
-        
-    // let formData = new FormData();
-    // formData.append(userId +'__' +questionCount, blob);
-    // axios.post("/upload/fileUpload", formData, configFormData)
-    //   .then(res => {
-    //     let {data} = res;
-    //     console.log('result',data)
-    //     if(!data.success) {
-    //       let message = `While uploading files, unknown errors was occured!`
-    //       return;
-    //     }
-    //   })
-    //   .catch(() => {
-    //   });
     axios.defaults.baseURL = Config.api_url;
     axios.post("/input-selector/answer-audio", {
       partner:partnerId?.toUpperCase(),
@@ -224,9 +178,6 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         return;
       }
       if(data.url){
-        // let tempUrl : any= url;
-        // tempUrl.push(data.url);
-        // setUrl(tempUrl);
         axios.defaults.baseURL = '';
         axios.put(data.url, file).then(res =>{
           console.log('3333333')
@@ -239,16 +190,11 @@ export default function AnswerAudio(props:AnswerAudioProps) {
           console.log('--startrecord---')
         }
         if( questionCount  >= questionArrObj.length){
-          // clearInterval(volume_timer as  any)
-          if (volume_timer) {
-            clearInterval(volume_timer);
-            volume_timer = null;
-          }
-          // // media_recorder.stop();
-          // cmedia_recorderonsole.log('>>>>>>>>>>>>>>>>>>> status <<<<<<<<<<<<<<<<<<<<')
-          // console.log('', media_recorder);
-          // let tempRec= media_recorder;
-          // tempRec?.stop();
+          clearInterval(volumeTimer);
+          // if (volume_timer) {
+          //   clearInterval(volume_timer);
+          //   volume_timer = null;
+          // }
           console.log('status', status)
           onNextClick(2,userId, questionArrObj.length);
         }
@@ -275,8 +221,6 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       });
     }
     await stopRecording();
-    // console.log('--stoprecord---', media_recorder)
-
   }
   useEffect(() => {
     console.log('444',status)
@@ -285,12 +229,14 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       startRecording()
      }
      if(status =='recording' && previewAudioStream){
+       if(volumeTimer)
+        clearInterval(volumeTimer);
       request_recording()
         // previewAudioStream.onaddtrack = (event) => {
         //   console.log('onaddtracn')
         //   console.log(event )
         // }
-        console.log('track',previewAudioStream.getAudioTracks()[0]);
+        console.log('track');
      }
   },[status])
   useEffect(()=>{
