@@ -5,13 +5,15 @@ import styled from "styled-components"
 import { Config } from 'src/config/aws';
 import axios from 'axios';
 import brandLogoImg from 'src/assets/images/panda@3x.png'
+import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 const configFormData = {     
     headers: { 'content-type': 'text/plain' }
   }
 export default function UserLayout() {
     const { token, setToken} = useToken();
-    const partners = Config.partner;
+  let naviage = useNavigate();
+  const partners = Config.partner;
     const { partnerId, interviewId, user } = useParams();
     const [sepcPartner, setSepcPartner] = useState('');
     const [pubName, setPubName] = useState('');
@@ -32,6 +34,9 @@ export default function UserLayout() {
           console.log(res);
           window.location.href='';
         })}
+    }
+    const clikLink =(partner:any, interview:any)=>{
+        naviage('/admin/user-media/' + partner + '/' + interview);
     }
     const onClickInterview = (partner:any, interview:any) => {
         setInterviewActive(true);
@@ -78,7 +83,7 @@ export default function UserLayout() {
             <h5>Partners and Interviews</h5>
             {partners.map((element, index)=> (sepcPartner=='' || sepcPartner == element.partner) &&<li key={index}>
                 Partner: <a onClick={()=>setSepcPartner(element.partner)}>{element.partner}</a>
-                <ol>&nbsp;&nbsp;&nbsp;{element.interviews.map(subelement => <li onClick={()=>onClickInterview(element.partner, subelement.name)}>Interview: {subelement.name}</li>)}
+                <ol>&nbsp;&nbsp;&nbsp;{element.interviews.map(subelement => <li onClick={()=>clikLink(element.partner, subelement.name)}>Interview: {subelement.name}</li>)}
                 </ol>
             </li>)}
             </>:<div>
