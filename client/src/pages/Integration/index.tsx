@@ -3,7 +3,7 @@ import styled from "styled-components"
 import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from 'axios';
 import { Config } from 'src/config/aws';
 import { useNavigate } from 'react-router-dom';
@@ -11,9 +11,14 @@ import {v4 as uuidv4} from 'uuid';
 
 export default function Integration() {
   const { integrationType, partnerId, interviewId } = useParams();
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
   let naviage = useNavigate();
   const [user, setUser]= useState(uuidv4());
-  const [integrationFlag,setIntegrationFlag] = useState(false);
+  const [integrationFlag, setIntegrationFlag] = useState(false);
+  const [integrationLink, setIntegrationLink] = useState('');
+  const [integrationUserName, setIntegrationUserName] = useState('');
+  const [integrationUserEmail, setIntegrationUserEmail] = useState('');
   getIntegration(integrationType, partnerId,interviewId);
   function getIntegration (integrationType:any, partner:any, interview:any){
     axios.defaults.baseURL = Config.api_url;
@@ -22,13 +27,21 @@ export default function Integration() {
       interview:interviewId,
       integrationType:integrationType,
       user
-    })
+    }, { params: {
+      name: query.get('name') || "",
+      email: query.get('email') || ""
+    } })
     .then(res => {
       let {data} = res;
       if(!data.integration)
         naviage('/input-selector/'+ data.partner + '/' + data.interview + '/' + data.user);
-      else{
+      else {
         setIntegrationFlag(true);
+        setIntegrationLink(data.integration_link);
+        if (partnerId === "DATASAUR") {
+          setIntegrationUserName(data.datasaur_data.name);
+          setIntegrationUserEmail(data.datasaur_data.email);
+        }
         setUser(data.user);
         window.addEventListener('message', function(e) {
           // message that was passed from iframe page
@@ -60,17 +73,17 @@ export default function Integration() {
 }
   return (
     <IntegrationWrapper>
-         {integrationFlag && <iframe src={"https://panda-demo-f236d.web.app/?microinterviewlink=" + user} title="Perspective Panda - Scheduling"></iframe>}
+      {integrationFlag && partnerId === "ABRR1" && <iframe src={integrationLink + "?microinterviewlink=" + user} title="Perspective Panda - Scheduling"></iframe>}
+      {integrationFlag && partnerId === "DATASAUR" && <iframe src={integrationLink + "?microinterviewlink=" + user + "&name=" + integrationUserName + "&email=" + integrationUserEmail} title="Perspective Panda - Scheduling"></iframe>}
     </IntegrationWrapper>
- 
   )
 }
 const IntegrationWrapper = styled.div`   
     position: absolute;
     width: 400px;
-    height: 450px;
+    height: 460px;
     padding: 0;
-    top: 50%;
+    top: 49%;
     left: 50%;
     margin: -225px 0 0 -200px;
     background-color: #e6eefd;

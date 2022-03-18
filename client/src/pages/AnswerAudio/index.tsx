@@ -325,7 +325,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         }
       </Bottom>
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </>
   )
@@ -494,7 +494,7 @@ const PoweredBy = styled.span`
   position: absolute;
   height: 15px;
   width: 400px;
-  top: 445px;
+  top: 440px;
   left: 0px;
   font-size: 10px!important;
   font-weight: normal!important;

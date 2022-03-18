@@ -163,7 +163,7 @@ export default function AnswerText(props:AnswerTextProps) {
         }
       </Bottom>
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </>
   )
@@ -221,7 +221,7 @@ const Message = styled.div`
   background-color: #ffffff;
   border-radius: 15px;
   border: 1px solid #c4c4c4;
-  padding: 15px 10px 30px 15px;
+  padding: 10px 10px 15px 15px;
 `
 const ArrowImg = styled.div`
     position: relative;
@@ -348,7 +348,7 @@ const PoweredBy = styled.span`
   position: absolute;
   height: 15px;
   width: 400px;
-  top: 445px;
+  top: 440px;
   left: 0px;
   font-size: 10px!important;
   font-weight: normal!important;

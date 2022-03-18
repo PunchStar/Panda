@@ -17,6 +17,7 @@ export default [
                         "text": "What features here seem most useful to you?"
                     }
                 ],
+                "thank_you_text": "",
                 "duration": 180
             }
         ],
@@ -43,6 +44,7 @@ export default [
                         "text": "What do you like most about the interview tool you're using right now?"
                     }
                 ],
+                "thank_you_text": "",
                 "duration": 180
             }
         ],
@@ -171,7 +173,7 @@ export default [
     },
     {
         "public_name": "Datasaur.ai",
-        "partner_name": "Datasaur.ai",
+        "partner_name": "Datasaur",
         "partner": "DATASAUR",
         "interviews": [
             {
@@ -204,19 +206,21 @@ export default [
                         "text": "Do you currently have a text labeling tool? If so, what are your current challenges?"
                     }
                 ],
-                "thank_you_text": "Thanks!<br/>You should now have received an appointment confirmation email.",
+                "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
                 "duration": 180
             }
         ],
         // "customer_support": "Thank you for sharing your feedback. Would you like customer support to follow up with you?",
-        "email_send": false,
+        // "email_send": false,
         "integration": true,
+        "integration_app_link": "https://datasaur-calendly-v1.web.app/",
         "input_selector_type": "b",
-        "input_selector_text": "Which of your needs are you hoping Datasaur can address?",
+        "input_selector_text": "To make the most of our time together, please mention which of your needs you're hoping Datasaur can address?",
         "password": "datasaur.rocks",
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
-            "aaron@perceptivepanda.com"
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
         ],
         "x_button": "1"
     },
@@ -327,7 +331,7 @@ export default [
     },
     {
         "public_name": "Consider.com",
-        "partner_name": "",
+        "partner_name": "Consider.com",
         "partner": "ABRR1",
         "interviews": [
             {
@@ -341,11 +345,12 @@ export default [
                         "text": "What else would you like to focus on during the meeting?"
                     }
                 ],
-                "thank_you_text": "Thanks!<br/>You should now have received an appointment confirmation email.",
+                "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
                 "duration": 180
             }
         ],
         "integration": true,
+        "integration_app_link": "https://panda-demo-f236d.web.app/",
         "input_selector_type": "b",
         "input_selector_text": "To help us prepare for your appointment, please mention which business needs you’re hoping Consider.com can address.",
         "x_button": "1",

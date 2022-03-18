@@ -15,7 +15,7 @@ export default function Admin() {
     return(
         <AdminWrapper>
             <LogoImg src={brandLogoImg}/>
-            <h1>Perceptive Panda Admin</h1>
+            <h1>PerceptivePanda Admin</h1>
             <ul>
                 <li><a href="/admin/interviews">Interviews</a></li>
                 <li><a href="/admin/user-inputs">User Inputs</a></li>

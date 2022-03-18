@@ -44,7 +44,7 @@ export default function ThoughtBubble() {
         </a>
       </Initial_cta>
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </ThoughtBubbleWrapper>
   )
@@ -52,9 +52,9 @@ export default function ThoughtBubble() {
 const ThoughtBubbleWrapper = styled.div`
     position: absolute;
     width: 400px;
-    height: 450px;
+    height: 460px;
     padding: 0;
-    top: 50%;
+    top: 49%;
     left: 50%;
     margin: -225px 0 0 -200px;
     opacity: 1.0;

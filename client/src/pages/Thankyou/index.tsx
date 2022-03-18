@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import styled from "styled-components"
 import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
+import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
 
@@ -24,10 +25,10 @@ export default function Thankyou(props: ThankyouProps) {
       {/* <Message > Thank you for sharing your insights! </Message>  */}
       <Message > {thank_you_text} </Message> 
       {/* } */}
-      <PandaTalkImg src={pandaTalkingImg} />
+      <PandaTalkImg src={pandaListeningImg} />
       {/* {!closeFlag && <Button onClick={()=>{onNextClick(3);}}>See Result</Button>} */}
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </>
   )
@@ -59,11 +60,11 @@ const Button = styled.span`
 `
 const SpeechBubbleImg = styled.img`
   position: absolute;
-  left: 40px;
-  top: -10px;
-  width: 300px;
-  height: 220px;
-  margin: 4px 10px 81px 2.5px;
+  left: 50px;
+  top: 0px;
+  width: 280px;
+  height: 180px;
+  margin: 4px 10px 81px 10px;
   padding: 26.5px 7.5px 38px;
   object-fit: contain;
   border: 0;
@@ -88,15 +89,15 @@ const Message = styled.div`
   position: absolute;
   overflow: hidden;
   font-family: 'Muli', sans-serif;
-  font-size: 18px;
+  font-size: 12px;
   font-weight: 900;
   font-stretch: normal;
   font-style: normal;
   letter-spacing: normal;
   text-align: center;
-  left: 69px;
+  left: 65.5px;
   top: 50px;
-  width: 250px;
+  width: 270px;
   height: 80px;
   line-height: 1.15;
   text-align: center;

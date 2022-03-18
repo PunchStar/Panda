@@ -13,9 +13,8 @@ const app = express();
 // const fileUpload = require('express-fileupload');
 
 dotenv.config();
-const env = 'dev';
+const env = process.env.NODE_ENV === "development" ? "dev" : (process.env.NODE_ENV === "production" ? "prod" : process.env.NODE_ENV);
 const partners = {};
-let email_send = null;
 let partner_userID = null;
 let integration_type = null;
 let intergration_result = null;
@@ -142,7 +141,7 @@ const get_interviews_media = async(req, res, orig_list) => {
     console.log("--2---",list.length)
     // console.log('list',list)
 	const users_obj = {};
-	let coun_i = list.length > 40 ? 40: list.length;
+	let coun_i = /* list.length > 40 ? 40:*/ list.length;
 
 	for( let i = 0; i < coun_i; i++) {
 		let elem = list[i];
@@ -174,7 +173,7 @@ const get_interviews_media = async(req, res, orig_list) => {
 				transcript_exist = 1;
 			}
 		}
-		var datetime = new Date(parseInt(ts)).toLocaleString("en-US",{timezone:'PST8PDT'});
+		var datetime = new Date(parseInt(ts)).toLocaleString("en-US", {timeZone: "PST8PDT"});
 		const questionsArr = partners[req.body.partner].interview_obj[req.body.interview].questions;
 		if (!users_obj[elem.user].length || users_obj[elem.user][0].type === 'Text' || (users_obj[elem.user][0].type === 'Audio' && file_type === 'ogg')) {
 			users_obj[elem.user].push({
@@ -202,7 +201,7 @@ const get_interviews_media = async(req, res, orig_list) => {
 			files: users_obj[elem]
 		});
 	});
-    // console.log("--4---",users)
+    console.log("--4---")
 
 	users.sort((a, b) => parseInt(b.files[0].ts) - parseInt(a.files[0].ts));
     return res.json({success: true, users: users});
@@ -232,7 +231,7 @@ const get_interviews_media = async(req, res, orig_list) => {
 
 app.post('/admin/user-input/get-media', async function(req, res) {
     console.log("<< admin - user-media >>");
-	const orig_list = await listBucket(`${env}/${req.body.partner}/${req.body.interview}`);
+	const orig_list = await listBucket(`${env}/${req.body.partner}/${req.body.interview}/${req.body.user}`);
 	await get_interviews_media(req, res, orig_list);
 });
 
@@ -272,10 +271,12 @@ app.post('/send-audio-generated-email', async function(req, res) {
 
 	let site_url = `http://localhost:3000`;
 	if (env === 'dev') {
-		site_url = `https://dev.perceptivepanda.com`;
+		site_url = `https://reactdev.perceptivepanda.com`;
 	} else if (env === 'prod') {
 		site_url = `https://www.perceptivepanda.com`;
 	}
+
+	const email_send = partners[req.body.partner].email_send == undefined ? true : partners[req.body.partner].email_send;
 	const link = `${site_url}/admin/user-media/${req.body.partner}/${partners[req.body.partner].interview_obj[req.body.interview].name}/${req.body.user}/`;
 	intergration_result = intergration_result || "";
 	event_uuid = event_uuid || "";
@@ -283,7 +284,8 @@ app.post('/send-audio-generated-email', async function(req, res) {
 	if (partners[req.body.partner].integration) {
 		if (env !== 'local') {
 			if (integration_type == "calendly") {
-				axios.get('https://hooks.zapier.com/hooks/catch/11643492/bi7hcl9/silent/', {
+				const paired_event_endpoint = (env !== "prod") ? "https://hooks.zapier.com/hooks/catch/11643492/bi7hcl9/silent/" : "https://hooks.zapier.com/hooks/catch/11643492/bsmjzr1/silent/";
+				axios.get(paired_event_endpoint, {
 					params: {
 						e_uri: event_uuid,
 						i_uri: invitee_uuid,
@@ -347,12 +349,13 @@ app.post('/integration/get', function(req, res) {
 			user: partner_userID,
 			interview,
 			integration: partners[partner].integration || false,
+			integration_link: (env !== "prod") ? "https://panda-demo-f236d.web.app/" : partners[partner].integration_app_link,
 			x_button: partners[partner].x_button || 0,
-			datasaur_data: req.query.t == '1' ? { name: req.query.name, 
+			datasaur_data: { name: req.query.name, 
 				firstname: req.query.firstname, 
 				lastname: req.query.lastname, 
 				email: req.query.email
-			} : {}
+			}
 		});
 });
 
@@ -362,7 +365,6 @@ app.post('/input-selector/event', function(req, res) {
 	}
 
 	partner_userID = req.body.user || "Not Applicable";
-	email_send = partners[req.body.partner].email_send == undefined ? true : partners[req.body.partner].email_send;
 	intergration_result = Buffer.from(req.body.event_link || "", 'base64').toString("utf-8");
 	event_uuid = Buffer.from(req.body.event_uuid || "", 'base64').toString("utf-8");
 	invitee_uuid = Buffer.from(req.body.invitee_uuid || "", 'base64').toString("utf-8");

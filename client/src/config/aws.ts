@@ -2,7 +2,7 @@ export const Config = {
     api_url: process.env.NODE_ENV === 'production' 
             ? '/api'
             : 'http://localhost:5005',
-    partner:[
+    partner: [
         {
             "partner_name": "Test",
             "partner": "TEST",
@@ -177,7 +177,7 @@ export const Config = {
         },
         {
             "public_name": "Datasaur.ai",
-            "partner_name": "Datasaur.ai",
+            "partner_name": "Datasaur",
             "partner": "DATASAUR",
             "interviews": [
                 {
@@ -215,14 +215,16 @@ export const Config = {
                 }
             ],
             // "customer_support": "Thank you for sharing your feedback. Would you like customer support to follow up with you?",
-            "email_send": false,
+            // "email_send": false,
             "integration": true,
+            "integration_app_link": "https://datasaur-calendly-v1.web.app/",
             "input_selector_type": "b",
-            "input_selector_text": "Which of your needs are you hoping Datasaur can address?",
+            "input_selector_text": "To make the most of our time together, please mention which of your needs you're hoping Datasaur can address?",
             "password": "datasaur.rocks",
             "email": ["andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
-                "aaron@perceptivepanda.com"
+                "aaron@perceptivepanda.com",
+                "Lori@perceptivepanda.com"
             ],
             "x_button": "1"
         },
@@ -333,7 +335,7 @@ export const Config = {
         },
         {
             "public_name": "Consider.com",
-            "partner_name": "",
+            "partner_name": "Consider.com",
             "partner": "ABRR1",
             "interviews": [
                 {
@@ -352,6 +354,7 @@ export const Config = {
                 }
             ],
             "integration": true,
+            "integration_app_link": "https://panda-demo-f236d.web.app/",
             "input_selector_type": "b",
             "input_selector_text": "To help us prepare for your appointment, please mention which business needs you’re hoping Consider.com can address.",
             "x_button": "1",

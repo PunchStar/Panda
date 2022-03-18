@@ -99,7 +99,7 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
   },[status]);
   
   return (
-    <InputSelectorWrapper step={step}>
+    <InputSelectorWrapper step={step} partner={partnerId}>
       {step === 0 ? <>
       <CloseImg onClick={onCloseClick} src={closeImg}/>
       { CObj.input_selector_type != "b" ?
@@ -116,7 +116,7 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
       <WriteText>Press to write</WriteText>
       <PoweredBy>
         *All feedback is recorded.<br/>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name?.toUpperCase()}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
       </PoweredBy></>: step === 1 ?
       isTextActive?
       <AnswerText onNextClick={(step,value,arrCount,urlArr) => {
@@ -156,12 +156,12 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
     </InputSelectorWrapper>
   )
 }
-const InputSelectorWrapper = styled.div<{step:number}>`
+const InputSelectorWrapper = styled.div<{step:number, partner: any}>`
     position: absolute;
     width: 400px;
-    height: 450px;
+    height: 460px;
     padding: 0;
-    top: 50%;
+    top: 49%;
     left: 50%;
     margin: -225px 0 0 -200px;
     ${(props) => props.step !== 0 && `background-color: #e6eefd;`}   
@@ -183,7 +183,8 @@ const InputSelectorWrapper = styled.div<{step:number}>`
       cursor: pointer;
     }
     @media(min-width: 1000px){
-        transform: scale(1.7);
+        transform: scale(1.5);
+        // transform: ${({ partner, step }) => partner === 'ABRR1' && step === 2  ? 'scale(1.2)' : 'scale(1.7)'};
     }
 `
 const PandaImg = styled.img`

@@ -10,39 +10,29 @@ import { useParams } from "react-router-dom";
 export default function UserLayout() {
     const { token, setToken} = useToken();
     const partners = Config.partner;
-    const { partnerId, interviewId,user } = useParams();
+    const { partnerId, interviewId, user } = useParams();
     const [sepcPartner, setSepcPartner] = useState('');
+    const [pubName, setPubName] = useState('');
     const [interviewActive, setInterviewActive] = useState(false)
     const [sepcInterview, setSpecInterview] = useState('');
-    const[specUser, setSpecUser] = useState('');
+    const [specUser, setSpecUser] = useState('');
     const [users,setUsers]= useState<any[]>([]);
     const [answer,setAnswer] = useState<any[]>(['']);
-    useEffect(()=>{
-        if(partnerId || interviewId)
-            onClickInterview(partnerId?.toUpperCase(),interviewId)
-        if(user){
-            onClickInterview(partnerId?.toUpperCase(),interviewId)
-            setInterviewActive(true);
-            setSpecUser(user);    
-
-        }
-    },[ partnerId, interviewId,user]) 
-    if(!token ){
-        return <Login setToken = {setToken} />
-    }
     const onClickInterview = (partner:any, interview:any) => {
         setInterviewActive(true);
         setSepcPartner(partner);
+        setPubName(Config.partner.filter(item => item.partner === partner?.toUpperCase())[0].public_name || "");
         setSpecInterview(interview);
         axios.defaults.baseURL = Config.api_url;
         axios.post("/admin/user-input/get-media", {
           partner:partner,
           interview:interview,
+          user:user||""
         })
         .then(res => {
           let {data} = res;
-          console.log('result114441',data)
-        setUsers(data.users);
+          console.log('result114441', data)
+          setUsers(data.users);
           if(!data.success) {
             let message = `While uploading files, unknown errors was occured!`
             return;
@@ -51,9 +41,22 @@ export default function UserLayout() {
         .catch(() => {
         });
     }
+    useEffect(()=>{
+        if(partnerId || interviewId)
+            onClickInterview(partnerId?.toUpperCase(), interviewId)
+        if(user){
+            onClickInterview(partnerId?.toUpperCase(), interviewId)
+            setInterviewActive(true);
+            setSpecUser(user);    
+
+        }
+    },[ partnerId, interviewId, user]) 
+    if(!token ){
+        return <Login setToken = {setToken} />
+    }
     return(
         <UserLayoutWrapper>
-            <LogoImg src={brandLogoImg}/> <h1>Perceptive Panda Admin</h1>
+            <LogoImg src={brandLogoImg}/> <h1>PerceptivePanda Admin</h1>
             {!interviewActive ? <>
             <h3>User Inputs</h3>
             <h5>Partners and Interviews</h5>
@@ -64,22 +67,20 @@ export default function UserLayout() {
             </li>)}
             </>:<div>
                 <h2>User Interviews</h2>    
-                <h4>Partner:{sepcPartner}</h4>
-                <h4>Interview:{sepcInterview}</h4>
+                <h4>Partner: {pubName}</h4>
+                <h4>Interview: {sepcInterview}</h4>
             <ul>
                 {users.map((uElement, index)=> (specUser=='' || specUser == uElement['user']) &&<div>
-                    <p>Users: {uElement['user']}</p>
+                    <p>User: {uElement['user']}</p>
                     <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => 
                     {   
                         // var tempDate = new Date(subelement1.datetime);
-                        return(<li key={subelement1.url}>Question: {subelement1.question} - {subelement1.type} - {subelement1.type=="Text" && subelement1.questionContent} 
-                        {subelement1.type=="Text" && <RemovedSpan>{subelement1.questionContentRe}</RemovedSpan>}
-                         - {subelement1.datetime} (PST) -
-                         <a href={Config.api_url +subelement1.url}>Download</a>
-                         <br/>
-                         <span>Response: &nbsp;&nbsp;{subelement1.textResult}</span>
-                         </li>)})}
-                </div>
+                        return(<li key={subelement1.url}>{subelement1.datetime} (PST) - {subelement1.type} - Question {subelement1.question} - {subelement1.questionContent}  - &nbsp;
+                         {/* {subelement1.type=="Text" && <RemovedSpan>{subelement1.questionContentRe}</RemovedSpan>} */}
+                         <a href={Config.api_url + subelement1.url} target="_blank">Download</a>
+                         {subelement1.type == "Text" && <span><br/><br/>Response: {subelement1.textResult}</span>}
+                         <br/><br/></li>)})}
+                    </div>
                 </div>)}
             </ul></div>
             }
@@ -108,6 +109,6 @@ const UserLayoutWrapper = styled.div`
     }
 `
 const LogoImg =  styled.img`
-width: 143px;
-height: 143px;
+width: 86px;
+height: 86px;
 `
