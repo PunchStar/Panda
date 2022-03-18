@@ -30,13 +30,13 @@ import { Config } from 'src/config/aws';
 
 
 interface AnswerAudioProps {
-  onNextClick: (step:number,userId:string, arrCount:number, urlArr:never[]) => void;
+  onNextClick: (step:number,userId:string, arrCount:number) => void;
   onLogClick: (flag:number,questionNumber:number) => void;
   onClosesClick: (flag:boolean) => void;
 }
 export default function AnswerAudio(props:AnswerAudioProps) {
   const {onNextClick, onLogClick, onClosesClick} = props;
-  const [url, setUrl] = useState([]);
+  // const [url, setUrl] = useState([]);
   const {
     status, startRecording, stopRecording, mediaBlobUrl ,
     previewAudioStream,previewStream
@@ -181,9 +181,9 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         return;
       }
       if(data.url){
-        let tempUrl : any= url;
-        tempUrl.push(data.url);
-        setUrl(tempUrl);
+        // let tempUrl : any= url;
+        // tempUrl.push(data.url);
+        // setUrl(tempUrl);
         
       }
     })
@@ -224,9 +224,9 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         return;
       }
       if(data.url){
-        let tempUrl : any= url;
-        tempUrl.push(data.url);
-        setUrl(tempUrl);
+        // let tempUrl : any= url;
+        // tempUrl.push(data.url);
+        // setUrl(tempUrl);
         axios.defaults.baseURL = '';
         axios.put(data.url, file).then(res =>{
           console.log('3333333')
@@ -250,7 +250,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
           // let tempRec= media_recorder;
           // tempRec?.stop();
           console.log('status', status)
-          onNextClick(2,userId, questionArrObj.length, url);
+          onNextClick(2,userId, questionArrObj.length);
         }
       }
     })

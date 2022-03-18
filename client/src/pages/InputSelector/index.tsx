@@ -18,7 +18,7 @@ import {v4 as uuidv4} from 'uuid';
 import axios from 'axios';
 
 export default function InputSelector() {
-  const { status, startRecording, stopRecording } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
+  const { status, error, startRecording, stopRecording, previewAudioStream } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   let naviage = useNavigate();
   const [closeFlag, setCloseFlag] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -100,7 +100,16 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
       // naviage('/input-selector/answer-audio');
       setStep(1);
     }
+    console.log('>>>><<<<>>>><<')
+    console.log("status'",status)
+    console.log('>>>><<<<>>>><<')
   },[status]);
+  useEffect(() => {
+    if( error === 'permission_denied')
+      setMicFlag(false);
+    else
+      setMicFlag(true);
+  },[error]);
   useEffect(() => {
     if(step == 2){
       stopRecording();
@@ -122,14 +131,19 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
       <PandaImg src={panda}/> : <InputSelectorText>{CObj.input_selector_text}</InputSelectorText>
       }
       <HowTalk>How should we talk?</HowTalk>
-      <SpeakButton onClick={onClick}>
+      <SpeakButton onClick={onClick} micFlag={micFlag}>
           <MicrophoneImg src={micFlag ? microphone : microphoneDisable}/>
       </SpeakButton>
-      <SpeakText>Press to speak</SpeakText>
+      <SpeakText micFlag={micFlag}>Press to speak</SpeakText>
       <WriteButton onClick={onTextClick}>
         <PencilPaperImg src={pencilpaper} />
       </WriteButton>
       <WriteText>Press to write</WriteText>
+      {!micFlag &&
+        <PermissionDeniedText>
+            Your browser or OS isn't Microphone enabled.<br/> Please click "Press to write" instead.
+        </PermissionDeniedText>
+      }
       <PoweredBy>
         *All feedback is recorded.<br/>
         Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
@@ -150,10 +164,10 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
         setCloseFlag(flag);
       }}
       />:
-       <AnswerAudio onNextClick={(step,value,arrCount,urlArr) => {
+       <AnswerAudio onNextClick={(step,value,arrCount) => {
         setStep(step);
         setArrCount(arrCount);
-        setUrlArr(urlArr);
+        // setUrlArr(urlArr);
         setUserID(value);
       }} onLogClick={(flag, questionNumber)=>{
         if(flag == 0)
@@ -167,7 +181,9 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
       <Thankyou partner={partnerId as any} onNextClick={(step) => {
         setStep(step);
         log_event('thank-you', 3 , '0', partnerId, interviewId, userId);    
-      }} closeFlag={closeFlag as boolean} thank_you_text={thank_you_text} partner_name={partner_name} />: <AudioResult  userId={userId} text={isTextActive} count={arrCount} url={urlArr}/>
+      }} closeFlag={closeFlag as boolean} thank_you_text={thank_you_text} partner_name={partner_name} />:
+      //  <AudioResult  userId={userId} text={isTextActive} count={arrCount} url={urlArr}/>
+      <></>
       }
     </InputSelectorWrapper>
   )
@@ -245,7 +261,7 @@ const HowTalk = styled.div`
   color: #535353;
   text-transform: uppercase;    
 `
-const SpeakButton = styled.div`
+const SpeakButton = styled.div<{micFlag:boolean}>`
   position: absolute;
   top: 275px;
   left: 100px;
@@ -253,6 +269,7 @@ const SpeakButton = styled.div`
   width: 75px;
   border: solid 2px #4d9ff5;
   border-radius: 50%;
+  ${(props) => !props.micFlag  && `border-color: lightgray;`}   
   display: inline-block;
   cursor: pointer; 
 `
@@ -272,11 +289,13 @@ const MicrophoneImg = styled.img`
   left: 24px;
   top: 17px;
 `
-const SpeakText = styled.span`
+const SpeakText = styled.span<{micFlag:boolean}>`
   position: absolute;
   top: 355px;
   left: 83px;
   width: 110px;
+  ${(props) => !props.micFlag  && `color: lightgray!important;`}   
+
 `
 const WriteText = styled.span`
   position: absolute;
@@ -303,4 +322,19 @@ const PoweredBy = styled.span`
   letter-spacing: -0.18px;
   text-align: center;
   color: #999!important;
+`
+const PermissionDeniedText = styled.span`
+    position: absolute;
+    height: 15px;
+    width: 400px;
+    bottom: 66px;
+    left: 0px;
+    font-size: 10px!important;
+    font-weight: normal!important;
+    font-stretch: normal!important;
+    font-style: normal!important;
+    line-height: normal!important;
+    letter-spacing: -0.18px;
+    text-align: center;
+    color: red!important;
 `
