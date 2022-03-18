@@ -39,7 +39,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const [url, setUrl] = useState([]);
   const {
     status, startRecording, stopRecording, mediaBlobUrl ,
-    previewAudioStream
+    previewAudioStream,previewStream
   } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   const { partnerId, interviewId } = useParams();
   const [circleWidth, setCircleWidth] =useState(33);
@@ -62,7 +62,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const partner_name = CObj.partner_name;
   let average_volume = 0;
   var volume_timer:any = null;
-  let media_recorder:any = null;
+  // const [media_recorder, setMediaRecorder] = useState<MediaRecorder>();
 
   function get_volume_meter(stream:any) {
     const audioContext = new AudioContext();
@@ -87,17 +87,19 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       }
   }
   async function request_recording() {
-    if (navigator.mediaDevices.getUserMedia) {
-      try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // if (navigator.mediaDevices.getUserMedia) {
+    //   try {
+    //       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-          if (stream) {
-              if (media_recorder == null) {
-                  media_recorder = new MediaRecorder(stream);
-              }
-              get_volume_meter(stream);
+    //       if (stream) {
+              // if (media_recorder == null) {
+              //     let temp_recorder = new MediaRecorder(stream);
+              //     setMediaRecorder(temp_recorder);
+              // }
+              get_volume_meter(previewAudioStream);
 
               volume_timer = setInterval(function() {
+
                   let corrected_vol = average_volume * 2;
                   if (corrected_vol >= 100) {
                       corrected_vol = 99;
@@ -143,18 +145,19 @@ export default function AnswerAudio(props:AnswerAudioProps) {
               }, 100);
 
               return true;
-          } else {
-              return false;
-          }
-      } catch (e) {
-              console.error('Unrecognized error getting device', e);
-          return false;
-      }
-  } else {
-      // getUserMedia NOT supported. Yikes.
-      console.log('getUserMedia NOT supported');
-      return false;
-  }
+      //     } 
+      //     else {
+      //         return false;
+      //     }
+      // } catch (e) {
+      //         console.error('Unrecognized error getting device', e);
+      //     return false;
+      // }
+  // } else {
+  //     // getUserMedia NOT supported. Yikes.
+  //     console.log('getUserMedia NOT supported');
+  //     return false;
+  // }
   }
   const onCloseClick = () => {
     if(CObj['x_button'] == '1')
@@ -231,13 +234,22 @@ export default function AnswerAudio(props:AnswerAudioProps) {
           console.log('3333333')
         })
         setQuestionCount(questionCount + 1);
-        startRecording();
+        if( questionCount  < questionArrObj.length){
+          startRecording();
+          console.log('--startrecord---')
+        }
         if( questionCount  >= questionArrObj.length){
           // clearInterval(volume_timer as  any)
           if (volume_timer) {
             clearInterval(volume_timer);
             volume_timer = null;
           }
+          // // media_recorder.stop();
+          // cmedia_recorderonsole.log('>>>>>>>>>>>>>>>>>>> status <<<<<<<<<<<<<<<<<<<<')
+          // console.log('', media_recorder);
+          // let tempRec= media_recorder;
+          // tempRec?.stop();
+          console.log('status', status)
           onNextClick(2,userId, questionArrObj.length, url);
         }
       }
@@ -263,21 +275,30 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       });
     }
     await stopRecording();
+    // console.log('--stoprecord---', media_recorder)
+
   }
-  useEffect(()=>{
-    console.log('444')
+  useEffect(() => {
+    console.log('444',status)
     if(status == 'idle'){
-      request_recording();
-      startRecording();
+      // request_recording();
+      startRecording()
      }
-  },[])
+     if(status =='recording' && previewAudioStream){
+      request_recording()
+        // previewAudioStream.onaddtrack = (event) => {
+        //   console.log('onaddtracn')
+        //   console.log(event )
+        // }
+        console.log('track',previewAudioStream.getAudioTracks()[0]);
+     }
+  },[status])
   useEffect(()=>{
     console.log('circlewidth', circleWidth)
     let totalWidth = 200 - questionArrObj.length * 20;
     totalWidth /= questionArrObj.length-1;
     setCircleWidth(totalWidth);
   },[questionArrObj])
-
   // useEffect(()=>{
   //   console.log('333')
   //   if( questionCount  < questionArrObj.length)

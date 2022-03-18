@@ -1,7 +1,7 @@
 import React, { useState, useEffect  } from "react";
 import styled from "styled-components"
 import { useNavigate } from 'react-router-dom';
-import {useReactMediaRecorder} from "react-media-recorder";
+import {ReactMediaRecorder, useReactMediaRecorder} from "react-media-recorder";
 import panda from 'src/assets/images/panda@3x.png';
 import microphone from 'src/assets/images/microphone.svg';
 import microphoneDisable from 'src/assets/images/microphone-disabled.svg';
@@ -44,10 +44,14 @@ export default function InputSelector() {
     log_event('input-selector', '', '2', partnerId?.toUpperCase(), interviewId, userId)
      if(!isActive){
       startRecording();
+      console.log('===start_record=====')
       // stopRecording();
     } 
-      else
+      else{
         stopRecording();
+        console.log('===stop_record=====')
+      
+      }
       setIsActive(!isActive);
     }
   const onTextClick = () => {
@@ -97,7 +101,19 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
       setStep(1);
     }
   },[status]);
-  
+  useEffect(() => {
+    if(step == 2){
+      stopRecording();
+      console.log('===stopRecording====')
+      // navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      //     console.log('stream',stream)
+      //     var track = stream.getTracks()[0];
+      //     track.stop();
+      // }).catch(function(err){
+      //   console.log('media error', err)
+      // })
+    }
+  },[step]);
   return (
     <InputSelectorWrapper step={step} partner={partnerId}>
       {step === 0 ? <>
