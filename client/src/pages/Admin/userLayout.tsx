@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Login from "src/components/Login/Login";
 import useToken from "src/useToken";
 import styled from "styled-components"
@@ -6,7 +6,9 @@ import { Config } from 'src/config/aws';
 import axios from 'axios';
 import brandLogoImg from 'src/assets/images/panda@3x.png'
 import { useParams } from "react-router-dom";
-
+const configFormData = {     
+    headers: { 'content-type': 'text/plain' }
+  }
 export default function UserLayout() {
     const { token, setToken} = useToken();
     const partners = Config.partner;
@@ -18,6 +20,19 @@ export default function UserLayout() {
     const [specUser, setSpecUser] = useState('');
     const [users,setUsers]= useState<any[]>([]);
     const [answer,setAnswer] = useState<any[]>(['']);
+    const fileRef = useRef<HTMLInputElement>(null);
+    const [transcriptURL, setTranscriptURL] = useState('');
+    // const handleUrlChange =(url:string, e:any)=>{
+    const handleUrlChange =(e:any)=>{
+        const file= e.target.files;
+        console.log('handleurlchange', transcriptURL, e);
+        axios.defaults.baseURL = '';
+        if(transcriptURL){
+        axios.put(transcriptURL , file[0]).then(res =>{
+          console.log(res);
+          window.location.href='';
+        })}
+    }
     const onClickInterview = (partner:any, interview:any) => {
         setInterviewActive(true);
         setSepcPartner(partner);
@@ -41,6 +56,7 @@ export default function UserLayout() {
         .catch(() => {
         });
     }
+  
     useEffect(()=>{
         if(partnerId || interviewId)
             onClickInterview(partnerId?.toUpperCase(), interviewId)
@@ -78,7 +94,21 @@ export default function UserLayout() {
                         return(<li key={subelement1.url}>{subelement1.datetime} (PST) - {subelement1.type} - Question {subelement1.question} - {subelement1.questionContent}  - &nbsp;
                          {/* {subelement1.type=="Text" && <RemovedSpan>{subelement1.questionContentRe}</RemovedSpan>} */}
                          <a href={Config.api_url + subelement1.url} target="_blank">Download</a>
-                         {subelement1.type == "Text" && <span><br/><br/>Response: {subelement1.textResult}</span>}
+                         {subelement1.transcript_exist ? <a href={Config.api_url +subelement1.transcript_url} id="view">Transcript</a>:''}
+                         {subelement1.type == "Text" ? <span><br/><br/>Response: {subelement1.textResult}</span>:
+                            <UploadWrapper>
+                                {/* <input type="file" accept=".txt"  ref={fileRef} data-upload-url={subelement1.transcript_file_dest} /> */}
+                                {/* <input type="file" accept=".txt"  ref={fileRef} onChange={(e)=>handleUrlChange(subelement1.transcript_file_dest ,e)} /> */}
+                                <input type="file" accept=".txt"  ref={fileRef} onChange={handleUrlChange} />
+                                <button onClick={() => {
+                                    fileRef.current?.click();
+                                    setTranscriptURL(subelement1.transcript_file_dest)
+                                }}>
+                                    {subelement1.transcript_exist?'Transcript Update':'Transcript Upload'}
+                                    {/* {subelement1.transcript_file_dest} */}
+                                    </button>
+                            </UploadWrapper>    
+                         }
                          <br/><br/></li>)})}
                     </div>
                 </div>)}
@@ -90,6 +120,12 @@ export default function UserLayout() {
 }
 const RemovedSpan = styled.span`
     color:red;
+`
+const UploadWrapper = styled.span`
+    padding-left: 20px;
+    input {
+        display:none;
+    }
 `
 const UserLayoutWrapper = styled.div`
     padding:20px;
@@ -106,6 +142,10 @@ const UserLayoutWrapper = styled.div`
              padding-top: 20px;
          margin-bottom: 0px;
      }
+    }
+    a{
+        padding-left:10px;
+        padding-right:10px;
     }
 `
 const LogoImg =  styled.img`

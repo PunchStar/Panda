@@ -129,7 +129,7 @@ app.post('/input-selector/getobject', async function(req, res) {
 const get_interviews_media = async(req, res, orig_list) => {
 	console.log('- get interview media -');
 
-    console.log("--1---")
+    console.log("--1---",`${env}/${req.body.partner}/${req.body.interview}/`)
 	const list = orig_list.map((elem) => {
 		const cleaned = elem.replace(`${env}/${req.body.partner}/${req.body.interview}/`, '');
 		if (cleaned === elem) {
@@ -141,9 +141,9 @@ const get_interviews_media = async(req, res, orig_list) => {
     console.log("--2---",list.length)
     // console.log('list',list)
 	const users_obj = {};
-	let coun_i = /* list.length > 40 ? 40:*/ list.length;
+	// let coun_i =  list.length > 40 ? 40: list.length;
 
-	for( let i = 0; i < coun_i; i++) {
+	for( let i = 0; i < list.length; i++) {
 		let elem = list[i];
 		users_obj[elem.user] = users_obj[elem.user] || [];
 		const [question_num, ts, file_type] = elem.filename.split(/\./);
