@@ -4,6 +4,8 @@ import {useReactMediaRecorder} from "react-media-recorder";
 import { v4 as uuidv4 } from 'uuid';
 import microphone from 'src/assets/images/microphone-white.svg';
 import microphoneInit from 'src/assets/images/microphone-initial.svg';
+import micrphoneDark from 'src/assets/images/audio-states/icon-9@3x.png';
+import micrphoneCircleDark from 'src/assets/images/audio-states/inner-circle-9@3x.png';
 import microphoneActive from 'src/assets/images/microphone-active.svg';
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
@@ -19,28 +21,36 @@ import micVolumeImg6 from 'src/assets/images/bar-6-8.svg'
 import micVolumeImg7 from 'src/assets/images/bar-7-8.svg'
 import micVolumeImg8 from 'src/assets/images/bar-8-8.svg'
 import micVolumeImg from 'src/assets/images/bar-0-8.svg'
-import { useParams } from "react-router-dom";
+import darkMicVolumeImg1 from 'src/assets/images/audio-states/volume-2@3x.png'
+import darkMicVolumeImg2 from 'src/assets/images/audio-states/volume-3@3x.png'
+import darkMicVolumeImg3 from 'src/assets/images/audio-states/volume-4@3x.png'
+import darkMicVolumeImg4 from 'src/assets/images/audio-states/volume-5@3x.png'
+import darkMicVolumeImg5 from 'src/assets/images/audio-states/volume-6@3x.png'
+import darkMicVolumeImg6 from 'src/assets/images/audio-states/volume-7@3x.png'
+import darkMicVolumeImg7 from 'src/assets/images/audio-states/volume-8@3x.png'
+import darkMicVolumeImg8 from 'src/assets/images/audio-states/volume-9@3x.png'
+import darkMicVolumeImg  from 'src/assets/images/audio-states/volume@3x.png'
+import { useParams }  from "react-router-dom";
+import closeDarkImg from 'src/assets/images/input-dark/rectangle-x@3x.png'
+import pandaDarkTalkImg from 'src/assets/images/audio-dark/panda-gradient@3x.png'
+import bubbleDarkImg from 'src/assets/images/audio-dark/bubble-full@3x.png';
 
 // declare var MediaRecorder: any;
 import { Config } from 'src/config/aws';
   import axios from 'axios';
-import { setFlagsFromString } from "v8";
-  const configFormData = {     
-    headers: { 'content-type': 'multipart/form-data' }
-  }
 
-
-interface AnswerAudioProps {
+  interface AnswerAudioProps {
+  userId: string,
+  darkFlag: boolean,
   onNextClick: (step:number,userId:string, arrCount:number) => void;
   onLogClick: (flag:number,questionNumber:number) => void;
   onClosesClick: (flag:boolean) => void;
 }
 export default function AnswerAudio(props:AnswerAudioProps) {
-  const {onNextClick, onLogClick, onClosesClick} = props;
+  const {userId, onNextClick, onLogClick, onClosesClick, darkFlag} = props;
   // const [url, setUrl] = useState([]);
   const {
-    status, startRecording, stopRecording, mediaBlobUrl ,
-    previewAudioStream,previewStream
+    status, startRecording, stopRecording, mediaBlobUrl, previewAudioStream,
   } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
   const { partnerId, interviewId } = useParams();
   const [circleWidth, setCircleWidth] =useState(33);
@@ -54,8 +64,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   // ];
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
-  const [userId, setUserId] = useState(uuidv4());
-  const [micVolume, setMicVolume] = useState(micVolumeImg);
+  const [micVolume, setMicVolume] = useState(darkFlag?darkMicVolumeImg:micVolumeImg);
   const [redCircle, setRedCircle] = useState(false);
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
@@ -63,12 +72,11 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const partner_name = CObj.partner_name;
   let average_volume = 0;
   var volume_timer:any = null;
-  const[volumeTimer,setVolumeTimer] = useState();
+  const [volumeTimer, setVolumeTimer] = useState();
   // const [media_recorder, setMediaRecorder] = useState<MediaRecorder>();
 
   function get_volume_meter(stream:any) {
     console.log('---average_volume----')
-
     const audioContext = new AudioContext();
     const analyser = audioContext.createAnalyser();
     const microphone = audioContext.createMediaStreamSource(stream);
@@ -91,53 +99,53 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       }
   }
   async function request_recording() {
-              get_volume_meter(previewAudioStream);
+            get_volume_meter(previewAudioStream);
 
-              volume_timer = setInterval(function() {
-                  let corrected_vol = average_volume * 2;
-                  if (corrected_vol >= 100) {
-                      corrected_vol = 99;
-                  }
-                  const num = Math.floor(9 * corrected_vol / 100);
-                  switch(num){
-                    case 1:
-                      setMicVolume(micVolumeImg1);
-                      break;
-                    case 2:
-                      setMicVolume(micVolumeImg2);
-                      break;
-                    case 3:
-                      setMicVolume(micVolumeImg3);
-                      break;
-                    case 4:
-                      setMicVolume(micVolumeImg4);
-                      break;
-                    case 5:
-                      setMicVolume(micVolumeImg5);
-                      break;
-                    case 6:
-                      setMicVolume(micVolumeImg6);
-                      break;
-                    case 7:
-                      setMicVolume(micVolumeImg7);
-                      break; 
-                    case 8:
-                      setMicVolume(micVolumeImg8);
-                      break;
-                    default:
-                      setMicVolume(micVolumeImg);
-                      break;
-                  }
-                  if (num == 0) {
-                    setRedCircle(true);
-                    setHidden(false);
-                } else {
-                  setRedCircle(false);
-                  setHidden(true);
+            volume_timer = setInterval(function() {
+                let corrected_vol = average_volume * 2;
+                if (corrected_vol >= 100) {
+                    corrected_vol = 99;
                 }
-              }, 100);
-              setVolumeTimer(volume_timer);
-              return true;
+                const num = Math.floor(9 * corrected_vol / 100);
+                switch(num){
+                  case 1:
+                    setMicVolume(darkFlag?darkMicVolumeImg1:micVolumeImg1);
+                    break;
+                  case 2:
+                    setMicVolume(darkFlag?darkMicVolumeImg2:micVolumeImg2);
+                    break;
+                  case 3:
+                    setMicVolume(darkFlag?darkMicVolumeImg3:micVolumeImg3);
+                    break;
+                  case 4:
+                    setMicVolume(darkFlag?darkMicVolumeImg4:micVolumeImg4);
+                    break;
+                  case 5:
+                    setMicVolume(darkFlag?darkMicVolumeImg5:micVolumeImg5);
+                    break;
+                  case 6:
+                    setMicVolume(darkFlag?darkMicVolumeImg6:micVolumeImg6);
+                    break;
+                  case 7:
+                    setMicVolume(darkFlag?darkMicVolumeImg7:micVolumeImg7);
+                    break; 
+                  case 8:
+                    setMicVolume(darkFlag?darkMicVolumeImg8:micVolumeImg8);
+                    break;
+                  default:
+                    setMicVolume(darkFlag?darkMicVolumeImg:micVolumeImg);
+                    break;
+                }
+                if (num == 0) {
+                  setRedCircle(true);
+                  setHidden(false);
+              } else {
+                setRedCircle(false);
+                setHidden(true);
+              }
+            }, 100);
+            setVolumeTimer(volume_timer);
+            return true;
       //     } 
       //     else {
       //         return false;
@@ -185,7 +193,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
           console.log('3333333')
         })
         setQuestionCount(questionCount + 1);
-        if( questionCount  < questionArrObj.length){
+        if(questionCount  < questionArrObj.length) {
           startRecording();
           console.log('--startrecord---')
         }
@@ -196,7 +204,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
           //   volume_timer = null;
           // }
           console.log('status', status)
-          onNextClick(2,userId, questionArrObj.length);
+          onNextClick(2, userId, questionArrObj.length);
         }
       }
     })
@@ -224,19 +232,19 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   }
   useEffect(() => {
     console.log('444',status)
-    if(status == 'idle'){
+    if(status == 'idle') {
       // request_recording();
       startRecording()
      }
-     if(status =='recording' && previewAudioStream){
-       if(volumeTimer)
+     if(status == 'recording' && previewAudioStream){
+      if(volumeTimer)
         clearInterval(volumeTimer);
       request_recording()
         // previewAudioStream.onaddtrack = (event) => {
         //   console.log('onaddtracn')
         //   console.log(event )
         // }
-        console.log('track');
+      console.log('track');
      }
   },[status])
   useEffect(()=>{
@@ -259,36 +267,42 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   return (
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
-      <CloseImg onClick={onCloseClick}src={closeImg}/>
-      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaListeningImg}/>
+      <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
+      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaDarkTalkImg:pandaListeningImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
-      <Message> 
+      {darkFlag&& <DarkBubbleImg src={bubbleDarkImg} />}
+      <Message darkFlag={darkFlag}> 
         {questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}
       </Message>
-      <ArrowImg/>
+      {!darkFlag&&<ArrowImg/>}
       {hidden && <BlueCircle hidden>
          <img src={microphone} />
       </BlueCircle>}
       <Circle redCircle>
-        <img src={microphoneInit} />
-        {hidden && <img src={microphoneActive} />}
+      {!darkFlag ? <img src={microphoneInit} /> : 
+        <DarkMicrophone>
+          <DarkMicrophoneCircle src={micrphoneCircleDark}/>
+          <DarkMicrophoneMain src={micrphoneDark}/>
+        </DarkMicrophone>
+       }
+        {hidden && !darkFlag &&<img src={microphoneActive} />}
       </Circle>
-      <MicVolume src={micVolume}/>
-      <Bottom>
-        <LabelProgress>Progress</LabelProgress>
+      <MicVolume src={micVolume} darkFlag={darkFlag}/>
+      <Bottom darkFlag={darkFlag}>
+        {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
-            <StepCircle active={1 <= questionCount}>1</StepCircle>
-            <StepBar  active={2 <= questionCount}  circleWidth={circleWidth}/>
-            <StepCircle active={2 <= questionCount}>2</StepCircle>
-            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount} circleWidth={circleWidth}/> }
-            {questionArrObj.length > 2 && <StepCircle active={3 <= questionCount}>3</StepCircle> }
-            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount} circleWidth={circleWidth}/> }
-            {questionArrObj.length > 3 && <StepCircle active={4 <= questionCount}>4</StepCircle> }
-            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount} circleWidth={circleWidth}/> }
-            {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}>5</StepCircle> }
+            <StepCircle active={1 <= questionCount} darkFlag={darkFlag}>1</StepCircle>
+            <StepBar  active={2 <= questionCount}  circleWidth={circleWidth} darkFlag={darkFlag}/>
+            <StepCircle active={2 <= questionCount} darkFlag={darkFlag}>2</StepCircle>
+            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
+            {questionArrObj.length > 2 && <StepCircle active={3 <= questionCount} darkFlag={darkFlag}>3</StepCircle> }
+            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
+            {questionArrObj.length > 3 && <StepCircle active={4 <= questionCount} darkFlag={darkFlag}>4</StepCircle> }
+            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
+            {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount} darkFlag={darkFlag}>5</StepCircle> }
         </ProgressBar>
-        {questionCount !== questionArrObj.length ?<Button onClick={()=>nextQuestionFunc(0)}>Next Question →</Button> :
-          <Button onClick={()=>nextQuestionFunc(1)}>Finish</Button>
+        {questionCount !== questionArrObj.length ?<Button onClick={()=>nextQuestionFunc(0)} darkFlag={darkFlag}>Next Question →</Button> :
+          <Button onClick={()=>nextQuestionFunc(1)} darkFlag={darkFlag}>Finish</Button>
         }
       </Bottom>
       <PoweredBy>
@@ -303,6 +317,16 @@ const PandaTalkImg = styled.img`
   top: 180px;
   height: 208px; z-index: 1;
 `
+const DarkBubbleImg = styled.img`
+  position: absolute;
+  margin: 4px 10px 81px 10px;
+  left: 25px;
+  top: 20px;
+  width: 343px;
+  height: 183px;
+  object-fit: contain;
+  border: 0;
+`
 const PandaListenImg = styled.img`
   position: absolute;
   left: 220px;
@@ -311,7 +335,7 @@ const PandaListenImg = styled.img`
   z-index: 1;
   display: none;
 `
-const CloseImg = styled.img`
+const CloseImg = styled.img<{darkFlag:boolean}>`
   position: absolute;
   width: 25px;
   height: 25px;
@@ -319,8 +343,13 @@ const CloseImg = styled.img`
   right: 5px;
   opacity: 0.5;
   cursor: pointer;
+  ${(props) => props.darkFlag  && `
+    width:10px;
+    height:10px;
+    right:10px;
+  `}   
 `
-const Message = styled.div`
+const Message = styled.div<{darkFlag?:boolean}>`
   position: relative;
   left: 35px;
   top: 55px;
@@ -335,6 +364,19 @@ const Message = styled.div`
   border-radius: 15px;
   border: 1px solid #c4c4c4;
   padding: 15px 10px 30px 15px;
+  ${(props) => props.darkFlag && `
+  color:white!important;
+  background-image: linear-gradient(106deg, rgba(49,49,49,0.84), #111 53%, #000 77%);
+  text-align:center;
+  border:0px;
+  padding: 10px 10px 15px 15px;
+  color: white!important;
+  left: 45.5px;
+  top: 52px;
+  border-radius: 0px;
+  width: 320px;
+  height: 108px;
+`} 
 `
 const ArrowImg = styled.div`
     position: relative;
@@ -374,12 +416,14 @@ const Circle = styled.div<{redCircle:boolean}>`
   }
   ${(props) => props.redCircle && `border: 0px solid #f56f4d;`}   
 `
-const MicVolume = styled.img`
+const MicVolume = styled.img<{darkFlag:boolean}>`
   position: absolute;
   left: 61px;
   top: 203px;
+  ${(props) => props.darkFlag && `width:124px;`}   
+
 `
-const Bottom = styled.div`
+const Bottom = styled.div<{darkFlag:boolean}>`
   position: absolute;
   top: 380px;
   left: 0px;
@@ -389,6 +433,7 @@ const Bottom = styled.div`
   border-radius: 0 0 10px 10px;
   opacity: 1.0;
   border-top: solid 1px #ccc;
+  ${(props) => props.darkFlag && `background-color: #0f1523;color: #fff;border-top:0px solid!important;`}   
 `
 const LabelProgress = styled.span`
   position: absolute;
@@ -412,7 +457,7 @@ const ProgressBar = styled.div`
   margin-top: 25px;
 
 `
-const StepCircle = styled.div<{active?:boolean}>`
+const StepCircle = styled.div<{active?:boolean, darkFlag?:boolean}>`
   background-color: #b1bdd4;
   height: 20px;
   width: 20px;
@@ -422,8 +467,12 @@ const StepCircle = styled.div<{active?:boolean}>`
   color: #929292;
   text-align: center;
   ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
+  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:18px`}  
+  ${(props) => props.darkFlag && props.active &&
+  `       box-shadow: 0px 0px 12.5px 7px rgb(0 0 0 / 81%);
+    background-color: #05010d;`}
 `
-const StepBar = styled.div<{active?:boolean, circleWidth?:number}>`
+const StepBar = styled.div<{active?:boolean, circleWidth?:number, darkFlag?:boolean}>`
   background-color: #b1bdd4;
   height: 3px;
   // width: 33.333333333333336px;
@@ -431,8 +480,9 @@ const StepBar = styled.div<{active?:boolean, circleWidth?:number}>`
   margin-bottom: auto;
   ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
   ${(props) => props.circleWidth && `width: ${props.circleWidth}px;`}   
+  ${(props) => props.darkFlag && `height:1px; background-color:#2a64ff;`}   
 `
-const Button = styled.span`
+const Button = styled.span<{darkFlag:boolean}>`
   position: absolute;
   padding: 5px 0 5px 0;
   margin: 0 0 0 0;
@@ -456,6 +506,26 @@ const Button = styled.span`
   text-decoration: none;
   font-size: 13px;
   line-height: 20px;
+  ${(props) => props.darkFlag  &&`
+    color:white!important;
+      padding-top:6px;
+      text-transform: uppercase;
+      font-size:10px!important;
+  height: 26px;
+  background:transparent;
+    &:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    padding: 1px;
+    background: linear-gradient(105deg, #0ec88f 7%, #0064ff 51%,#934dfc 93%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    `}
 `
 const PoweredBy = styled.span`
   position: absolute;
@@ -471,4 +541,36 @@ const PoweredBy = styled.span`
   letter-spacing: -0.18px;
   text-align: center;
   color: #999!important;
+`
+const DarkMicrophone = styled.div`
+    &:before {
+    content: "";
+    position: absolute;
+    width: 101px;
+    height: 101px;
+    left: -10px!important;
+    top: -8px!important;
+    inset: 0;
+    border-radius: 50px;
+    padding: 1px;
+    background: linear-gradient(105deg, #0ec88f 7%, #0064ff 51%,#934dfc 93%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    }
+`
+const DarkMicrophoneMain = styled.img`
+    position: absolute;
+    left: 23px!important;
+    top: 14px!important;
+    width: 35px!important;
+`
+const DarkMicrophoneCircle = styled.img`
+    position:absolute;
+    width: 90px!important;
+    height: 90px!important;
+    left: -5px!important;
+    top: -3px!important;
 `

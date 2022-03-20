@@ -2,26 +2,27 @@ import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { v4 as uuidv4 } from 'uuid';
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
+import pandaListeningImgDark from 'src/assets/images/text-dark/panda-gradient@3x.png'
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
 import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
+import bubbleImg from 'src/assets/images/text-dark/bubble@3x.png'
 import { Config } from 'src/config/aws';
 import { useParams } from "react-router-dom";
+import closeDarkImg from 'src/assets/images/input-dark/rectangle-x@3x.png'
 
 import axios from 'axios';
-const configFormData = {     
-  headers: { 'content-type': 'multipart/form-data' }
-}
-
 
 interface AnswerTextProps {
+  userId: string,
+  darkFlag: boolean,
   onNextClick: (step:number,userId:string, arrCount:number, urlArr:never[]) => void;
   onClosesClick: (flag:boolean) => void;
   onLogClick: (flag:number,questionNumber:number) => void;
 }
 export default function AnswerText(props:AnswerTextProps) {
-  const {onNextClick, onLogClick,onClosesClick} = props;
+  const {userId, onNextClick, onLogClick,onClosesClick, darkFlag} = props;
   const [commetText, setCommentText] = useState('');
   // const [question, setQuestion] = useState("");
   const { partnerId, interviewId } = useParams();
@@ -39,7 +40,6 @@ export default function AnswerText(props:AnswerTextProps) {
   // ];
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
-  const [userId, setUserId] = useState(uuidv4());
   const [url, setUrl] = useState([]);
   const createSigned = async() =>{
     axios.defaults.baseURL = Config.api_url;
@@ -83,21 +83,6 @@ export default function AnswerText(props:AnswerTextProps) {
       onClosesClick(true);
   }
   const uploadFile = async() => {
-    // const file = new Blob([commetText], {type:'text.plain'});
-    // setCommentText('');
-    // let formData = new FormData();
-    // formData.append(userId +'__' +questionCount, file);
-    // axios.post("/upload/fileTextUpload", formData, configFormData)
-    //   .then(res => {
-    //     let {data} = res;
-    //     console.log('result',data)
-    //     if(!data.success) {
-    //       let message = `While uploading files, unknown errors was occured!`
-    //       return;
-    //     }
-    //   })
-    //   .catch(() => {
-    //   });
     console.log("upload", url);
     axios.defaults.baseURL = '';
     axios.put(url[questionCount - 1], commetText).then(res =>{
@@ -133,33 +118,39 @@ export default function AnswerText(props:AnswerTextProps) {
   return (
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
-      <CloseImg onClick={onCloseClick}src={closeImg}/>
-      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaListeningImg}/>
+      <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
+      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaListeningImgDark:pandaListeningImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
+      {darkFlag?
+      <AnswerBubbleDark>
+        <DarkBubbleImg src={bubbleImg} />
+        <Message darkFlag={darkFlag}>{questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}</Message>
+      </AnswerBubbleDark>:
       <AnswerBubble>
         <Message> 
           {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
         </Message>
         <ArrowImg/>
       </AnswerBubble>
-      <ResponseAnswer>
-        <textarea value={commetText} onChange={e=> setCommentText(e.target.value)}/>
+      }
+      <ResponseAnswer darkFlag={darkFlag}>
+        <textarea value={commetText} onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
       </ResponseAnswer>
-      <Bottom>
-        <LabelProgress>Progress</LabelProgress>
+      <Bottom darkFlag={darkFlag}>
+        {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
-            <StepCircle active={1 <= questionCount}>1</StepCircle>
-            <StepBar  active={2 <= questionCount}  circleWidth={circleWidth}/>
-            <StepCircle active={2 <= questionCount}>2</StepCircle>
-            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount} circleWidth={circleWidth}/> }
-            {questionArrObj.length > 2 && <StepCircle active={3 <= questionCount}>3</StepCircle> }
-            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount} circleWidth={circleWidth}/> }
-            {questionArrObj.length > 3 && <StepCircle active={4 <= questionCount}>4</StepCircle> }
-            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount} circleWidth={circleWidth}/> }
-            {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}>5</StepCircle> }
+            <StepCircle darkFlag={darkFlag}active={1 <= questionCount}>1</StepCircle>
+            <StepBar darkFlag={darkFlag} active={2 <= questionCount}  circleWidth={circleWidth}/>
+            <StepCircle darkFlag={darkFlag}active={2 <= questionCount}>2</StepCircle>
+            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount} circleWidth={circleWidth}darkFlag={darkFlag}/> }
+            {questionArrObj.length > 2 && <StepCircle active={3 <= questionCount}darkFlag={darkFlag}>3</StepCircle> }
+            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount} circleWidth={circleWidth}darkFlag={darkFlag}/> }
+            {questionArrObj.length > 3 && <StepCircle active={4 <= questionCount}darkFlag={darkFlag}>4</StepCircle> }
+            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount} circleWidth={circleWidth}darkFlag={darkFlag}/> }
+            {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}darkFlag={darkFlag}>5</StepCircle> }
         </ProgressBar>
-        {questionCount !== questionArrObj.length ?<Button onClick={()=>nextQuestionFunc(0)}>Next Question →</Button> :
-          <Button onClick={()=>nextQuestionFunc(1)}>Finish</Button>
+        {questionCount !== questionArrObj.length ?<Button darkFlag={darkFlag}onClick={()=>nextQuestionFunc(0)}>Next Question {darkFlag?'':'→'}</Button> :
+          <Button darkFlag={darkFlag} onClick={()=>nextQuestionFunc(1)}>Finish</Button>
         }
       </Bottom>
       <PoweredBy>
@@ -174,7 +165,21 @@ const AnswerBubble = styled.div`
   background-color: transparent;
   left: 205px;
 `
-const ResponseAnswer = styled.div`
+const AnswerBubbleDark = styled.div`
+  position: absolute;
+  top: 34px;
+  background-color: transparent;
+  left: 205px;
+`
+const DarkBubbleImg = styled.img`
+    position: absolute;
+    left: 13px;
+    top: 0px;
+    width: 170px;
+    height: 154px;
+    border: 0;
+`
+const ResponseAnswer = styled.div<{darkFlag:boolean}>`
   position: absolute;
   left: 35px;
   top: 35px;
@@ -183,6 +188,17 @@ const ResponseAnswer = styled.div`
   textarea {
     width: 100%;
     height: 100%;
+    ${(props) => props.darkFlag && `
+    background-color: #0f1523;
+    border: solid 0.5px #2a64ff;
+    border-radius: 1px;
+    color:white;
+    padding: 10px 8px!important;
+    font-size:12px !important;
+    &:placeholder{
+      color:#6f737b!important;
+    }
+    `}
   }
 `
 const PandaTalkImg = styled.img`
@@ -199,7 +215,7 @@ const PandaListenImg = styled.img`
   z-index: 1;
   display: none;
 `
-const CloseImg = styled.img`
+const CloseImg = styled.img<{darkFlag:boolean}>`
   position: absolute;
   width: 25px;
   height: 25px;
@@ -207,8 +223,15 @@ const CloseImg = styled.img`
   right: 5px;
   opacity: 0.5;
   cursor: pointer;
+  ${(props) => props.darkFlag  && `
+    width:10px;
+    height:10px;
+    right:10px;
+
+  `}   
+
 `
-const Message = styled.div`
+const Message = styled.div<{darkFlag?:boolean}>`
   position: relative;
   left: 17px;
   top: 3px;
@@ -222,10 +245,23 @@ const Message = styled.div`
   border-radius: 15px;
   border: 1px solid #c4c4c4;
   padding: 10px 10px 15px 15px;
+  ${(props) => props.darkFlag && `
+    color:white!important;
+    background-image: linear-gradient(106deg, rgba(49,49,49,0.84), #111 53%, #000 77%);
+    text-align:center;
+    border:0px;
+    padding: 10px 10px 15px 15px;
+    color: white!important;
+    left: 24.5px;
+    top: 8px;
+    border-radius: 0px;
+    width: 144px;
+    height: 118px;
+  `}  
 `
 const ArrowImg = styled.div`
     position: relative;
-    background-image: url("${arrowImg}");
+  background-image: url("${arrowImg}");
     width: 30px;
     height: 28px;
     top: 0px;
@@ -266,7 +302,7 @@ const MicVolume = styled.img`
   left: 61px;
   top: 203px;
 `
-const Bottom = styled.div`
+const Bottom = styled.div<{darkFlag:boolean}>`
   position: absolute;
   top: 380px;
   left: 0px;
@@ -276,6 +312,8 @@ const Bottom = styled.div`
   border-radius: 0 0 10px 10px;
   opacity: 1.0;
   border-top: solid 1px #ccc;
+  ${(props) => props.darkFlag && `background-color: #0f1523;color: #fff;border-top:0px solid!important;`}   
+
 `
 const LabelProgress = styled.span`
   position: absolute!important;
@@ -298,7 +336,7 @@ const ProgressBar = styled.div`
   margin-left: 35px;
   margin-top: 25px;
 `
-const StepCircle = styled.div<{active?:boolean}>`
+const StepCircle = styled.div<{active?:boolean, darkFlag?:boolean}>`
   background-color: #b1bdd4;
   height: 20px;
   width: 20px;
@@ -308,8 +346,12 @@ const StepCircle = styled.div<{active?:boolean}>`
   color: #929292;
   text-align: center;
   ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
+  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:18px`}  
+  ${(props) => props.darkFlag && props.active &&
+  `       box-shadow: 0px 0px 12.5px 7px rgb(0 0 0 / 81%);
+    background-color: #05010d;`}
 `
-const StepBar = styled.div<{active?:boolean, circleWidth?:number}>`
+const StepBar = styled.div<{active?:boolean, circleWidth?:number, darkFlag?:boolean}>`
   background-color: #b1bdd4;
   height: 3px;
   // width: 33.333333333333336px;
@@ -317,8 +359,10 @@ const StepBar = styled.div<{active?:boolean, circleWidth?:number}>`
   margin-bottom: auto;
   ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
   ${(props) => props.circleWidth && `width: ${props.circleWidth}px;`}   
+  ${(props) => props.darkFlag && `height:1px; background-color:#2a64ff;`}   
+
 `
-const Button = styled.span`
+const Button = styled.span<{darkFlag:boolean}>`
   position: absolute;
   padding: 5px 0 5px 0;
   margin: 0 0 0 0;
@@ -342,7 +386,26 @@ const Button = styled.span`
   text-decoration: none;
   font-size: 13px;
   line-height: 20px; 
-
+  ${(props) => props.darkFlag  &&`
+    color:white!important;
+      padding-top:6px;
+      text-transform: uppercase;
+      font-size:10px!important;
+  height: 26px;
+  background:transparent;
+    &:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    padding: 1px;
+    background: linear-gradient(105deg, #0ec88f 7%, #0064ff 51%,#934dfc 93%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    `}
 `
 const PoweredBy = styled.span`
   position: absolute;

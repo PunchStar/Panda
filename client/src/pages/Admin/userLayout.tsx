@@ -7,13 +7,11 @@ import axios from 'axios';
 import brandLogoImg from 'src/assets/images/panda@3x.png'
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
-const configFormData = {     
-    headers: { 'content-type': 'text/plain' }
-  }
+
 export default function UserLayout() {
     const { token, setToken} = useToken();
-  let naviage = useNavigate();
-  const partners = Config.partner;
+    let naviage = useNavigate();
+    const partners = Config.partner;
     const { partnerId, interviewId, user } = useParams();
     const [sepcPartner, setSepcPartner] = useState('');
     const [pubName, setPubName] = useState('');
@@ -35,7 +33,7 @@ export default function UserLayout() {
           window.location.href='';
         })}
     }
-    const clikLink =(partner:any, interview:any)=>{
+    const clickLink =(partner:any, interview:any)=>{
         naviage('/admin/user-media/' + partner + '/' + interview);
     }
     const onClickInterview = (partner:any, interview:any) => {
@@ -61,7 +59,6 @@ export default function UserLayout() {
         .catch(() => {
         });
     }
-  
     useEffect(()=>{
         if(partnerId || interviewId)
             onClickInterview(partnerId?.toUpperCase(), interviewId)
@@ -83,7 +80,7 @@ export default function UserLayout() {
             <h5>Partners and Interviews</h5>
             {partners.map((element, index)=> (sepcPartner=='' || sepcPartner == element.partner) &&<li key={index}>
                 Partner: <a onClick={()=>setSepcPartner(element.partner)}>{element.partner}</a>
-                <ol>&nbsp;&nbsp;&nbsp;{element.interviews.map(subelement => <li onClick={()=>clikLink(element.partner, subelement.name)}>Interview: {subelement.name}</li>)}
+                <ol>&nbsp;&nbsp;&nbsp;{element.interviews.map(subelement => <li onClick={()=>clickLink(element.partner, subelement.name)}>Interview: {subelement.name}</li>)}
                 </ol>
             </li>)}
             </>:<div>
@@ -96,7 +93,7 @@ export default function UserLayout() {
                     <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => 
                     {   
                         // var tempDate = new Date(subelement1.datetime);
-                        return(<li key={subelement1.url}>{subelement1.datetime} (PST) - {subelement1.type} - Question {subelement1.question} - {subelement1.questionContent}  - &nbsp;
+                        return(<li key={subelement1.url}>{subelement1.datetime} (PST) - {subelement1.type} - Question {subelement1.question} - {subelement1.questionContent}  -
                          {/* {subelement1.type=="Text" && <RemovedSpan>{subelement1.questionContentRe}</RemovedSpan>} */}
                          <a href={Config.api_url + subelement1.url} target="_blank">Download</a>
                          {subelement1.transcript_exist ? <a href={Config.api_url +subelement1.transcript_url} id="view">Transcript</a>:''}
@@ -144,13 +141,13 @@ const UserLayoutWrapper = styled.div`
     }
     ul {
         p {
-             padding-top: 20px;
-         margin-bottom: 0px;
-     }
+            padding-top: 20px;
+            margin-bottom: 0px;
+        }
     }
-    a{
-        padding-left:10px;
-        padding-right:10px;
+    a {
+        padding-left: 5px;
+        padding-right: 5px;
     }
 `
 const LogoImg =  styled.img`
