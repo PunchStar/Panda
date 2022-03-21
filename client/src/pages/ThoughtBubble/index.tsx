@@ -1,21 +1,10 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState } from "react";
 import styled from "styled-components"
-import { useNavigate } from 'react-router-dom';
-import {useReactMediaRecorder} from "react-media-recorder";
 import panda from 'src/assets/images/panda@3x.png';
 import thought from 'src/assets/images/thought-bubble-gray.svg';
-import microphone from 'src/assets/images/microphone.svg';
-import microphoneDisable from 'src/assets/images/microphone-disabled.svg';
-import pencilpaper from 'src/assets/images/pencil-paper.svg'
 import closeImg from 'src/assets/images/x.svg'
-import AnswerAudio from "../AnswerAudio";
-import AudioResult from "../AudioResult";
-import Thankyou from "../Thankyou";
-import AnswerText from "../AnswerText";
 import { useParams } from "react-router-dom";
 import { Config } from 'src/config/aws';
-import * as actions from '../../actions';
-import axios from 'axios';
 
 export default function ThoughtBubble() {
   const [closeFlag, setCloseFlag] = useState(false);
@@ -23,9 +12,8 @@ export default function ThoughtBubble() {
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   const partner_name = CObj.partner_name;
-  const [arrCount,setArrCount] = useState(0);
   const onCloseClick = () => {
-    if(CObj['x_button'] == '1')
+    if(CObj['x_button'] === '1')
       setCloseFlag(false);
     else
       setCloseFlag(true);
@@ -44,7 +32,7 @@ export default function ThoughtBubble() {
         </a>
       </Initial_cta>
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </ThoughtBubbleWrapper>
   )

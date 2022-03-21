@@ -25,35 +25,6 @@ export default function Login ({setToken}) {
         setToken(token);
     }
     return (
-        // <div className="modal">
-        //     <div className="modal-content">
-        //         <div className="modal-header">
-        //             <h4 className="modal-title">Sign In</h4>
-        //         </div>
-        //         <div className="modal-body">
-        //             <div className="login-wrapper">
-        //             <form onSubmit={handleSubmit}>
-        //                 <label>
-        //                     <p>UserName</p>
-        //                     <input type="text" onChange={e => setUserName(e.target.value)} />
-        //                 </label>
-        //                 <label>
-        //                     <p>Password</p>
-        //                     <input type="password" onChange={e => setPassword(e.target.value)} />
-        //                 </label>
-        //                 <div>
-        //                     <button type="submit">Submit</button>
-        //                 </div>
-        //             </form>
-        //         </div>
-        //         </div>
-        //         <div className="modal-footer">
-        //             <button className="button">
-        //                 Close
-        //             </button>
-        //         </div>
-        //     </div>
-        // </div>
         <div className="modal">
                 <div className="modal-dialog">
                     <div className="loginmodal-container">

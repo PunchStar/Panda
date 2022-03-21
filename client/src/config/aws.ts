@@ -1,7 +1,7 @@
 export const Config = {
     api_url: process.env.NODE_ENV === 'production' 
             ? '/api'
-            : 'http://localhost:5005',
+            : 'http://localhost:5115',
     partner: [
         {
             "partner_name": "Test",
@@ -27,7 +27,8 @@ export const Config = {
             ],
             "email": ["andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
-                "aaron@perceptivepanda.com"
+                "aaron@perceptivepanda.com",
+                "Lori@perceptivepanda.com"
             ]
         },
         {
@@ -54,7 +55,8 @@ export const Config = {
             ],
             "email": ["andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
-                "aaron@perceptivepanda.com"
+                "aaron@perceptivepanda.com",
+                "Lori@perceptivepanda.com"
             ]
         },
         {
@@ -93,7 +95,8 @@ export const Config = {
             "email": ["viviana@jobox.ai",
                 "andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
-                "aaron@perceptivepanda.com"
+                "aaron@perceptivepanda.com",
+                "Lori@perceptivepanda.com"
             ]
         },
         {
@@ -172,7 +175,8 @@ export const Config = {
                 "sarthak.jain@greyb.com",
                 "andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
-                "aaron@perceptivepanda.com"
+                "aaron@perceptivepanda.com",
+                "Lori@perceptivepanda.com"
             ]
         },
         {
@@ -259,7 +263,8 @@ export const Config = {
             "password": "Seeti.rocks",
             "email": ["andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
-                "aaron@perceptivepanda.com"
+                "aaron@perceptivepanda.com",
+                "Lori@perceptivepanda.com"
             ]
         },
         {
@@ -330,7 +335,8 @@ export const Config = {
             "password": "PMSS9.rocks",
             "email": ["andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
-                "aaron@perceptivepanda.com"
+                "aaron@perceptivepanda.com",
+                "Lori@perceptivepanda.com"
             ]
         },
         {
@@ -361,7 +367,8 @@ export const Config = {
             "password": "ABRR1.rocks",
             "email": ["andre@perceptivepanda.com",
                 "josh@perceptivepanda.com",
-                "aaron@perceptivepanda.com"
+                "aaron@perceptivepanda.com",
+                "Lori@perceptivepanda.com"
             ]
         }
     ]

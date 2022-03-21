@@ -145,12 +145,12 @@ const log_event = (event_name:any, question_number:any, code:any, partner:any, i
           <DarkSpeakImg src={micDarkSpeak}/>
           :<MicrophoneImg src={micFlag ? microphone : microphoneDisable}/>}
       </SpeakButton>
-      <SpeakText micFlag={micFlag} darkFlag={darkFlag}>Press to speak</SpeakText>
+      <SpeakText micFlag={micFlag} darkFlag={darkFlag} onClick={onClick}>Press to speak</SpeakText>
       <WriteButton darkFlag={darkFlag} onClick={onTextClick}>
         {!darkFlag ?<PencilPaperImg src={pencilpaper} />:
         <PencilDarkImg src={micDarkWrite}/>}
       </WriteButton>
-      <WriteText darkFlag={darkFlag}><div>Press to write</div></WriteText>
+      <WriteText darkFlag={darkFlag} onClick={onTextClick}><div>Press to write</div></WriteText>
       {!micFlag &&
         <PermissionDeniedText>
             Your browser or OS isn't Microphone enabled.<br/> Please click "Press to write" instead.

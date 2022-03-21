@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 import styled from "styled-components"
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
-import closeImg from 'src/assets/images/x.svg'
 import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
 import bubbleDarkImg from 'src/assets/images/thanks-dark/bubble@3x.png';
 import pandaDarkImg from 'src/assets/images/thanks-dark/panda@3x.png';
+
 interface ThankyouProps {
   partner: any;
   closeFlag: boolean;
@@ -13,9 +13,9 @@ interface ThankyouProps {
   partner_name: string;
 }
 export default function Thankyou(props: ThankyouProps) {
-  const {onNextClick, partner, closeFlag, thank_you_text, partner_name} = props;
+  const { partner, thank_you_text, partner_name} = props;
   const [darkFlag, setDarkFlag] = useState(partner?.toUpperCase() === 'DATASAUR' ? true : false);
-  // const [customsupport, setCusstomSupport] = useState(true);
+
   return (
     <>
       {darkFlag?
@@ -26,13 +26,11 @@ export default function Thankyou(props: ThankyouProps) {
         <Message darkFlag={darkFlag}>Thanks! You should now have received an appointment confirmation email.</Message> :
         <Message > {thank_you_text} </Message> 
             }
-      {/* } */}
       {darkFlag?
       <PandaTalkDarkImg src={pandaDarkImg}/>:
       <PandaTalkImg src={pandaListeningImg} />}
-      {/* {!closeFlag && <Button onClick={()=>{onNextClick(3);}}>See Result</Button>} */}
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </>
   )
@@ -72,15 +70,6 @@ const PandaTalkDarkImg = styled.img`
   top: 122px;
   width: auto;
   height: 281px;
-`
-const CloseImg = styled.img`
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  top: 10px;
-  right: 5px;
-  opacity: 0.5;
-  cursor: pointer;
 `
 const Message = styled.div<{darkFlag?:boolean}>`
   position: absolute;

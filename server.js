@@ -129,7 +129,9 @@ app.post('/input-selector/getobject', async function(req, res) {
 const get_interviews_media = async(req, res, orig_list) => {
 	console.log('- get interview media -');
 
-    console.log("--1---",`${env}/${req.body.partner}/${req.body.interview}/`)
+	console.log("--1---")
+	if (orig_list == null)
+		return res.json({success: true, users: []});
 	const list = orig_list.map((elem) => {
 		const cleaned = elem.replace(`${env}/${req.body.partner}/${req.body.interview}/`, '');
 		if (cleaned === elem) {
@@ -267,7 +269,6 @@ app.get('/admin/media-download/:partner/:interview/:user/:filename', async funct
 app.post('/send-audio-generated-email', async function(req, res) {
 	console.log("---- send email -----");
 	const email_to = partners[req.body.partner].email || [];
-	email_to.push('andre@perceptivepanda.com');
 
 	let site_url = `http://localhost:3000`;
 	if (env === 'dev') {
@@ -300,34 +301,46 @@ app.post('/send-audio-generated-email', async function(req, res) {
 							'Newly scheduled demo with interview', 
 							`<p>You have a newly scheduled interview.</p><p>See calendar event here: ${intergration_result}</p><p>See interview here: ${link}</p>`, 
 							`You have a newly scheduled interview.\n\nSee calendar event here: ${intergration_result}\n\nSee interview here: ${link}`);
-						return res.sendStatus(200);
+						res.json({success:true, data:'done'});
 					}
 				})
 				.catch(function (error) {
 					console.log(error);
 				});
+			} else if (integration_type == null) {
+				if (email_send) {
+					await send_email(
+						'support@perceptivepanda.com', 
+						email_to, 
+						'New interview!', 
+						`<p>A new user interview session was just generated through PerceptivePanda.</p><p>Click here for all the session data: ${link}</p>`, 
+						`A new user interview session was just generated through PerceptivePanda.\n\nClick here for all the session data: ${link}`);
+					res.json({success:true, data:'done'});
+				}
 			}
 		}
 	}
 	else {
 		if (env !== 'local') {
-			// if (req.body.customer_support == 0) {
-				await send_email(
-					'support@perceptivepanda.com', 
-					email_to, 
-					'New interview!', 
-					`<p>A new user interview session was just generated through PerceptivePanda.</p><p>Click here for all the session data: ${link}</p>`, 
-					`A new user interview session was just generated through PerceptivePanda.\n\nClick here for all the session data: ${link}`);
-			// }
-			//  else {
-			// 	await send_email(
-			// 		'support@perceptivepanda.com', 
-			// 		email_to, 
-			// 		'Request for customer support', 
-			// 		`<p>A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.</p><p>PerceptivePanda Generated SessionID: ${req.body.user}</p><p>Partner Generated UserID: ${partner_userID}</p>`, 
-			// 		`A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.\n\PerceptivePanda Generated SessionID: ${req.body.user}\n\nPartner Generated UserID: ${partner_userID}`);
-			// }
-			res.json({success:true, data:'done'});
+			if (email_send) {
+				// if (req.body.customer_support == 0) {
+					await send_email(
+						'support@perceptivepanda.com', 
+						email_to, 
+						'New interview!', 
+						`<p>A new user interview session was just generated through PerceptivePanda.</p><p>Click here for all the session data: ${link}</p>`, 
+						`A new user interview session was just generated through PerceptivePanda.\n\nClick here for all the session data: ${link}`);
+				// }
+				//  else {
+				// 	await send_email(
+				// 		'support@perceptivepanda.com', 
+				// 		email_to, 
+				// 		'Request for customer support', 
+				// 		`<p>A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.</p><p>PerceptivePanda Generated SessionID: ${req.body.user}</p><p>Partner Generated UserID: ${partner_userID}</p>`, 
+				// 		`A new user interview session was just generated through PerceptivePanda. The user requested help from customer support.\n\PerceptivePanda Generated SessionID: ${req.body.user}\n\nPartner Generated UserID: ${partner_userID}`);
+				// }
+				res.json({success:true, data:'done'});
+			}
 		}
 	}
 });
@@ -448,5 +461,5 @@ app.post('/event', async function(req, res) {
 	res.sendStatus(204);
 });
 
-const port = process.env.PORT || 5005;  //process.env.port is Heroku's port if you choose to deplay the app there
+const port = process.env.PORT || 5115;  //process.env.port is Heroku's port if you choose to deplay the app there
 app.listen(port, () => console.log("Server up and running on port " + port));

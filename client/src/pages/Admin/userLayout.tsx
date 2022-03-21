@@ -19,10 +19,9 @@ export default function UserLayout() {
     const [sepcInterview, setSpecInterview] = useState('');
     const [specUser, setSpecUser] = useState('');
     const [users,setUsers]= useState<any[]>([]);
-    const [answer,setAnswer] = useState<any[]>(['']);
     const fileRef = useRef<HTMLInputElement>(null);
     const [transcriptURL, setTranscriptURL] = useState('');
-    // const handleUrlChange =(url:string, e:any)=>{
+
     const handleUrlChange =(e:any)=>{
         const file= e.target.files;
         console.log('handleurlchange', transcriptURL, e);
@@ -52,7 +51,6 @@ export default function UserLayout() {
           console.log('result114441', data)
           setUsers(data.users);
           if(!data.success) {
-            let message = `While uploading files, unknown errors was occured!`
             return;
           }
         })
@@ -66,7 +64,6 @@ export default function UserLayout() {
             onClickInterview(partnerId?.toUpperCase(), interviewId)
             setInterviewActive(true);
             setSpecUser(user);    
-
         }
     },[ partnerId, interviewId, user]) 
     if(!token ){
@@ -78,7 +75,7 @@ export default function UserLayout() {
             {!interviewActive ? <>
             <h3>User Inputs</h3>
             <h5>Partners and Interviews</h5>
-            {partners.map((element, index)=> (sepcPartner=='' || sepcPartner == element.partner) &&<li key={index}>
+            {partners.map((element, index)=> (sepcPartner === '' || sepcPartner === element.partner) &&<li key={index}>
                 Partner: <a onClick={()=>setSepcPartner(element.partner)}>{element.partner}</a>
                 <ol>&nbsp;&nbsp;&nbsp;{element.interviews.map(subelement => <li onClick={()=>clickLink(element.partner, subelement.name)}>Interview: {subelement.name}</li>)}
                 </ol>
@@ -88,16 +85,15 @@ export default function UserLayout() {
                 <h4>Partner: {pubName}</h4>
                 <h4>Interview: {sepcInterview}</h4>
             <ul>
-                {users.map((uElement, index)=> (specUser=='' || specUser == uElement['user']) &&<div>
+                {users.map((uElement, index) => (specUser === '' || specUser === uElement['user']) &&<div>
                     <p>User: {uElement['user']}</p>
                     <div>&nbsp;&nbsp;&nbsp;{uElement.files.map((subelement1 : any) => 
                     {   
                         // var tempDate = new Date(subelement1.datetime);
                         return(<li key={subelement1.url}>{subelement1.datetime} (PST) - {subelement1.type} - Question {subelement1.question} - {subelement1.questionContent}  -
-                         {/* {subelement1.type=="Text" && <RemovedSpan>{subelement1.questionContentRe}</RemovedSpan>} */}
                          <a href={Config.api_url + subelement1.url} target="_blank">Download</a>
                          {subelement1.transcript_exist ? <a href={Config.api_url +subelement1.transcript_url} id="view">Transcript</a>:''}
-                         {subelement1.type == "Text" ? <span><br/><br/>Response: {subelement1.textResult}</span>:
+                         {subelement1.type === "Text" ? <span><br/><br/>Response: {subelement1.textResult}</span>:
                             <UploadWrapper>
                                 {/* <input type="file" accept=".txt"  ref={fileRef} data-upload-url={subelement1.transcript_file_dest} /> */}
                                 {/* <input type="file" accept=".txt"  ref={fileRef} onChange={(e)=>handleUrlChange(subelement1.transcript_file_dest ,e)} /> */}
@@ -120,9 +116,7 @@ export default function UserLayout() {
 
     )
 }
-const RemovedSpan = styled.span`
-    color:red;
-`
+
 const UploadWrapper = styled.span`
     padding-left: 20px;
     input {

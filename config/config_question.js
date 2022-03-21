@@ -23,7 +23,8 @@ export default [
         ],
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
-            "aaron@perceptivepanda.com"
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
         ]
     },
     {
@@ -50,7 +51,8 @@ export default [
         ],
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
-            "aaron@perceptivepanda.com"
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
         ]
     },
     {
@@ -89,7 +91,8 @@ export default [
         "email": ["viviana@jobox.ai",
             "andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
-            "aaron@perceptivepanda.com"
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
         ]
     },
     {
@@ -168,7 +171,8 @@ export default [
             "sarthak.jain@greyb.com",
             "andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
-            "aaron@perceptivepanda.com"
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
         ]
     },
     {
@@ -255,7 +259,8 @@ export default [
         "password": "Seeti.rocks",
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
-            "aaron@perceptivepanda.com"
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
         ]
     },
     {
@@ -326,7 +331,8 @@ export default [
         "password": "PMSS9.rocks",
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
-            "aaron@perceptivepanda.com"
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
         ]
     },
     {
@@ -357,7 +363,8 @@ export default [
         "password": "ABRR1.rocks",
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
-            "aaron@perceptivepanda.com"
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
         ]
     }
 ];
