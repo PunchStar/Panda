@@ -124,7 +124,10 @@ export default function AnswerText(props:AnswerTextProps) {
       {darkFlag?
       <AnswerBubbleDark>
         <DarkBubbleImg src={bubbleImg} />
-        <Message darkFlag={darkFlag}>{questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}</Message>
+        <Message darkFlag={darkFlag}>
+        {darkFlag ?<MessageDark>{questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}</MessageDark>:
+          questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
+        </Message>
       </AnswerBubbleDark>:
       <AnswerBubble>
         <Message> 
@@ -259,6 +262,15 @@ const Message = styled.div<{darkFlag?:boolean}>`
     height: 118px;
   `}  
 `
+const MessageDark = styled.span`
+  background:none;
+  color:white!important;
+  position: absolute;
+  width:90%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`
 const ArrowImg = styled.div`
     position: relative;
   background-image: url("${arrowImg}");
@@ -346,10 +358,11 @@ const StepCircle = styled.div<{active?:boolean, darkFlag?:boolean}>`
   color: #929292;
   text-align: center;
   ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
-  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:18px`}  
+  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:17px;`}  
   ${(props) => props.darkFlag && props.active &&
-  `       box-shadow: 0px 0px 12.5px 7px rgb(0 0 0 / 81%);
-    background-color: #05010d;`}
+  `      box-shadow: 0 0 4px 0 #934dfc;
+  border: solid 0.5px #2a64ff;
+  background-color: #04153e;`}
 `
 const StepBar = styled.div<{active?:boolean, circleWidth?:number, darkFlag?:boolean}>`
   background-color: #b1bdd4;

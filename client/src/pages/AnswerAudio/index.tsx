@@ -270,11 +270,12 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
       <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaDarkTalkImg:pandaListeningImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
-      {darkFlag&& <DarkBubbleImg src={bubbleDarkImg} />}
+      {darkFlag && <DarkBubbleImg src={bubbleDarkImg} />}
       <Message darkFlag={darkFlag}> 
-        {questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}
+        {darkFlag ?<MessageDark>{questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}</MessageDark>:questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}
       </Message>
       {!darkFlag&&<ArrowImg/>}
+      
       {hidden && <BlueCircle hidden>
          <img src={microphone} />
       </BlueCircle>}
@@ -365,18 +366,26 @@ const Message = styled.div<{darkFlag?:boolean}>`
   border: 1px solid #c4c4c4;
   padding: 15px 10px 30px 15px;
   ${(props) => props.darkFlag && `
+    color: transparent;
+    background-image: linear-gradient(106deg, rgba(49,49,49,0.84), #111 53%, #000 77%);
+    top: 52px;
+    border:0px solid;
+    left:46px;
+    border-radius:0px;
+    width: 320px;
+    padding:0px;
+    height: 108px;
+  `} 
+`
+const MessageDark = styled.span`
+  background:none;
   color:white!important;
-  background-image: linear-gradient(106deg, rgba(49,49,49,0.84), #111 53%, #000 77%);
-  text-align:center;
-  border:0px;
-  padding: 10px 10px 15px 15px;
-  color: white!important;
-  left: 45.5px;
-  top: 52px;
-  border-radius: 0px;
-  width: 320px;
-  height: 108px;
-`} 
+  position: absolute;
+  font-size:17px!important;
+  width:80%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 `
 const ArrowImg = styled.div`
     position: relative;
@@ -467,10 +476,11 @@ const StepCircle = styled.div<{active?:boolean, darkFlag?:boolean}>`
   color: #929292;
   text-align: center;
   ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
-  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:18px`}  
+  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:17px;`}  
   ${(props) => props.darkFlag && props.active &&
-  `       box-shadow: 0px 0px 12.5px 7px rgb(0 0 0 / 81%);
-    background-color: #05010d;`}
+  `      box-shadow: 0 0 4px 0 #934dfc;
+  border: solid 0.5px #2a64ff;
+  background-color: #04153e;`}
 `
 const StepBar = styled.div<{active?:boolean, circleWidth?:number, darkFlag?:boolean}>`
   background-color: #b1bdd4;

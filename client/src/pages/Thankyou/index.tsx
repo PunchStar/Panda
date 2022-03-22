@@ -23,7 +23,7 @@ export default function Thankyou(props: ThankyouProps) {
       <SpeechBubbleImg src={SpeechBubbleCenter} />
       }
       {darkFlag?
-        <Message darkFlag={darkFlag}>Thanks! You should now have received an appointment confirmation email.</Message> :
+        <Message darkFlag={darkFlag}><span>Thanks! You should now have received an appointment confirmation email.</span></Message> :
         <Message > {thank_you_text} </Message> 
             }
       {darkFlag?
@@ -48,14 +48,15 @@ const SpeechBubbleImg = styled.img`
 `
 const DarkBubbleImg = styled.img`
   position: absolute;
-  left: 50px;
   top: 0px;
-  width: 280px;
   height: 180px;
   margin: 4px 10px 81px 10px;
-  padding: 26.5px 7.5px 38px;
   object-fit: contain;
   border: 0;
+  left: 7px;
+  top: 0px;
+  margin: 4px 10px 81px 10px;
+  padding: 14.5px 7.5px 38px;
 `
 const PandaTalkImg = styled.img`
   position: absolute;
@@ -90,13 +91,22 @@ const Message = styled.div<{darkFlag?:boolean}>`
   color: #000;
   white-space: pre-wrap;
   ${(props) => props.darkFlag && `
-    color:white!important;
-    left: 76.5px;
-    top: 48px;
-    width: 247px;
-    height: 67px;
-    padding: 13px 10px;
+    span {
+      background:none;
+      color:white!important;
+      position: absolute;
+      width:90%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    position:relative;
     background-image: linear-gradient(106deg, rgba(49,49,49,0.84), #111 53%, #000 77%);
+    left: 36.5px;
+    top: 28px;
+    width: 320px;
+    height: 91px;
+    padding: 13px 10px;
   `}   
 
 `
