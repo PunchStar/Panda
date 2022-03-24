@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Config } from 'src/config/aws';
 import { useNavigate } from 'react-router-dom';
 import {v4 as uuidv4} from 'uuid';
+import * as actions from '../../actions';
 
 export default function Integration() {
   const { integrationType, partnerId, interviewId } = useParams();
@@ -19,6 +20,18 @@ export default function Integration() {
   const [integrationLink, setIntegrationLink] = useState('');
   const [integrationUserName, setIntegrationUserName] = useState('');
   const [integrationUserEmail, setIntegrationUserEmail] = useState('');
+  actions.xmit_event('popup-generated', partnerId?.toUpperCase(), user, interviewId).then(res => {
+    let {data} = res;
+    console.log('result-event-xmit',data)
+  })
+  .catch(() => {
+  });
+  actions.log_event('inegration', '', '2', partnerId?.toUpperCase(), interviewId, user).then(res => {
+    let {data} = res;
+    console.log('result-event-log',data)
+  })
+  .catch(() => {
+  });
   getIntegration(integrationType, partnerId,interviewId);
   function getIntegration (integrationType:any, partner:any, interview:any){
     axios.defaults.baseURL = Config.api_url;
@@ -78,7 +91,7 @@ export default function Integration() {
     </IntegrationWrapper>
   )
 }
-const IntegrationWrapper = styled.div`   
+const IntegrationWrapper = styled.div`
     position: absolute;
     width: 400px;
     height: 460px;

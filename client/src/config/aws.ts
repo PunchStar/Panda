@@ -1,7 +1,7 @@
 export const Config = {
     api_url: process.env.NODE_ENV === 'production' 
             ? '/api'
-            : 'http://localhost:5115',
+            : 'http://localhost:5005',
     partner: [
         {
             "partner_name": "Test",

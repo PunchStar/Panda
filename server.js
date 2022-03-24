@@ -21,12 +21,12 @@ let intergration_result = null;
 let event_uuid = null;
 let invitee_uuid = null;
 let mixpanel = null;
-// switch(env) {
-// 	case 'prod': mixpanel = Mixpanel.init('1f47670881f7c33899deeaaf7cc94524'); break;
-// 	case 'dev': mixpanel = Mixpanel.init('820fb47d4ab8cd1e52bf879add08313c'); break;
-// 	default:
-// 	case 'local': mixpanel = Mixpanel.init('c9fad51e49059dcb80d838121b7f4d72'); break;
-// }
+switch(env) {
+	case 'prod': mixpanel = Mixpanel.init('1f47670881f7c33899deeaaf7cc94524'); break;
+	case 'dev': mixpanel = Mixpanel.init('820fb47d4ab8cd1e52bf879add08313c'); break;
+	default:
+	case 'local': mixpanel = Mixpanel.init('c9fad51e49059dcb80d838121b7f4d72'); break;
+}
 
 confg_question.forEach((elem) => {
 	partners[elem.partner] = elem;
@@ -43,13 +43,13 @@ app.use(
 );
 app.use( bodyParser.json());
 // app.use(fileUpload());
-if(process.env.NODE_ENV === 'production') {
-    app.use(express.static("client/build"));
+// if(process.env.NODE_ENV === 'production') {
+//     app.use(express.static("client/build"));
 
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-    });
-}
+//     app.get('*', (req, res) => {
+//         res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+//     });
+// }
 app.use(cors());
 
 app.use(function(req, res, next) {
@@ -425,7 +425,7 @@ app.post('/event', async function(req, res) {
 	}
 	if (partner_userID === "Not Applicable")
 		partner_userID = u;
-	console.log(req.body);return;
+	// console.log(req.body);return;
 
 	mixpanel.track(e, {
 		distinct_id: `${p}🐼${u}🐼${i}`,
@@ -461,5 +461,5 @@ app.post('/event', async function(req, res) {
 	res.sendStatus(204);
 });
 
-const port = process.env.PORT || 5115;  //process.env.port is Heroku's port if you choose to deplay the app there
+const port = process.env.PORT || 5005;  //process.env.port is Heroku's port if you choose to deplay the app there
 app.listen(port, () => console.log("Server up and running on port " + port));

@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import styled from "styled-components"
+import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
 import bubbleDarkImg from 'src/assets/images/thanks-dark/bubble@3x.png';
@@ -25,12 +26,12 @@ export default function Thankyou(props: ThankyouProps) {
       {darkFlag?
         <Message darkFlag={darkFlag}><span>Thanks! You should now have received an appointment confirmation email.</span></Message> :
         <Message > {thank_you_text} </Message> 
-            }
+      }
       {darkFlag?
       <PandaTalkDarkImg src={pandaDarkImg}/>:
-      <PandaTalkImg src={pandaListeningImg} />}
+      <PandaTalkImg src={partner?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaListeningImg}/>}
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </>
   )

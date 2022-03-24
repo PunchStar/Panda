@@ -18,7 +18,7 @@ interface AnswerTextProps {
   userId: string,
   darkFlag: boolean,
   onNextClick: (step:number,userId:string, arrCount:number, urlArr:never[]) => void;
-  onClosesClick: (flag:boolean) => void;
+  onClosesClick: (flag:boolean, questionNumber:number ) => void;
   onLogClick: (flag:number,questionNumber:number) => void;
 }
 export default function AnswerText(props:AnswerTextProps) {
@@ -78,9 +78,9 @@ export default function AnswerText(props:AnswerTextProps) {
   },[questionCount]);
   const onCloseClick = () => {
     if(CObj['x_button'] == '1')
-      onClosesClick(false);
+      onClosesClick(false, questionCount);
     else
-      onClosesClick(true);
+      onClosesClick(true, questionCount);
   }
   const uploadFile = async() => {
     console.log("upload", url);
@@ -142,15 +142,15 @@ export default function AnswerText(props:AnswerTextProps) {
       <Bottom darkFlag={darkFlag}>
         {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
-            <StepCircle darkFlag={darkFlag}active={1 <= questionCount}>1</StepCircle>
+            <StepCircle darkFlag={darkFlag} active={1 == questionCount} passed={0 < questionCount}>1</StepCircle>
             <StepBar darkFlag={darkFlag} active={2 <= questionCount}  circleWidth={circleWidth}/>
-            <StepCircle darkFlag={darkFlag}active={2 <= questionCount}>2</StepCircle>
-            {questionArrObj.length > 2 && <StepBar  active={3 <= questionCount} circleWidth={circleWidth}darkFlag={darkFlag}/> }
-            {questionArrObj.length > 2 && <StepCircle active={3 <= questionCount}darkFlag={darkFlag}>3</StepCircle> }
-            {questionArrObj.length > 3 && <StepBar  active={4 <= questionCount} circleWidth={circleWidth}darkFlag={darkFlag}/> }
-            {questionArrObj.length > 3 && <StepCircle active={4 <= questionCount}darkFlag={darkFlag}>4</StepCircle> }
-            {questionArrObj.length > 4 && <StepBar  active={5 <= questionCount} circleWidth={circleWidth}darkFlag={darkFlag}/> }
-            {questionArrObj.length > 4 && <StepCircle active={5 <= questionCount}darkFlag={darkFlag}>5</StepCircle> }
+            <StepCircle darkFlag={darkFlag} active={2 == questionCount} passed={1 < questionCount}>2</StepCircle>
+            {questionArrObj.length > 2 && <StepBar active={3 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
+            {questionArrObj.length > 2 && <StepCircle active={3 == questionCount} darkFlag={darkFlag} passed={2 < questionCount}>3</StepCircle> }
+            {questionArrObj.length > 3 && <StepBar active={4 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
+            {questionArrObj.length > 3 && <StepCircle active={4 == questionCount}darkFlag={darkFlag} passed={3 < questionCount}>4</StepCircle> }
+            {questionArrObj.length > 4 && <StepBar active={5 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
+            {questionArrObj.length > 4 && <StepCircle active={5 == questionCount}darkFlag={darkFlag} passed={4 < questionCount}>5</StepCircle> }
         </ProgressBar>
         {questionCount !== questionArrObj.length ?<Button darkFlag={darkFlag}onClick={()=>nextQuestionFunc(0)}>Next Question {darkFlag?'':'→'}</Button> :
           <Button darkFlag={darkFlag} onClick={()=>nextQuestionFunc(1)}>Finish</Button>
@@ -348,7 +348,7 @@ const ProgressBar = styled.div`
   margin-left: 35px;
   margin-top: 25px;
 `
-const StepCircle = styled.div<{active?:boolean, darkFlag?:boolean}>`
+const StepCircle = styled.div<{active?:boolean, darkFlag?:boolean, passed?:boolean}>`
   background-color: #b1bdd4;
   height: 20px;
   width: 20px;
@@ -357,11 +357,12 @@ const StepCircle = styled.div<{active?:boolean, darkFlag?:boolean}>`
   font-size: 10px;
   color: #929292;
   text-align: center;
-  ${(props) => props.active && `background-color: #399aff;color: #fff;`}   
-  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:17px;`}  
+  ${(props) => props.passed && `background-color: #399aff;color: #fff;`}
+  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:17px;`}
+  ${(props) => props.darkFlag && !props.active && props.passed && `background-color: #0f1523; color:#fff;border:1px solid #0ec88f;line-height:17px;`}  
   ${(props) => props.darkFlag && props.active &&
-  `      box-shadow: 0 0 4px 0 #934dfc;
-  border: solid 0.5px #2a64ff;
+  `box-shadow: 0 0 4px 0 #934dfc;
+  border: solid 0.5px #0ec88f;
   background-color: #04153e;`}
 `
 const StepBar = styled.div<{active?:boolean, circleWidth?:number, darkFlag?:boolean}>`

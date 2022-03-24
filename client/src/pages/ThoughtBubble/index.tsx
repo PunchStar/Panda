@@ -1,23 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import styled from "styled-components"
+import { useNavigate } from 'react-router-dom';
+import {useReactMediaRecorder} from "react-media-recorder";
 import panda from 'src/assets/images/panda@3x.png';
 import thought from 'src/assets/images/thought-bubble-gray.svg';
+import microphone from 'src/assets/images/microphone.svg';
+import microphoneDisable from 'src/assets/images/microphone-disabled.svg';
+import pencilpaper from 'src/assets/images/pencil-paper.svg'
 import closeImg from 'src/assets/images/x.svg'
+import AnswerAudio from "../AnswerAudio";
+import Thankyou from "../Thankyou";
+import AnswerText from "../AnswerText";
 import { useParams } from "react-router-dom";
 import { Config } from 'src/config/aws';
+import * as actions from '../../actions';
+import {v4 as uuidv4} from 'uuid';
+import axios from 'axios';
 
 export default function ThoughtBubble() {
   const [closeFlag, setCloseFlag] = useState(false);
-  const { partnerId, interviewId } = useParams();
+  const { partnerId, interviewId, user } = useParams();
+  const [userId, setUserID] = useState(user == undefined ? uuidv4() : user);
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   const partner_name = CObj.partner_name;
+  const [arrCount,setArrCount] = useState(0);
   const onCloseClick = () => {
-    if(CObj['x_button'] === '1')
+    if(CObj['x_button'] == '1')
       setCloseFlag(false);
     else
       setCloseFlag(true);
   }
+  const onStartClick = () => {
+    actions.log_event('thought-bubble', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+      let {data} = res;
+      console.log('result-event-log',data)
+    })
+    .catch(() => {
+    });
+  }
+  useEffect(() => {
+    actions.xmit_event('popup-generated', partnerId?.toUpperCase(), userId, interviewId).then(res => {
+      let {data} = res;
+      console.log('result-event-xmit',data)
+    })
+    .catch(() => {
+    });
+  }, [userId]);
   return (
     <ThoughtBubbleWrapper>
       <CloseImg onClick={onCloseClick} src={closeImg}/>
@@ -27,12 +56,12 @@ export default function ThoughtBubble() {
       </Message>
       <PandaImg src={panda}/>
       <Initial_cta>
-        <a href={`/input-selector/${partnerId}/${interviewId}`}>
+        <a href={`/input-selector/${partnerId}/${interviewId}/${userId}`} onClick={onStartClick}>
             Yes. Let's go!
         </a>
       </Initial_cta>
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </ThoughtBubbleWrapper>
   )
