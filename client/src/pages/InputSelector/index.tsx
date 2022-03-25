@@ -17,6 +17,7 @@ import { useParams } from "react-router-dom";
 import { Config } from 'src/config/aws';
 import * as actions from '../../actions';
 import {v4 as uuidv4} from 'uuid';
+let interval:any = null;
 
 export default function InputSelector() {
   const { status, error, startRecording, stopRecording } = useReactMediaRecorder({video: false, askPermissionOnMount:false});
@@ -26,21 +27,36 @@ export default function InputSelector() {
   const [micFlag, setMicFlag] = useState(true);
   const [step,setStep] = useState(0);
   const { partnerId, interviewId, user } = useParams();
-  const [userId, setUserID] = useState(user == undefined ? uuidv4() : user);
+  const [userId, setUserID] = useState(generateUSER(user));
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const thank_you_text = interviewArr.filter(item => item.name === interviewId)[0].thank_you_text || "Thank you for sharing your insights!";
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   const partner_name = CObj.partner_name;
-  const [arrCount,setArrCount] = useState(0);
-  const [darkFlag, setDarkFlag] = useState(partnerId?.toUpperCase() === 'DATASAUR' ? true : false);
+  // const [arrCount,setArrCount] = useState(0);
+  const darkFlag = partnerId?.toUpperCase() === 'DATASAUR' ? true : false;
   const [questionNum, setQuestionNum] = useState(0);
-
+  const [timer, setTimes] = useState(0);
+  function generateUSER(id : any) {
+    id = id || "";
+    let flag = 0;
+    const parts = id.split('-');
+    if (parts.length === 5 && 
+      parts[0].length === 8 && 
+      parts[1].length === 4 && 
+      parts[2].length === 4 && 
+      parts[3].length === 4 && 
+      parts[4].length === 12)
+      flag = 1;
+    if(flag === 1) return id;
+    return uuidv4();
+  }
   const onCloseClick = () => {
     setStep(2);
-    if(CObj['x_button'] == '1')
-      setCloseFlag(false);
-    else
-      setCloseFlag(true);
+    setCloseFlag(!closeFlag);
+    // if(CObj['x_button'] == '1')
+    //   setCloseFlag(false);
+    // else
+      // setCloseFlag(true);
   }
   const onClick = () => {
     actions.log_event('input-selector', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
@@ -51,12 +67,12 @@ export default function InputSelector() {
     });
     if(!isActive){
       startRecording();
-      console.log('===start_record=====')
+      // console.log('===start_record=====')
       // stopRecording();
     } 
     else {
         stopRecording();
-        console.log('===stop_record=====')      
+        // console.log('===stop_record=====')      
     }
     setIsActive(!isActive);
   }
@@ -73,15 +89,21 @@ export default function InputSelector() {
   useEffect(() => {
     if(status === 'recording'){
       setStep(1);
+      actions.log_event('give-permission', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+        let {data} = res;
+        console.log('result-event-log-','give-permission',data)
+
+      })
     }
-    console.log('>>>><<<<>>>><<')
-    console.log("status'",status)
-    console.log('>>>><<<<>>>><<')
+    // console.log('>>>><<<<>>>><<')
+    // console.log("status'",status)
+    // console.log('>>>><<<<>>>><<')
   },[status]);
   useEffect(()=>{
+    console.log('closeFlag', closeFlag)
     if(closeFlag){
-      const event_name = step === 0 ? 'input-selector' : (step === 1 && isTextActive) ? 'answer-text':(step === 1 && !isTextActive) ? 'answer-audio': 'input-selector';
-      actions.log_event(event_name, questionNum, '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+      const event_name = step === 0 ? 'input-selector' : isTextActive ? 'answer-text':'answer-audio';
+      actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
         console.log('result-event-log',data)
       })
@@ -91,31 +113,51 @@ export default function InputSelector() {
   },[closeFlag])
   useEffect(() => {
     if( error === 'permission_denied' || error === "no_specified_media_found" )
+    {  
       setMicFlag(false);
+      actions.log_event('deny-permission', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+        let {data} = res;
+        console.log('result-event-log-','deny-permission',data)
+      })
+      .catch(() => {
+      });
+    }
     else
       setMicFlag(true);
   }, [error]);
-  useEffect(() => {
-    const event_name = step === 0 ? 'input-selector' : (step === 1 && isTextActive) ? 'answer-text':(step === 1 && !isTextActive) ? 'answer-audio': 'input-selector';
-    window.setTimeout(() => {
-      actions.log_event(event_name, questionNum, '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+  useEffect(()=>{
+    interval = setInterval(()=>{
+      console.log('dddd',timer);
+      setTimes(timer + 1);
+    },1000)
+    if(timer > 60){
+      const event_name = step === 0 ? 'input-selector' : (step === 1 && isTextActive) ? 'answer-text':(step === 1 && !isTextActive) ? 'answer-audio': (step === 2)?'thank-you':'';
+      console.log('step... useEffect', step,event_name)
+      console.log('............ setTimeout', event_name, questionNum)
+      actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
         console.log('result-event-log',data)
       })
       .catch(() => {
-      });      
-    }, 60000);
-    if (step == 0) {
+      });    
+      clearInterval(interval);
+    }
+    return ()=>clearInterval(interval);
+  },[timer,step])
+  useEffect(() => {
+    console.log("step'",step)
+    setTimes(0);
+    if (step === 0) {
       console.log(document.referrer)
       if (!document.referrer.includes('thought-bubble') && !document.referrer.includes('integration'))
-        actions.xmit_event('popup-generated', partnerId, userId, interviewId).then(res => {
+        actions.xmit_event('popup-generated', partnerId, userId, interviewId, user?user:'').then(res => {
           let {data} = res;
           console.log('result-event-xmit',data)
         })
         .catch(() => {
         });
     }
-    if(step == 2) {
+    if(step === 2) {
       stopRecording();
       console.log('===stopRecording====')
       // navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
@@ -136,7 +178,7 @@ export default function InputSelector() {
           <BitmapImg src={bitmapImg}/>
           <DarkInputSelectorText>{"To help us prepare for your appointment, please mention which business needs you're hoping we can address."}</DarkInputSelectorText>
         </>
-      :CObj.input_selector_type != "b" ?
+      :CObj.input_selector_type !== "b" ?
       <PandaImg src={panda}/> : <InputSelectorText>{CObj.input_selector_text}</InputSelectorText>
       }
       <HowTalk darkFlag={darkFlag}>How should we talk?</HowTalk>
@@ -158,24 +200,24 @@ export default function InputSelector() {
       }
       <PoweredBy>
         *All feedback is recorded.<br/>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
       </PoweredBy></>: step === 1 ?
       isTextActive?
       <AnswerText userId={userId} darkFlag={darkFlag} onNextClick={(step,value,arrCount) => {
         setStep(step);
-        setArrCount(arrCount);
+        // setArrCount(arrCount);
         setUserID(value);
         // setUrlArr(urlArr);
       }}onLogClick={(flag, questionNumber)=>{
-        if(flag == 0)
-          actions.log_event('answer-text', questionNumber, '2', partnerId, interviewId, userId).then(res => {
+        if(flag === 0)
+        actions.log_event('answer-text', questionNumber.toString(), '2', partnerId, interviewId, userId).then(res => {
             let {data} = res;
             console.log('result-event-log',data)
           })
           .catch(() => {
           });     
         else
-        actions.log_event('answer-text', questionNumber, '3', partnerId, interviewId, userId).then(res => {
+        actions.log_event('answer-text', questionNumber.toString(), '3', partnerId, interviewId, userId).then(res => {
           let {data} = res;
           console.log('result-event-log',data)
         })
@@ -189,19 +231,19 @@ export default function InputSelector() {
       />:
        <AnswerAudio userId={userId} darkFlag={darkFlag} onNextClick={(step,value,arrCount) => {
         setStep(step);
-        setArrCount(arrCount);
+        // setArrCount(arrCount);
         // setUrlArr(urlArr);
         setUserID(value);
       }} onLogClick={(flag, questionNumber)=>{
-        if(flag == 0)
-        actions.log_event('answer-audio', questionNumber, '2', partnerId, interviewId, userId).then(res => {
+        if(flag === 0)
+        actions.log_event('answer-audio', questionNumber.toString(), '2', partnerId, interviewId, userId).then(res => {
           let {data} = res;
           console.log('result-event-log',data)
         })
         .catch(() => {
         });      
         else
-        actions.log_event('answer-audio', questionNumber, '3', partnerId, interviewId, userId).then(res => {
+        actions.log_event('answer-audio', questionNumber.toString(), '3', partnerId, interviewId, userId).then(res => {
           let {data} = res;
           console.log('result-event-log',data)
         })
@@ -214,7 +256,7 @@ export default function InputSelector() {
       }}/>: step === 2 ?
       <Thankyou partner={partnerId as any} onNextClick={(step) => {
         setStep(step);
-        actions.log_event('thank-you', 3 , '0', partnerId, interviewId, userId).then(res => {
+        actions.log_event('thank-you', '' , '0', partnerId, interviewId, userId).then(res => {
           let {data} = res;
           console.log('result-event-log',data)
         })

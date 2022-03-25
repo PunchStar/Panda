@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import styled from "styled-components"
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
@@ -15,7 +15,7 @@ interface ThankyouProps {
 }
 export default function Thankyou(props: ThankyouProps) {
   const { partner, thank_you_text, partner_name} = props;
-  const [darkFlag, setDarkFlag] = useState(partner?.toUpperCase() === 'DATASAUR' ? true : false);
+  const darkFlag = partner?.toUpperCase() === 'DATASAUR' ? true : false;
 
   return (
     <>
@@ -29,9 +29,9 @@ export default function Thankyou(props: ThankyouProps) {
       }
       {darkFlag?
       <PandaTalkDarkImg src={pandaDarkImg}/>:
-      <PandaTalkImg src={partner?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:pandaListeningImg}/>}
+      <PandaTalkImg src={partner?.toUpperCase() === 'ABRR1' ?pandaListeningImgConsider:pandaListeningImg}/>}
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </>
   )

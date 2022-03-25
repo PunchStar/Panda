@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
-import { v4 as uuidv4 } from 'uuid';
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import pandaListeningImgDark from 'src/assets/images/text-dark/panda-gradient@3x.png'
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
-import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
+// import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import bubbleImg from 'src/assets/images/text-dark/bubble@3x.png'
@@ -38,7 +37,7 @@ export default function AnswerText(props:AnswerTextProps) {
   //   "Where is Jobox falling short on understanding your needs?",
   //   "Is Jobox the primary way you manage all your jobs? If not, what could Jobox do to become your primary way?",
   // ];
-  const [hidden, setHidden] = useState(false);
+  const hidden = false;
   const [questionCount, setQuestionCount] = useState(1);
   const [url, setUrl] = useState([]);
   const createSigned = async() =>{
@@ -54,13 +53,13 @@ export default function AnswerText(props:AnswerTextProps) {
       console.log('result111',data)
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
+        console.log(message);
         return;
       }
       if(data.url){
         let tempUrl : any= url;
         tempUrl.push(data.url);
-        setUrl(tempUrl);
-        
+        setUrl(tempUrl);        
       }
     })
     .catch(() => {
@@ -71,13 +70,13 @@ export default function AnswerText(props:AnswerTextProps) {
     let totalWidth = 200 - questionArrObj.length * 20;
     totalWidth /= questionArrObj.length-1;
     setCircleWidth(totalWidth);
-  },[questionArrObj])
+  },[questionArrObj, circleWidth])
   useEffect(()=>{
     console.log('333')
     createSigned();
   },[questionCount]);
   const onCloseClick = () => {
-    if(CObj['x_button'] == '1')
+    if(CObj['x_button'] === '1')
       onClosesClick(false, questionCount);
     else
       onClosesClick(true, questionCount);
@@ -98,7 +97,7 @@ export default function AnswerText(props:AnswerTextProps) {
   }
   const nextQuestionFunc = async(flag:number) => {
     onLogClick(flag,questionCount);
-    if(flag == 1){
+    if(flag === 1){
       axios.defaults.baseURL = Config.api_url;
       axios.post("/send-audio-generated-email", {
           partner:partnerId?.toUpperCase(),
@@ -119,8 +118,8 @@ export default function AnswerText(props:AnswerTextProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaListeningImgDark:pandaListeningImg}/>
-      {hidden && <PandaListenImg src={pandaListeningImg}/>}
+      <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaListeningImgDark:pandaListeningImg}/>
+      {hidden && <PandaListenImg alt="" src={pandaListeningImg}/>}
       {darkFlag?
       <AnswerBubbleDark>
         <DarkBubbleImg src={bubbleImg} />
@@ -142,22 +141,22 @@ export default function AnswerText(props:AnswerTextProps) {
       <Bottom darkFlag={darkFlag}>
         {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
-            <StepCircle darkFlag={darkFlag} active={1 == questionCount} passed={0 < questionCount}>1</StepCircle>
+            <StepCircle darkFlag={darkFlag} active={1 === questionCount} passed={0 < questionCount}>1</StepCircle>
             <StepBar darkFlag={darkFlag} active={2 <= questionCount}  circleWidth={circleWidth}/>
-            <StepCircle darkFlag={darkFlag} active={2 == questionCount} passed={1 < questionCount}>2</StepCircle>
+            <StepCircle darkFlag={darkFlag} active={2 === questionCount} passed={1 < questionCount}>2</StepCircle>
             {questionArrObj.length > 2 && <StepBar active={3 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
-            {questionArrObj.length > 2 && <StepCircle active={3 == questionCount} darkFlag={darkFlag} passed={2 < questionCount}>3</StepCircle> }
+            {questionArrObj.length > 2 && <StepCircle active={3 === questionCount} darkFlag={darkFlag} passed={2 < questionCount}>3</StepCircle> }
             {questionArrObj.length > 3 && <StepBar active={4 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
-            {questionArrObj.length > 3 && <StepCircle active={4 == questionCount}darkFlag={darkFlag} passed={3 < questionCount}>4</StepCircle> }
+            {questionArrObj.length > 3 && <StepCircle active={4 === questionCount}darkFlag={darkFlag} passed={3 < questionCount}>4</StepCircle> }
             {questionArrObj.length > 4 && <StepBar active={5 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
-            {questionArrObj.length > 4 && <StepCircle active={5 == questionCount}darkFlag={darkFlag} passed={4 < questionCount}>5</StepCircle> }
+            {questionArrObj.length > 4 && <StepCircle active={5 === questionCount}darkFlag={darkFlag} passed={4 < questionCount}>5</StepCircle> }
         </ProgressBar>
         {questionCount !== questionArrObj.length ?<Button darkFlag={darkFlag}onClick={()=>nextQuestionFunc(0)}>Next Question {darkFlag?'':'→'}</Button> :
           <Button darkFlag={darkFlag} onClick={()=>nextQuestionFunc(1)}>Finish</Button>
         }
       </Bottom>
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </>
   )
@@ -278,41 +277,6 @@ const ArrowImg = styled.div`
     height: 28px;
     top: 0px;
     left: 79px;
-`
-const BlueCircle = styled.div`
-  position: absolute;
-  left: 89px;
-  top: 230px;
-  height: 65px;
-  width: 65px;
-  background-color: #399aff;
-  border-radius: 50%;
-  cursor: pointer; 
-  img {
-    position: absolute;
-    left: 21px;
-    top: 15px;
-  }
-`
-const Circle = styled.div<{redCircle:boolean}>`
-  position: absolute;
-  left: 83px;
-  top: 223px;
-  height: 76px;
-  width: 76px;
-  border-radius: 50%;
-  cursor: pointer;
-  img {
-    position: absolute;
-    left: 6px;
-    top: 6px;
-  }
-  ${(props) => props.redCircle && `border: 0px solid #f56f4d;`}   
-`
-const MicVolume = styled.img`
-  position: absolute;
-  left: 61px;
-  top: 203px;
 `
 const Bottom = styled.div<{darkFlag:boolean}>`
   position: absolute;

@@ -12,17 +12,18 @@ async function loginUser(credentials) {
         body: JSON.stringify(credentials)
     }).then(data => data.json())
 }
-export default function Login ({setToken}) {
+export default function Login ({setToken, partnerId}) {
     const [userName, setUserName] = useState();
     const [password, setPassword] = useState();
-    const handleSubmit = async e =>{
+    const handleSubmit = async e => {
         e.preventDefault();
         const token = await loginUser({
+            partnerId,
             userName,
             password
         });
         if(token.success)
-        setToken(token);
+            setToken(token);
     }
     return (
         // <div className="modal">

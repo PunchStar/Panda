@@ -1,38 +1,55 @@
 import React, { useState, useEffect  } from "react";
 import styled from "styled-components"
-import { useNavigate } from 'react-router-dom';
-import {useReactMediaRecorder} from "react-media-recorder";
 import panda from 'src/assets/images/panda@3x.png';
 import thought from 'src/assets/images/thought-bubble-gray.svg';
-import microphone from 'src/assets/images/microphone.svg';
-import microphoneDisable from 'src/assets/images/microphone-disabled.svg';
-import pencilpaper from 'src/assets/images/pencil-paper.svg'
 import closeImg from 'src/assets/images/x.svg'
-import AnswerAudio from "../AnswerAudio";
 import Thankyou from "../Thankyou";
-import AnswerText from "../AnswerText";
 import { useParams } from "react-router-dom";
 import { Config } from 'src/config/aws';
 import * as actions from '../../actions';
 import {v4 as uuidv4} from 'uuid';
-import axios from 'axios';
 
 export default function ThoughtBubble() {
   const [closeFlag, setCloseFlag] = useState(false);
   const { partnerId, interviewId, user } = useParams();
-  const [userId, setUserID] = useState(user == undefined ? uuidv4() : user);
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
+  const thank_you_text = interviewArr.filter(item => item.name === interviewId)[0].thank_you_text || "Thank you for sharing your insights!";
   const partner_name = CObj.partner_name;
-  const [arrCount,setArrCount] = useState(0);
+  const darkFlag = partnerId?.toUpperCase() === 'DATASAUR' ? true : false;
+  const userId = generateUSER(user);
+
+  window.setTimeout(() => {
+    actions.log_event('thought-bubble', '', '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+      let {data} = res;
+      console.log('result-event-log',data)
+    })
+    .catch(() => {
+    });      
+  }, 60000);
+  function generateUSER(id : any) {
+    id = id || "";
+    let flag = 0;
+    const parts = id.split('-');
+    if (parts.length === 5 && 
+      parts[0].length === 8 && 
+      parts[1].length === 4 && 
+      parts[2].length === 4 && 
+      parts[3].length === 4 && 
+      parts[4].length === 12)
+      flag = 1;
+    if(flag === 1) return id;
+    return uuidv4();
+  }
   const onCloseClick = () => {
-    if(CObj['x_button'] == '1')
-      setCloseFlag(false);
-    else
-      setCloseFlag(true);
+    // if(CObj['x_button'] == '1')
+      setCloseFlag(!closeFlag);
+    // else
+    //   setCloseFlag(true);
+    
   }
   const onStartClick = () => {
-    actions.log_event('thought-bubble', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+    actions.log_event('thought-bubble', '', '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
       console.log('result-event-log',data)
     })
@@ -40,14 +57,25 @@ export default function ThoughtBubble() {
     });
   }
   useEffect(() => {
-    actions.xmit_event('popup-generated', partnerId?.toUpperCase(), userId, interviewId).then(res => {
+    actions.xmit_event('popup-generated', partnerId?.toUpperCase(), userId, interviewId,user?user:'').then(res => {
       let {data} = res;
       console.log('result-event-xmit',data)
     })
     .catch(() => {
     });
   }, [userId]);
-  return (
+  useEffect(() => {
+    console.log('dd',closeFlag, CObj['x_button'])
+    if(closeFlag){
+      actions.log_event('thought-bubble', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+        let {data} = res;
+        console.log('result-event-log',data)
+      })
+      .catch(() => {
+      });
+  }
+  }, [closeFlag]); 
+  return (!closeFlag?
     <ThoughtBubbleWrapper>
       <CloseImg onClick={onCloseClick} src={closeImg}/>
       <ThoughBubbleImg src={thought}/>
@@ -55,15 +83,27 @@ export default function ThoughtBubble() {
         {interviewArr.filter(item => item.name === interviewId)[0].initial_question}
       </Message>
       <PandaImg src={panda}/>
-      <Initial_cta>
+      <InitialCTA>
         <a href={`/input-selector/${partnerId}/${interviewId}/${userId}`} onClick={onStartClick}>
             Yes. Let's go!
         </a>
-      </Initial_cta>
+      </InitialCTA>
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
       </PoweredBy>
-    </ThoughtBubbleWrapper>
+      </ThoughtBubbleWrapper>
+      : 
+    <InputSelectorWrapper partner={partnerId} darkFlag={darkFlag}>
+      
+      <Thankyou partner={partnerId as any} onNextClick={(step) => {
+        actions.log_event('thank-you', 3 , '0', partnerId, interviewId, userId).then(res => {
+          let {data} = res;
+          console.log('result-event-log',data)
+        })
+        .catch(() => {
+        });    
+      }} closeFlag={closeFlag as boolean} thank_you_text={thank_you_text} partner_name={partner_name} />
+      </InputSelectorWrapper>
   )
 }
 const ThoughtBubbleWrapper = styled.div`
@@ -155,7 +195,7 @@ const PoweredBy = styled.span`
   color: #999!important;
   padding-top:12px;
 `
-const Initial_cta = styled.div`
+const InitialCTA = styled.div`
   width: 100%;
   height: 30px;
   top: 380px;
@@ -189,4 +229,34 @@ const Initial_cta = styled.div`
     cursor: pointer;
 
   }
+`
+const InputSelectorWrapper = styled.div<{ partner: any, darkFlag:boolean}>`
+    position: absolute;
+    width: 400px;
+    height: 460px;
+    padding: 0;
+    top: 49%;
+    left: 50%;
+    margin: -225px 0 0 -200px;
+    background-color: #e6eefd;  
+    opacity: 1.0;
+    border-radius: 10px;
+    box-shadow: 0 0 12.5px -1px rgba(0, 0, 0, 0.1);   
+    ${(props) => props.darkFlag && `background-color:black!important;`}   
+    span {
+      text-align: center;
+      font-family: 'Muli', sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: -0.21px;
+      text-align: center;
+      color: #399aff;
+      cursor: pointer;
+    }
+    @media(min-width: 1000px){
+        transform: scale(1.5);
+    }
 `

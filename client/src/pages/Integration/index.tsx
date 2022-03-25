@@ -1,8 +1,5 @@
 import React, { useState } from "react"
 import styled from "styled-components"
-import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
-import closeImg from 'src/assets/images/x.svg'
-import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
 import { useParams, useLocation } from "react-router-dom";
 import axios from 'axios';
 import { Config } from 'src/config/aws';
@@ -20,7 +17,7 @@ export default function Integration() {
   const [integrationLink, setIntegrationLink] = useState('');
   const [integrationUserName, setIntegrationUserName] = useState('');
   const [integrationUserEmail, setIntegrationUserEmail] = useState('');
-  actions.xmit_event('popup-generated', partnerId?.toUpperCase(), user, interviewId).then(res => {
+  actions.xmit_event('popup-generated', partnerId?.toUpperCase(), user, interviewId, user).then(res => {
     let {data} = res;
     console.log('result-event-xmit',data)
   })
@@ -59,7 +56,7 @@ export default function Integration() {
         window.addEventListener('message', function(e) {
           // message that was passed from iframe page
           let e_data = e.data;
-          if (e_data.event_id == "smpldv_message") {
+          if (e_data.event_id === "smpldv_message") {
               let event_url = btoa(e_data.data.host_event_uri);
               let event_uuid = btoa(e_data.data.event_uuid);
               let invitee_uuid = btoa(e_data.data.invitee_uuid);

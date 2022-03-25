@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import Login from "src/components/Login/Login";
 import useToken from "src/useToken";
 import styled from "styled-components"
 import brandLogoImg from 'src/assets/images/panda@3x.png'
-import axios from 'axios';
-import { Config } from 'src/config/aws';
 
 export default function Admin() {
     const { token, setToken} = useToken();
     if(!token ){
-        return <Login setToken = {setToken} />
+        return <Login setToken = {setToken} partnerId = {''} />
     }
 
     return(

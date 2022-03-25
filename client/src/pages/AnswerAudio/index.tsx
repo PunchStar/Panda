@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import {useReactMediaRecorder} from "react-media-recorder";
-import { v4 as uuidv4 } from 'uuid';
 import microphone from 'src/assets/images/microphone-white.svg';
 import microphoneInit from 'src/assets/images/microphone-initial.svg';
 import micrphoneDark from 'src/assets/images/audio-states/icon-9@3x.png';
@@ -9,7 +8,7 @@ import micrphoneCircleDark from 'src/assets/images/audio-states/inner-circle-9@3
 import microphoneActive from 'src/assets/images/microphone-active.svg';
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
-import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
+// import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import micVolumeImg1 from 'src/assets/images/bar-1-8.svg'
@@ -65,7 +64,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   const [hidden, setHidden] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
   const [micVolume, setMicVolume] = useState(darkFlag?darkMicVolumeImg:micVolumeImg);
-  const [redCircle, setRedCircle] = useState(false);
+  // const [redCircle, setRedCircle] = useState(false);
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
@@ -136,11 +135,11 @@ export default function AnswerAudio(props:AnswerAudioProps) {
                     setMicVolume(darkFlag?darkMicVolumeImg:micVolumeImg);
                     break;
                 }
-                if (num == 0) {
-                  setRedCircle(true);
+                if (num === 0) {
+                  // setRedCircle(true);
                   setHidden(false);
               } else {
-                setRedCircle(false);
+                // setRedCircle(false);
                 setHidden(true);
               }
             }, 100);
@@ -161,10 +160,10 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   // }
   }
   const onCloseClick = () => {
-    if(CObj['x_button'] == '1')
-      onClosesClick(false,questionCount);
+    if(CObj['x_button'] === '1')
+      onClosesClick(false, questionCount);
     else
-      onClosesClick(true,questionCount);
+      onClosesClick(true, questionCount);
   }
   const uploadFile = async() => {
     if(!mediaBlobUrl) return;
@@ -183,6 +182,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       console.log('result114441',data)
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
+        console.log(message);
         return;
       }
       if(data.url){
@@ -214,7 +214,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   }
   const nextQuestionFunc = async(flag:number) => {
     onLogClick(flag,questionCount);
-    if(flag == 1){
+    if(flag === 1){
     axios.defaults.baseURL = Config.api_url;
     axios.post("/send-audio-generated-email", {
         partner:partnerId?.toUpperCase(),
@@ -232,11 +232,11 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   }
   useEffect(() => {
     console.log('444',status)
-    if(status == 'idle') {
+    if(status === 'idle') {
       // request_recording();
       startRecording()
      }
-     if(status == 'recording' && previewAudioStream){
+     if(status === 'recording' && previewAudioStream){
       if(volumeTimer)
         clearInterval(volumeTimer);
       request_recording()
@@ -252,14 +252,14 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     let totalWidth = 200 - questionArrObj.length * 20;
     totalWidth /= questionArrObj.length-1;
     setCircleWidth(totalWidth);
-  },[questionArrObj])
+  },[questionArrObj, circleWidth])
   // useEffect(()=>{
   //   console.log('333')
   //   if( questionCount  < questionArrObj.length)
   //     createSigned();
   // },[questionCount]);
   useEffect(()=>{
-    if(mediaBlobUrl && status == 'stopped'){
+    if(mediaBlobUrl && status === 'stopped'){
       console.log("555", questionCount,mediaBlobUrl )
       uploadFile();
     }
@@ -268,7 +268,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      <PandaTalkImg src={partnerId?.toUpperCase()== 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaDarkTalkImg:pandaListeningImg}/>
+      <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaDarkTalkImg:pandaListeningImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       {darkFlag && <DarkBubbleImg src={bubbleDarkImg} />}
       <Message darkFlag={darkFlag}> 
@@ -277,37 +277,37 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       {!darkFlag&&<ArrowImg/>}
       
       {hidden && <BlueCircle hidden>
-         <img src={microphone} />
+         <img alt="" src={microphone} />
       </BlueCircle>}
       <Circle redCircle>
-      {!darkFlag ? <img src={microphoneInit} /> : 
+      {!darkFlag ? <img alt="" src={microphoneInit} /> : 
         <DarkMicrophone>
           <DarkMicrophoneCircle src={micrphoneCircleDark}/>
           <DarkMicrophoneMain src={micrphoneDark}/>
         </DarkMicrophone>
        }
-        {hidden && !darkFlag &&<img src={microphoneActive} />}
+        {hidden && !darkFlag &&<img alt="" src={microphoneActive} />}
       </Circle>
       <MicVolume src={micVolume} darkFlag={darkFlag}/>
       <Bottom darkFlag={darkFlag}>
         {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
-            <StepCircle darkFlag={darkFlag} active={1 == questionCount} passed={0 < questionCount}>1</StepCircle>
+            <StepCircle darkFlag={darkFlag} active={1 === questionCount} passed={0 < questionCount}>1</StepCircle>
             <StepBar darkFlag={darkFlag} active={2 <= questionCount}  circleWidth={circleWidth}/>
-            <StepCircle darkFlag={darkFlag} active={2 == questionCount} passed={1 < questionCount}>2</StepCircle>
+            <StepCircle darkFlag={darkFlag} active={2 === questionCount} passed={1 < questionCount}>2</StepCircle>
             {questionArrObj.length > 2 && <StepBar active={3 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
-            {questionArrObj.length > 2 && <StepCircle active={3 == questionCount} darkFlag={darkFlag} passed={2 < questionCount}>3</StepCircle> }
+            {questionArrObj.length > 2 && <StepCircle active={3 === questionCount} darkFlag={darkFlag} passed={2 < questionCount}>3</StepCircle> }
             {questionArrObj.length > 3 && <StepBar active={4 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
-            {questionArrObj.length > 3 && <StepCircle active={4 == questionCount}darkFlag={darkFlag} passed={3 < questionCount}>4</StepCircle> }
+            {questionArrObj.length > 3 && <StepCircle active={4 === questionCount}darkFlag={darkFlag} passed={3 < questionCount}>4</StepCircle> }
             {questionArrObj.length > 4 && <StepBar active={5 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
-            {questionArrObj.length > 4 && <StepCircle active={5 == questionCount}darkFlag={darkFlag} passed={4 < questionCount}>5</StepCircle> }
+            {questionArrObj.length > 4 && <StepCircle active={5 === questionCount}darkFlag={darkFlag} passed={4 < questionCount}>5</StepCircle> }
         </ProgressBar>
         {questionCount !== questionArrObj.length ?<Button onClick={()=>nextQuestionFunc(0)} darkFlag={darkFlag}>Next Question →</Button> :
           <Button onClick={()=>nextQuestionFunc(1)} darkFlag={darkFlag}>Finish</Button>
         }
       </Bottom>
       <PoweredBy>
-        Powered by PerceptivePanda {partner_name != `` ? `for ` : ``} {partner_name}
+        Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
       </PoweredBy>
     </>
   )

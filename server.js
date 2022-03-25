@@ -8,6 +8,7 @@ import { createSignedUrl, listBucket, getObject }  from './lib/awssigned.js';
 import confg_question from './config/config_question.js';
 import Mixpanel from 'mixpanel';
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
 // const fileUpload = require('express-fileupload');
@@ -15,7 +16,7 @@ const app = express();
 dotenv.config();
 const env = process.env.NODE_ENV === "development" ? "dev" : (process.env.NODE_ENV === "production" ? "prod" : process.env.NODE_ENV);
 const partners = {};
-let partner_userID = null;
+let partner_userID = "Not Applicable";
 let integration_type = null;
 let intergration_result = null;
 let event_uuid = null;
@@ -65,21 +66,51 @@ app.use(function(req, res, next) {
 //Routes
 // require('./routes/FileUpload.routes')(app);
 // require('./routes/User.routes')(app);
+function isPandaID(id) {
+	id = id || "";
+	const parts = id.split('-');
+	if (parts.length == 5 && 
+		parts[0].length == 8 && 
+		parts[1].length == 4 && 
+		parts[2].length == 4 && 
+		parts[3].length == 4 && 
+		parts[4].length == 12)
+		return true;
+	return false;
+}
+function validate_interview_and_user(req, u_can_be_null) {
+	const partner = req.body.partner.toUpperCase();
+	const interview = req.body.interview;
+	let user = req.body.user;
+	if (u_can_be_null || !user) {
+		user = uuidv4();
+	}
+
+	if (!partner || !user || !interview || !partners[partner] || !partners[partner].interview_obj[interview]) {
+		return {};
+	}
+
+	return { partner, user, interview };
+}
+
 app.post('/login', async function(req, res) {
     console.log('login');
-    console.log('req', req.body);
-    if(req.body.userName == 'admin' && req.body.password == '99ppPass') {
-        res.json({success:true, token:'true'})
-    }
+	console.log('req', req.body);
+    if(req.body.userName.toLowerCase() == 'admin' && req.body.password.toLowerCase() == '99ppPass'.toLowerCase()) {
+        res.json({success:true, token:'1'})
+    } else if (req.body.partnerId && partners[req.body.partnerId.toUpperCase()] && req.body.userName.toLowerCase() == partners[req.body.partnerId.toUpperCase()].partner.toLowerCase() && req.body.password.toLowerCase() == partners[req.body.partnerId.toUpperCase()].password.toLowerCase()) {
+        res.json({success:true, token:'2'})
+	}
     else
         return res.json({success:false})
 });
 app.post('/input-selector/answer-audio', async function(req, res) {
 	console.log('- answer-audio -');
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
+	const { partner, user, interview } = validate_interview_and_user(req, false);
 	const ts = +new Date();
-	const filename = `${env}/${req.body.partner}/${req.body.interview}/${req.body.user}/${req.body.question_number}.${ts}.ogg`;
-	partner_userID = req.body.user || "Not Applicable";
+	const filename = `${env}/${partner}/${interview}/${user}/${req.body.question_number}.${ts}.ogg`;
+	// partner_userID = req.body.user || "Not Applicable";
 
 	let url = '';
     url = await createSignedUrl(filename, 'audio/ogg; codecs=opus');
@@ -90,10 +121,11 @@ app.post('/input-selector/answer-audio', async function(req, res) {
 
 app.post('/input-selector/answer-text', async function(req, res) {
 	console.log('- answer-text -');
+	const { partner, user, interview } = validate_interview_and_user(req, false);
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
 	const ts = +new Date();
-	const filename = `${env}/${req.body.partner}/${req.body.interview}/${req.body.user}/${req.body.question_number}.${ts}.txt`;
-	partner_userID = req.body.user || "Not Applicable";
+	const filename = `${env}/${partner}/${interview}/${user}/${req.body.question_number}.${ts}.txt`;
+	// partner_userID = user || "Not Applicable";
 
 	let url = '';
 	if (env !== 'local') {
@@ -262,7 +294,7 @@ app.get('/admin/media-download/:partner/:interview/:user/:filename', async funct
 		res.send(data);
 	} else if (file_type === 'txt') {
 		data = data.toString("utf8");
-		res.send(data);
+		res.send('<div style="white-space: pre-line;">' + data + '</div>');
 	} 
 });
 
@@ -343,23 +375,23 @@ app.post('/send-audio-generated-email', async function(req, res) {
 			}
 		}
 	}
+	res.json({success:true, data:'done'});
 });
 
 app.post('/integration/get', function(req, res) {
-	if (!req.body.partner) {
+	const { partner, user, interview } = validate_interview_and_user(req, !isPandaID(req.body.user));
+
+	if (!partner) {
 		return res.sendStatus(404);
 	}
-
-	let user = req.body.user;
-	let partner = req.body.partner;
-	let interview = req.body.interview;
-	partner_userID = req.body.user || "Not Applicable";
+	
+	// partner_userID = req.body.user || "Not Applicable";
 	integration_type = req.body.integration_type;
 
 	res.json(
 		{
 			partner,
-			user: partner_userID,
+			user: user,
 			interview,
 			integration: partners[partner].integration || false,
 			integration_link: (env !== "prod") ? "https://panda-demo-f236d.web.app/" : partners[partner].integration_app_link,
@@ -373,11 +405,13 @@ app.post('/integration/get', function(req, res) {
 });
 
 app.post('/input-selector/event', function(req, res) {
+	const { partner, user, interview } = validate_interview_and_user(req, !isPandaID(req.body.user));
+	
 	if (!req.body.partner) {
 		return res.sendStatus(404);
 	}
 
-	partner_userID = req.body.user || "Not Applicable";
+	// partner_userID = req.body.user || "Not Applicable";
 	intergration_result = Buffer.from(req.body.event_link || "", 'base64').toString("utf-8");
 	event_uuid = Buffer.from(req.body.event_uuid || "", 'base64').toString("utf-8");
 	invitee_uuid = Buffer.from(req.body.invitee_uuid || "", 'base64').toString("utf-8");
@@ -388,10 +422,10 @@ app.post('/input-selector/event', function(req, res) {
 	res.json(
 		{
 			partner:req.body.partner,
-			user:req.body.user,
+			user:user,
 			interview:req.body.interview,
-			answer_text_url: `/answer-text/${req.body.partner}/${req.body.interview}/${req.body.user}/1`, 
-			answer_audio_url: `/answer-audio/${req.body.partner}/${req.body.interview}/${req.body.user}/1`,
+			answer_text_url: `/answer-text/${req.body.partner}/${req.body.interview}/${user}/1`, 
+			answer_audio_url: `/answer-audio/${req.body.partner}/${req.body.interview}/${user}/1`,
 			partner_name: partners[req.body.partner].partner_name,
 			input_selector_type: partners[req.body.partner].input_selector_type === 'b' ? true : false,
 			input_selector_text: partners[req.body.partner].input_selector_text || '',
@@ -402,8 +436,7 @@ app.post('/input-selector/event', function(req, res) {
 // MixPanel
 app.post('/event', async function(req, res) {
 	console.log('- event -');
-	const { e, p, u, i, q, c } = req.body;
-
+	const { e, p, u, i, q, c, pu } = req.body;
 	if (!e || !p || !u || !i || !partners[p] || !partners[p].interview_obj || !partners[p].interview_obj[i]) {
 		return res.sendStatus(404);
 	}
@@ -424,8 +457,8 @@ app.post('/event', async function(req, res) {
 			os = "Android";
 	}
 	if (partner_userID === "Not Applicable")
-		partner_userID = u;
-	// console.log(req.body);return;
+		partner_userID = pu;
+	// console.log(req.body, partner_userID);return;
 
 	mixpanel.track(e, {
 		distinct_id: `${p}🐼${u}🐼${i}`,
