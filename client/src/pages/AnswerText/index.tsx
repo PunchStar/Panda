@@ -53,7 +53,8 @@ export default function AnswerText(props:AnswerTextProps) {
       let {data} = res;
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
-        // console.log(message);
+        if(process.env.NODE_ENV === 'development')
+             console.log(message);
         return;
       }
       if(data.url){

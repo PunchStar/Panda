@@ -94,8 +94,6 @@ function validate_interview_and_user(req, u_can_be_null) {
 }
 
 app.post('/login', async function(req, res) {
-    console.log('login');
-	console.log('req', req.body);
     if(req.body.userName && req.body.password && req.body.userName.toLowerCase() == 'admin' && req.body.password.toLowerCase() == '99ppPass'.toLowerCase()) {
         res.json({success:true, token:'1'})
     } else if (req.body.userName && req.body.password && req.body.partnerId && partners[req.body.partnerId.toUpperCase()] && req.body.userName.toLowerCase() == partners[req.body.partnerId.toUpperCase()].partner.toLowerCase() && req.body.password.toLowerCase() == partners[req.body.partnerId.toUpperCase()].password.toLowerCase()) {
@@ -105,7 +103,6 @@ app.post('/login', async function(req, res) {
         return res.json({success:false})
 });
 app.post('/input-selector/answer-audio', async function(req, res) {
-	console.log('- answer-audio -');
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
 	const { partner, user, interview } = validate_interview_and_user(req, false);
 	const ts = +new Date();
@@ -114,13 +111,11 @@ app.post('/input-selector/answer-audio', async function(req, res) {
 
 	let url = '';
     url = await createSignedUrl(filename, 'audio/ogg; codecs=opus');
-	console.log('-----------')
     return res.json({success: true, url: url});
 	
 });
 
 app.post('/input-selector/answer-text', async function(req, res) {
-	console.log('- answer-text -');
 	const { partner, user, interview } = validate_interview_and_user(req, false);
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
 	const ts = +new Date();
@@ -131,14 +126,12 @@ app.post('/input-selector/answer-text', async function(req, res) {
 	if (env !== 'local') {
 		url = await createSignedUrl(filename, 'text/plain');
 	}
-    console.log('-----------')
 
     return res.json({success: true, url: url});
 	
 });
 
 app.post('/input-selector/getobject', async function(req, res) {
-	console.log('- /input-selector/get-object -');
 	// const questions = partners[req.body.partner].interview_obj[req.body.interview].questions;
 	let data = null;
 	try {
@@ -146,8 +139,6 @@ app.post('/input-selector/getobject', async function(req, res) {
 	} catch(e) {
 		return res.sendStatus(404);
 	}
-    console.log('finelne',req.body.filename)
-    console.log(data)
     if (!req.body.text) {
 		res.setHeader('content-type', 'audio/ogg; codecs=opus');
         // res.send(data);
@@ -159,9 +150,6 @@ app.post('/input-selector/getobject', async function(req, res) {
 });
 
 const get_interviews_media = async(req, res, orig_list) => {
-	console.log('- get interview media -');
-
-	console.log("--1---")
 	if (orig_list == null)
 		return res.json({success: true, users: []});
 	const list = orig_list.map((elem) => {
@@ -172,8 +160,6 @@ const get_interviews_media = async(req, res, orig_list) => {
 		const [user, filename] = cleaned.split(/\//);
 		return { user, filename };
 	});
-    console.log("--2---",list.length)
-    // console.log('list',list)
 	const users_obj = {};
 	// let coun_i =  list.length > 40 ? 40: list.length;
 
@@ -227,7 +213,6 @@ const get_interviews_media = async(req, res, orig_list) => {
 		}
 	}
 	const users = [];
-    console.log("--3---")
 	Object.keys(users_obj).forEach((elem) => {
 		users_obj[elem] = users_obj[elem].sort((a, b) => parseInt(a.ts) - parseInt(b.ts));
 		users.push({
@@ -235,14 +220,11 @@ const get_interviews_media = async(req, res, orig_list) => {
 			files: users_obj[elem]
 		});
 	});
-    console.log("--4---")
-
 	users.sort((a, b) => parseInt(b.files[0].ts) - parseInt(a.files[0].ts));
     return res.json({success: true, users: users});
 	// res.render('admin/user-media', { layout: 'admin', title: 'Perceptive Panda Admin', partner: req.params.partner, interview: req.params.interview, users });
 }
 // const admin_logged_in_middleware = function (req, res, next) {
-// 	console.log("--admin -- logo --")
 // 	let user = auth(req);
 // 	if (user && user.name && user.pass) {
 // 		// Admin always works.
@@ -264,13 +246,11 @@ const get_interviews_media = async(req, res, orig_list) => {
 // });
 
 app.post('/admin/user-input/get-media', async function(req, res) {
-    console.log("<< admin - user-media >>");
 	const orig_list = await listBucket(`${env}/${req.body.partner}/${req.body.interview}/${req.body.user}`);
 	await get_interviews_media(req, res, orig_list);
 });
 
 app.get('/admin/media-download/:partner/:interview/:user/:filename', async function(req, res) {
-	console.log("<< admin - media-download >>");
 	const [question_num, ts, file_type] = req.params.filename.split(/\./);
 
 	if (file_type !== 'ogg' && file_type !== 'txt') {
@@ -299,7 +279,6 @@ app.get('/admin/media-download/:partner/:interview/:user/:filename', async funct
 });
 
 app.post('/send-audio-generated-email', async function(req, res) {
-	console.log("---- send email -----");
 	const email_to = partners[req.body.partner].email || [];
 
 	let site_url = `http://localhost:3000`;
@@ -338,7 +317,7 @@ app.post('/send-audio-generated-email', async function(req, res) {
 					}
 				})
 				.catch(function (error) {
-					console.log(error);
+					if (env === 'dev') console.log(error);
 				});
 			} else if (integration_type == null) {
 				if (email_send) {
@@ -438,7 +417,6 @@ app.post('/input-selector/event', function(req, res) {
 
 // MixPanel
 app.post('/event', async function(req, res) {
-	console.log('- event -');
 	const { e, p, u, i, q, c, pu } = req.body;
 	if (!e || !p || !u || !i || !partners[p] || !partners[p].interview_obj || !partners[p].interview_obj[i]) {
 		return res.sendStatus(404);

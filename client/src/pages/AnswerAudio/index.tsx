@@ -155,7 +155,6 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       // }
   // } else {
   //     // getUserMedia NOT supported. Yikes.
-  //     console.log('getUserMedia NOT supported');
   //     return false;
   // }
   }
@@ -181,13 +180,15 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       let {data} = res;
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
-        // console.log(message);
+        if(process.env.NODE_ENV === 'development')
+             console.log(message);
         return;
       }
       if(data.url){
         axios.defaults.baseURL = '';
         axios.put(data.url, file).then(res =>{
-          // console.log(res);
+          if(process.env.NODE_ENV === 'development')
+             console.log(res);
         })
         setQuestionCount(questionCount + 1);
         if(questionCount  < questionArrObj.length) {
@@ -195,11 +196,6 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         }
         if( questionCount  >= questionArrObj.length){
           clearInterval(volumeTimer);
-          // if (volume_timer) {
-          //   clearInterval(volume_timer);
-          //   volume_timer = null;
-          // }
-          // console.log('status', status)
           onNextClick(2, userId, questionArrObj.length);
         }
       }
@@ -219,7 +215,8 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       })
       .then(res => {
         let {data} = res;
-        // console.log('result-sendemail',data)
+        if(process.env.NODE_ENV === 'development')
+             console.log('result-sendemail',data)
       })
       .catch(() => {
       });
@@ -235,11 +232,6 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       if(volumeTimer)
         clearInterval(volumeTimer);
       request_recording()
-        // previewAudioStream.onaddtrack = (event) => {
-        //   console.log('onaddtracn')
-        //   console.log(event )
-        // }
-      // console.log('track');
      }
   },[status])
   useEffect(()=>{
@@ -247,14 +239,8 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     totalWidth /= questionArrObj.length-1;
     setCircleWidth(totalWidth);
   },[questionArrObj, circleWidth])
-  // useEffect(()=>{
-  //   console.log('333')
-  //   if( questionCount  < questionArrObj.length)
-  //     createSigned();
-  // },[questionCount]);
   useEffect(()=>{
     if(mediaBlobUrl && status === 'stopped'){
-      // console.log("555", questionCount,mediaBlobUrl )
       uploadFile();
     }
   },[mediaBlobUrl])
