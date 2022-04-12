@@ -62,7 +62,7 @@ export default function InputSelector() {
   const onClick = () => {
     actions.log_event('input-selector', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
-      console.log('result-event-log',data)
+      // console.log('result-event-log',data)
     })
     .catch(() => {
     });
@@ -80,7 +80,7 @@ export default function InputSelector() {
   const onTextClick = () => {
     actions.log_event('input-selector', '', '3', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
-      console.log('result-event-log',data)
+      // console.log('result-event-log',data)
     })
     .catch(() => {
     });
@@ -92,7 +92,7 @@ export default function InputSelector() {
       setStep(1);
       actions.log_event('give-permission', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        console.log('result-event-log',data)
+        // console.log('result-event-log',data)
       })
       .catch(() => {
       });
@@ -102,12 +102,11 @@ export default function InputSelector() {
     // console.log('>>>><<<<>>>><<')
   },[status]);
   useEffect(()=>{
-    console.log('closeFlag', closeFlag)
     if(closeFlag){
       const event_name = step === 0 ? 'input-selector' : isTextActive ? 'answer-text':'answer-audio';
       actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        console.log('result-event-log',data)
+        // console.log('result-event-log',data)
       })
       .catch(() => {
       });
@@ -118,7 +117,7 @@ export default function InputSelector() {
       setMicFlag(false);
       actions.log_event('deny-permission', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        console.log('result-event-log',data)
+        // console.log('result-event-log',data)
       })
       .catch(() => {
       });
@@ -128,7 +127,6 @@ export default function InputSelector() {
   }, [error]);
   useEffect(()=>{
     interval = setInterval(()=>{
-      // console.log('dddd',timer);
       setTimes(timer + 1);
     },1000)
     if(timer > 60){
@@ -137,7 +135,7 @@ export default function InputSelector() {
       // console.log('............ setTimeout', event_name, questionNum)
       actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        console.log('result-event-log',data)
+        // console.log('result-event-log',data)
       })
       .catch(() => {
       });    
@@ -146,28 +144,18 @@ export default function InputSelector() {
     return ()=>clearInterval(interval);
   },[timer,step])
   useEffect(() => {
-    console.log("step'",step)
     setTimes(0);
     if (step === 0) {
-      console.log(document.referrer)
       if (!document.referrer.includes('thought-bubble') && !document.referrer.includes('integration'))
         actions.xmit_event('popup-generated', partnerId, userId, interviewId, user?user:'').then(res => {
           let {data} = res;
-          console.log('result-event-xmit',data)
+          // console.log('result-event-xmit',data)
         })
         .catch(() => {
         });
     }
     if(step === 2) {
       stopRecording();
-      console.log('===stopRecording====')
-      // navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
-      //     console.log('stream',stream)
-      //     var track = stream.getTracks()[0];
-      //     track.stop();
-      // }).catch(function(err){
-      //   console.log('media error', err)
-      // })
     }
   },[step]);
   return (
@@ -213,14 +201,14 @@ export default function InputSelector() {
         if(flag === 0)
         actions.log_event('answer-text', questionNumber.toString(), '2', partnerId, interviewId, userId).then(res => {
             let {data} = res;
-            console.log('result-event-log',data)
+            // console.log('result-event-log',data)
           })
           .catch(() => {
           });     
         else
         actions.log_event('answer-text', questionNumber.toString(), '3', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          console.log('result-event-log',data)
+          // console.log('result-event-log',data)
         })
         .catch(() => {
         });      
@@ -239,14 +227,14 @@ export default function InputSelector() {
         if(flag === 0)
         actions.log_event('answer-audio', questionNumber.toString(), '2', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          console.log('result-event-log',data)
+          // console.log('result-event-log',data)
         })
         .catch(() => {
         });      
         else
         actions.log_event('answer-audio', questionNumber.toString(), '3', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          console.log('result-event-log',data)
+          // console.log('result-event-log',data)
         })
         .catch(() => {
         });
@@ -259,7 +247,7 @@ export default function InputSelector() {
         setStep(step);
         actions.log_event('thank-you', '' , '0', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          console.log('result-event-log',data)
+          // console.log('result-event-log',data)
         })
         .catch(() => {
         });    

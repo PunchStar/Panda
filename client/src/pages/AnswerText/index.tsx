@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect  } from "react"
 import styled from "styled-components"
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import pandaListeningImgDark from 'src/assets/images/text-dark/panda-gradient@3x.png'
@@ -51,10 +51,9 @@ export default function AnswerText(props:AnswerTextProps) {
     })
     .then(res => {
       let {data} = res;
-      console.log('result111',data)
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
-        console.log(message);
+        // console.log(message);
         return;
       }
       if(data.url){
@@ -67,13 +66,11 @@ export default function AnswerText(props:AnswerTextProps) {
     });
   }
   useEffect(()=>{
-    console.log('circlewidth', circleWidth)
     let totalWidth = 200 - questionArrObj.length * 20;
     totalWidth /= questionArrObj.length-1;
     setCircleWidth(totalWidth);
   },[questionArrObj, circleWidth])
   useEffect(()=>{
-    console.log('333')
     createSigned();
   },[questionCount]);
   const onCloseClick = () => {
@@ -83,12 +80,12 @@ export default function AnswerText(props:AnswerTextProps) {
       onClosesClick(true, questionCount);
   }
   const uploadFile = async() => {
-    console.log("upload", url);
+    // console.log("upload", url);
     axios.defaults.baseURL = '';
     axios.put(url[questionCount - 1], commetText).then(res =>{
-      console.log('3333333')
-      console.log(res);
-      console.log('3333333')
+      // console.log('3333333')
+      // console.log(res);
+      // console.log('3333333')
     })
     setCommentText('');
     setQuestionCount(questionCount + 1);
@@ -96,7 +93,10 @@ export default function AnswerText(props:AnswerTextProps) {
       onNextClick(2,userId, questionArrObj.length, url);
     }
   }
-  const nextQuestionFunc = async(flag:number) => {
+  const nextQuestionFunc = async(flag:number,disabled:boolean) => {
+    if(disabled) {
+      return;
+    }
     onLogClick(flag,questionCount);
     if(flag === 1){
       axios.defaults.baseURL = Config.api_url;
@@ -107,7 +107,7 @@ export default function AnswerText(props:AnswerTextProps) {
         })
         .then(res => {
           let {data} = res;
-          console.log('result-sendemail',data)
+          // console.log('result-sendemail',data)
         })
         .catch(() => {
         });
@@ -137,7 +137,7 @@ export default function AnswerText(props:AnswerTextProps) {
       </AnswerBubble>
       }
       <ResponseAnswer darkFlag={darkFlag}>
-        <textarea value={commetText} onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
+        <textarea value={commetText} autoFocus onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
       </ResponseAnswer>
       <Bottom darkFlag={darkFlag}>
         {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
@@ -152,8 +152,8 @@ export default function AnswerText(props:AnswerTextProps) {
             {questionArrObj.length > 4 && <StepBar active={5 <= questionCount} circleWidth={circleWidth} darkFlag={darkFlag}/> }
             {questionArrObj.length > 4 && <StepCircle active={5 === questionCount}darkFlag={darkFlag} passed={4 < questionCount}>5</StepCircle> }
         </ProgressBar>
-        {questionCount !== questionArrObj.length ?<Button darkFlag={darkFlag}onClick={()=>nextQuestionFunc(0)}>Next Question {darkFlag?'':'→'}</Button> :
-          <Button darkFlag={darkFlag} onClick={()=>nextQuestionFunc(1)}>Finish</Button>
+        {questionCount !== questionArrObj.length ?<Button darkFlag={darkFlag} onClick={()=>nextQuestionFunc(0, commetText === ''?true:false)} disabled={commetText === ''?true:false}>Next Question {darkFlag?'':'→'}</Button> :
+          <Button darkFlag={darkFlag} onClick={()=>nextQuestionFunc(1, commetText === ''?true:false)} greenColor disabled={commetText === ''?true:false}>Finish</Button>
         }
       </Bottom>
       <PoweredBy>
@@ -348,7 +348,7 @@ const StepBar = styled.div<{active?:boolean, circleWidth?:number, darkFlag?:bool
   ${(props) => props.darkFlag && `height:1px; background-color:#2a64ff;`}   
 
 `
-const Button = styled.span<{darkFlag:boolean}>`
+const Button = styled.span<{darkFlag:boolean, greenColor?:boolean, disabled?:boolean}>`
   position: absolute;
   padding: 5px 0 5px 0;
   margin: 0 0 0 0;
@@ -392,6 +392,10 @@ const Button = styled.span<{darkFlag:boolean}>`
     -webkit-mask-composite: xor;
             mask-composite: exclude;
     `}
+    ${(props)=> props.greenColor && ' background-color: #4bc33d!important;'}
+    ${(props)=> props.disabled && ` opacity: 0.2;
+    cursor: default;
+    pointer-events: none;`}
 `
 const PoweredBy = styled.span`
   position: absolute;

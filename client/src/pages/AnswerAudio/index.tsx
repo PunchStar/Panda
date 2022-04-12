@@ -76,7 +76,6 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   // const [media_recorder, setMediaRecorder] = useState<MediaRecorder>();
 
   function get_volume_meter(stream:any) {
-    console.log('---average_volume----')
     const audioContext = new AudioContext();
     const analyser = audioContext.createAnalyser();
     const microphone = audioContext.createMediaStreamSource(stream);
@@ -180,23 +179,19 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     })
     .then(res => {
       let {data} = res;
-      console.log('result114441',data)
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
-        console.log(message);
+        // console.log(message);
         return;
       }
       if(data.url){
         axios.defaults.baseURL = '';
         axios.put(data.url, file).then(res =>{
-          console.log('3333333')
-          console.log(res);
-          console.log('3333333')
+          // console.log(res);
         })
         setQuestionCount(questionCount + 1);
         if(questionCount  < questionArrObj.length) {
           startRecording();
-          console.log('--startrecord---')
         }
         if( questionCount  >= questionArrObj.length){
           clearInterval(volumeTimer);
@@ -204,7 +199,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
           //   clearInterval(volume_timer);
           //   volume_timer = null;
           // }
-          console.log('status', status)
+          // console.log('status', status)
           onNextClick(2, userId, questionArrObj.length);
         }
       }
@@ -224,7 +219,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       })
       .then(res => {
         let {data} = res;
-        console.log('result-sendemail',data)
+        // console.log('result-sendemail',data)
       })
       .catch(() => {
       });
@@ -232,7 +227,6 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     await stopRecording();
   }
   useEffect(() => {
-    console.log('444',status)
     if(status === 'idle') {
       // request_recording();
       startRecording()
@@ -245,11 +239,10 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         //   console.log('onaddtracn')
         //   console.log(event )
         // }
-      console.log('track');
+      // console.log('track');
      }
   },[status])
   useEffect(()=>{
-    console.log('circlewidth', circleWidth)
     let totalWidth = 200 - questionArrObj.length * 20;
     totalWidth /= questionArrObj.length-1;
     setCircleWidth(totalWidth);
@@ -261,7 +254,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   // },[questionCount]);
   useEffect(()=>{
     if(mediaBlobUrl && status === 'stopped'){
-      console.log("555", questionCount,mediaBlobUrl )
+      // console.log("555", questionCount,mediaBlobUrl )
       uploadFile();
     }
   },[mediaBlobUrl])
@@ -304,7 +297,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
             {questionArrObj.length > 4 && <StepCircle active={5 === questionCount}darkFlag={darkFlag} passed={4 < questionCount}>5</StepCircle> }
         </ProgressBar>
         {questionCount !== questionArrObj.length ?<Button onClick={()=>nextQuestionFunc(0)} darkFlag={darkFlag}>Next Question →</Button> :
-          <Button onClick={()=>nextQuestionFunc(1)} darkFlag={darkFlag}>Finish</Button>
+          <Button onClick={()=>nextQuestionFunc(1)} darkFlag={darkFlag} greenColor>Finish</Button>
         }
       </Bottom>
       <PoweredBy>
@@ -494,7 +487,7 @@ const StepBar = styled.div<{active?:boolean, circleWidth?:number, darkFlag?:bool
   ${(props) => props.circleWidth && `width: ${props.circleWidth}px;`}   
   ${(props) => props.darkFlag && `height:1px; background-color:#2a64ff;`}   
 `
-const Button = styled.span<{darkFlag:boolean}>`
+const Button = styled.span<{darkFlag:boolean, greenColor?:boolean}>`
   position: absolute;
   padding: 5px 0 5px 0;
   margin: 0 0 0 0;
@@ -538,6 +531,7 @@ const Button = styled.span<{darkFlag:boolean}>`
     -webkit-mask-composite: xor;
             mask-composite: exclude;
     `}
+    ${(props)=> props.greenColor && ' background-color: #4bc33d!important;'}
 `
 const PoweredBy = styled.span`
   position: absolute;

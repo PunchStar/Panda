@@ -22,7 +22,7 @@ export default function ThoughtBubble() {
   window.setTimeout(() => {
     actions.log_event('thought-bubble', '', '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
-      console.log('result-event-log',data)
+      // console.log('result-event-log',data)
     })
     .catch(() => {
     });      
@@ -51,7 +51,7 @@ export default function ThoughtBubble() {
   const onStartClick = () => {
     actions.log_event('thought-bubble', '', '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
-      console.log('result-event-log',data)
+      // console.log('result-event-log',data)
     })
     .catch(() => {
     });
@@ -59,17 +59,16 @@ export default function ThoughtBubble() {
   useEffect(() => {
     actions.xmit_event('popup-generated', partnerId?.toUpperCase(), userId, interviewId,user?user:'').then(res => {
       let {data} = res;
-      console.log('result-event-xmit',data)
+      // console.log('result-event-xmit',data)
     })
     .catch(() => {
     });
   }, [userId]);
   useEffect(() => {
-    console.log('dd',closeFlag, CObj['x_button'])
     if(closeFlag){
       actions.log_event('thought-bubble', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        console.log('result-event-log',data)
+        // console.log('result-event-log',data)
       })
       .catch(() => {
       });
@@ -98,7 +97,6 @@ export default function ThoughtBubble() {
       <Thankyou partner={partnerId as any} onNextClick={(step) => {
         actions.log_event('thank-you', 3 , '0', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          console.log('result-event-log',data)
         })
         .catch(() => {
         });    

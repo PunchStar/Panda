@@ -25,11 +25,11 @@ export default function UserLayout() {
     // const handleUrlChange =(url:string, e:any)=>{
     const handleUrlChange =(e:any)=>{
         const file = e.target.files;
-        console.log('handleurlchange', transcriptURL, e);
+        // console.log('handleurlchange', transcriptURL, e);
         axios.defaults.baseURL = '';
         if(transcriptURL) {
             axios.put(transcriptURL , file[0]).then(res =>{
-                console.log(res);
+                // console.log(res);
                 alert('Transcript uploaded');
                 window.location.href='';
             })
@@ -64,12 +64,12 @@ export default function UserLayout() {
         })
         .then(res => {
           let {data} = res;
-          console.log('result114441', data)
+        //   console.log('result114441', data)
           setUsers(data.users);
           setLoading(false);
           if(!data.success) {
             let message = `While uploading files, unknown errors was occured!`
-            console.log(message);
+            // console.log(message);
             return;
           }
         })
