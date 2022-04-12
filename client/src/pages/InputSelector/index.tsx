@@ -62,8 +62,7 @@ export default function InputSelector() {
   const onClick = () => {
     actions.log_event('input-selector', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
-      if(process.env.NODE_ENV === 'development')
-        console.log('result-event-log',data)
+      actions.debug_console('result-event-log',data)
     })
     .catch(() => {
     });
@@ -78,8 +77,8 @@ export default function InputSelector() {
   const onTextClick = () => {
     actions.log_event('input-selector', '', '3', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
-      if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+      actions.debug_console('result-event-log',data)
+
     })
     .catch(() => {
     });
@@ -91,8 +90,8 @@ export default function InputSelector() {
       setStep(1);
       actions.log_event('give-permission', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+        actions.debug_console('result-event-log',data)
+
       })
       .catch(() => {
       });
@@ -103,8 +102,8 @@ export default function InputSelector() {
       const event_name = step === 0 ? 'input-selector' : isTextActive ? 'answer-text':'answer-audio';
       actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+        actions.debug_console('result-event-log',data)
+
       })
       .catch(() => {
       });
@@ -115,8 +114,8 @@ export default function InputSelector() {
       setMicFlag(false);
       actions.log_event('deny-permission', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+        actions.debug_console('result-event-log',data)
+
       })
       .catch(() => {
       });
@@ -132,8 +131,8 @@ export default function InputSelector() {
       const event_name = step === 0 ? 'input-selector' : (step === 1 && isTextActive) ? 'answer-text':(step === 1 && !isTextActive) ? 'answer-audio': (step === 2)?'thank-you':'';
       actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+        actions.debug_console('result-event-log',data)
+
       })
       .catch(() => {
       });    
@@ -147,8 +146,8 @@ export default function InputSelector() {
       if (!document.referrer.includes('thought-bubble') && !document.referrer.includes('integration'))
         actions.xmit_event('popup-generated', partnerId, userId, interviewId, user?user:'').then(res => {
           let {data} = res;
-          if(process.env.NODE_ENV === 'development')
-             console.log('result-event-xmit',data)
+          actions.debug_console('result-event-log',data)
+
         })
         .catch(() => {
         });
@@ -200,16 +199,16 @@ export default function InputSelector() {
         if(flag === 0)
         actions.log_event('answer-text', questionNumber.toString(), '2', partnerId, interviewId, userId).then(res => {
             let {data} = res;
-            if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+            actions.debug_console('result-event-log',data)
+
           })
           .catch(() => {
           });     
         else
         actions.log_event('answer-text', questionNumber.toString(), '3', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+          actions.debug_console('result-event-log',data)
+
         })
         .catch(() => {
         });      
@@ -228,16 +227,16 @@ export default function InputSelector() {
         if(flag === 0)
         actions.log_event('answer-audio', questionNumber.toString(), '2', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+          actions.debug_console('result-event-log',data)
+
         })
         .catch(() => {
         });      
         else
         actions.log_event('answer-audio', questionNumber.toString(), '3', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+          actions.debug_console('result-event-log',data)
+
         })
         .catch(() => {
         });
@@ -250,8 +249,8 @@ export default function InputSelector() {
         setStep(step);
         actions.log_event('thank-you', '' , '0', partnerId, interviewId, userId).then(res => {
           let {data} = res;
-          if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+          actions.debug_console('result-event-log',data)
+
         })
         .catch(() => {
         });    

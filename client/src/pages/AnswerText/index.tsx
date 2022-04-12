@@ -11,6 +11,7 @@ import bubbleImg from 'src/assets/images/text-dark/bubble@3x.png'
 import { Config } from 'src/config/aws';
 import { useParams } from "react-router-dom";
 import closeDarkImg from 'src/assets/images/input-dark/rectangle-x@3x.png'
+import * as actions from '../../actions';
 
 import axios from 'axios';
 
@@ -53,8 +54,7 @@ export default function AnswerText(props:AnswerTextProps) {
       let {data} = res;
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
-        if(process.env.NODE_ENV === 'development')
-             console.log(message);
+        actions.debug_console('uploading',message)
         return;
       }
       if(data.url){
@@ -81,12 +81,9 @@ export default function AnswerText(props:AnswerTextProps) {
       onClosesClick(true, questionCount);
   }
   const uploadFile = async() => {
-    // console.log("upload", url);
     axios.defaults.baseURL = '';
     axios.put(url[questionCount - 1], commetText).then(res =>{
-      // console.log('3333333')
-      // console.log(res);
-      // console.log('3333333')
+       actions.debug_console('uploadFile',res)
     })
     setCommentText('');
     setQuestionCount(questionCount + 1);
@@ -108,7 +105,8 @@ export default function AnswerText(props:AnswerTextProps) {
         })
         .then(res => {
           let {data} = res;
-          // console.log('result-sendemail',data)
+          actions.debug_console('result-sendemail',data)
+
         })
         .catch(() => {
         });

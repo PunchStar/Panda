@@ -22,8 +22,8 @@ export default function ThoughtBubble() {
   window.setTimeout(() => {
     actions.log_event('thought-bubble', '', '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
-      if(process.env.NODE_ENV === 'development')
-          console.log('result-event-log',data)
+      actions.debug_console('result-event-log',data)
+
     })
     .catch(() => {
     });      
@@ -52,8 +52,7 @@ export default function ThoughtBubble() {
   const onStartClick = () => {
     actions.log_event('thought-bubble', '', '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
       let {data} = res;
-      if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+      actions.debug_console('result-event-log',data)
     })
     .catch(() => {
     });
@@ -61,8 +60,7 @@ export default function ThoughtBubble() {
   useEffect(() => {
     actions.xmit_event('popup-generated', partnerId?.toUpperCase(), userId, interviewId,user?user:'').then(res => {
       let {data} = res;
-      if(process.env.NODE_ENV === 'development')
-             console.log('result-event-xmit',data)
+      actions.debug_console('result-event-xmit',data)
     })
     .catch(() => {
     });
@@ -71,8 +69,7 @@ export default function ThoughtBubble() {
     if(closeFlag){
       actions.log_event('thought-bubble', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        if(process.env.NODE_ENV === 'development')
-             console.log('result-event-log',data)
+        actions.debug_console('result-event-log',data)
       })
       .catch(() => {
       });

@@ -34,6 +34,7 @@ import { useParams }  from "react-router-dom";
 import closeDarkImg from 'src/assets/images/input-dark/rectangle-x@3x.png'
 import pandaDarkTalkImg from 'src/assets/images/audio-dark/panda-gradient@3x.png'
 import bubbleDarkImg from 'src/assets/images/audio-dark/bubble-full@3x.png';
+import * as actions from '../../actions';
 
 // declare var MediaRecorder: any;
 import { Config } from 'src/config/aws';
@@ -180,15 +181,14 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       let {data} = res;
       if(!data.success) {
         let message = `While uploading files, unknown errors was occured!`
-        if(process.env.NODE_ENV === 'development')
-             console.log(message);
+        actions.debug_console('Uploading_ERROR',message);
         return;
       }
       if(data.url){
         axios.defaults.baseURL = '';
         axios.put(data.url, file).then(res =>{
-          if(process.env.NODE_ENV === 'development')
-             console.log(res);
+          actions.debug_console('uploading',res)
+
         })
         setQuestionCount(questionCount + 1);
         if(questionCount  < questionArrObj.length) {
@@ -215,8 +215,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       })
       .then(res => {
         let {data} = res;
-        if(process.env.NODE_ENV === 'development')
-             console.log('result-sendemail',data)
+        actions.debug_console('result-sendemail',data);
       })
       .catch(() => {
       });

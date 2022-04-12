@@ -21,3 +21,7 @@ export const log_event = (event_name, question_number, code, partner, interview,
         c: code
     });
 }
+export const debug_console = (console_type, console_content) =>{
+    if(process.env.NODE_ENV === 'development')
+        console.log(console_type,console_content);
+}

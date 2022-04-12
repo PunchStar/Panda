@@ -7,6 +7,7 @@ import axios from 'axios';
 import brandLogoImg from 'src/assets/images/panda@3x.png'
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
+import * as actions from '../../actions';
 
 export default function UserLayout() {
     const { token, setToken} = useToken();
@@ -28,8 +29,6 @@ export default function UserLayout() {
         axios.defaults.baseURL = '';
         if(transcriptURL) {
             axios.put(transcriptURL , file[0]).then(res =>{
-                if(process.env.NODE_ENV === 'development')
-                     console.log(res);
                 alert('Transcript uploaded');
                 window.location.href='';
             })
@@ -68,8 +67,7 @@ export default function UserLayout() {
           setLoading(false);
           if(!data.success) {
             let message = `While uploading files, unknown errors was occured!`
-            if(process.env.NODE_ENV === 'development')
-             console.log(message);
+            actions.debug_console('Upload',message)
             return;
           }
         })
