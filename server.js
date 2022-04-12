@@ -96,9 +96,9 @@ function validate_interview_and_user(req, u_can_be_null) {
 app.post('/login', async function(req, res) {
     console.log('login');
 	console.log('req', req.body);
-    if(req.body.userName.toLowerCase() == 'admin' && req.body.password.toLowerCase() == '99ppPass'.toLowerCase()) {
+    if(req.body.userName && req.body.password && req.body.userName.toLowerCase() == 'admin' && req.body.password.toLowerCase() == '99ppPass'.toLowerCase()) {
         res.json({success:true, token:'1'})
-    } else if (req.body.partnerId && partners[req.body.partnerId.toUpperCase()] && req.body.userName.toLowerCase() == partners[req.body.partnerId.toUpperCase()].partner.toLowerCase() && req.body.password.toLowerCase() == partners[req.body.partnerId.toUpperCase()].password.toLowerCase()) {
+    } else if (req.body.userName && req.body.password && req.body.partnerId && partners[req.body.partnerId.toUpperCase()] && req.body.userName.toLowerCase() == partners[req.body.partnerId.toUpperCase()].partner.toLowerCase() && req.body.password.toLowerCase() == partners[req.body.partnerId.toUpperCase()].password.toLowerCase()) {
         res.json({success:true, token:'2'})
 	}
     else
@@ -317,17 +317,18 @@ app.post('/send-audio-generated-email', async function(req, res) {
 	if (partners[req.body.partner].integration) {
 		if (env !== 'local') {
 			if (integration_type == "calendly") {
-				const paired_event_endpoint = (env !== "prod") ? "https://hooks.zapier.com/hooks/catch/11643492/bi7hcl9/silent/" : "https://hooks.zapier.com/hooks/catch/11643492/bsmjzr1/silent/";
+				const paired_event_endpoint = (env !== "prod") ? "https://hooks.zapier.com/hooks/catch/11643492/b8krv0b/silent/" : "https://hooks.zapier.com/hooks/catch/11643492/bsmjzr1/silent/";
 				axios.get(paired_event_endpoint, {
 					params: {
 						e_uri: event_uuid,
 						i_uri: invitee_uuid,
-						mid: link
+						mid: link,
+						pid: 'PARTNER_FIELD_FROM_CONFIG_QUESTIONSJS_GOES_HERE'
 					}
 				})
-				.then(function(response) {
+				.then(async function(response) {
 					if (email_send) {
-						send_email(
+						await send_email(
 							'support@perceptivepanda.com', 
 							email_to, 
 							'Newly scheduled demo with interview', 
@@ -375,7 +376,7 @@ app.post('/send-audio-generated-email', async function(req, res) {
 			}
 		}
 	}
-	res.json({success:true, data:'done'});
+	// res.json({success:true, data:'done'});
 });
 
 app.post('/integration/get', function(req, res) {
@@ -400,13 +401,16 @@ app.post('/integration/get', function(req, res) {
 				firstname: req.query.firstname, 
 				lastname: req.query.lastname, 
 				email: req.query.email
-			}
+			},
+			calendlyAuth: partners[partner].calendlyAuth || false,
+			calendlyHostLink: (env !== "prod") ? "https://calendly.com/perceptivepanda-demo/15min" : partners[partner].calendlyHostLink,
+			additionalCalendlyParams: partners[partner].additionalCalendlyParams || false,
 		});
 });
 
 app.post('/input-selector/event', function(req, res) {
 	const { partner, user, interview } = validate_interview_and_user(req, !isPandaID(req.body.user));
-	
+
 	if (!req.body.partner) {
 		return res.sendStatus(404);
 	}
@@ -428,7 +432,6 @@ app.post('/input-selector/event', function(req, res) {
 			answer_audio_url: `/answer-audio/${req.body.partner}/${req.body.interview}/${user}/1`,
 			partner_name: partners[req.body.partner].partner_name,
 			input_selector_type: partners[req.body.partner].input_selector_type === 'b' ? true : false,
-			input_selector_text: partners[req.body.partner].input_selector_text || '',
 			x_button: partners[req.body.partner].x_button || 0
 		});
 });

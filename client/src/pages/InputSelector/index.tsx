@@ -29,6 +29,7 @@ export default function InputSelector() {
   const { partnerId, interviewId, user } = useParams();
   const [userId, setUserID] = useState(generateUSER(user));
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
+  const input_selector_text = interviewArr.filter(item => item.name === interviewId)[0].input_selector_text || "";
   const thank_you_text = interviewArr.filter(item => item.name === interviewId)[0].thank_you_text || "Thank you for sharing your insights!";
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   const partner_name = CObj.partner_name;
@@ -91,9 +92,10 @@ export default function InputSelector() {
       setStep(1);
       actions.log_event('give-permission', '', '2', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        console.log('result-event-log-','give-permission',data)
-
+        console.log('result-event-log',data)
       })
+      .catch(() => {
+      });
     }
     // console.log('>>>><<<<>>>><<')
     // console.log("status'",status)
@@ -112,12 +114,11 @@ export default function InputSelector() {
     }
   },[closeFlag])
   useEffect(() => {
-    if( error === 'permission_denied' || error === "no_specified_media_found" )
-    {  
+    if( error === 'permission_denied' || error === "no_specified_media_found" ) {  
       setMicFlag(false);
       actions.log_event('deny-permission', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        console.log('result-event-log-','deny-permission',data)
+        console.log('result-event-log',data)
       })
       .catch(() => {
       });
@@ -127,13 +128,13 @@ export default function InputSelector() {
   }, [error]);
   useEffect(()=>{
     interval = setInterval(()=>{
-      console.log('dddd',timer);
+      // console.log('dddd',timer);
       setTimes(timer + 1);
     },1000)
     if(timer > 60){
       const event_name = step === 0 ? 'input-selector' : (step === 1 && isTextActive) ? 'answer-text':(step === 1 && !isTextActive) ? 'answer-audio': (step === 2)?'thank-you':'';
-      console.log('step... useEffect', step,event_name)
-      console.log('............ setTimeout', event_name, questionNum)
+      // console.log('step... useEffect', step,event_name)
+      // console.log('............ setTimeout', event_name, questionNum)
       actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
         console.log('result-event-log',data)
@@ -179,7 +180,7 @@ export default function InputSelector() {
           <DarkInputSelectorText>{"To help us prepare for your appointment, please mention which business needs you're hoping we can address."}</DarkInputSelectorText>
         </>
       :CObj.input_selector_type !== "b" ?
-      <PandaImg src={panda}/> : <InputSelectorText>{CObj.input_selector_text}</InputSelectorText>
+      <PandaImg src={panda}/> : <InputSelectorText>{input_selector_text}</InputSelectorText>
       }
       <HowTalk darkFlag={darkFlag}>How should we talk?</HowTalk>
       <SpeakButton onClick={onClick} micFlag={micFlag} darkFlag={darkFlag}>

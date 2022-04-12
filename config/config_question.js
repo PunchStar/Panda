@@ -2,6 +2,9 @@ export default [
     {
         "partner_name": "Test",
         "partner": "TEST",
+        "calendlyAuth": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjQ0ODU2NTc4LCJqdGkiOiI3YzA2NzRlNy1mZDgzLTRkZjAtYWQ2Ni04M2IxMWMxMzI3Y2UiLCJ1c2VyX3V1aWQiOiI5MTNjYWIyYi05NTIxLTQ2ODMtOTlkMy0xYjQ5OWM1MjIzNWQifQ.8iYHT1sK_sHWP1Ze6Xh0kLIjqTq-n-dyHrNaZC9ruVk",
+        "calendlyHostLink": "https://calendly.com/perceptivepanda-demo/15min",
+        "additionalCalendlyParams": "&background_color=0e213f&text_color=fffffe&primary_color=00a0df",
         "interviews": [
             {
                 "name": "test",
@@ -17,10 +20,12 @@ export default [
                         "text": "What features here seem most useful to you?"
                     }
                 ],
+                "input_selector_text": "",
                 "thank_you_text": "",
                 "duration": 180
             }
         ],
+        "integration": true,
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
             "aaron@perceptivepanda.com",
@@ -45,6 +50,7 @@ export default [
                         "text": "What do you like most about the interview tool you're using right now?"
                     }
                 ],
+                "input_selector_text": "",
                 "thank_you_text": "",
                 "duration": 180
             }
@@ -71,6 +77,8 @@ export default [
                         "text": "What new functionality do you wish to have in the Jobox App?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             },
             {
@@ -84,6 +92,8 @@ export default [
                         "text": "What is your biggest challenge while closing jobs?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             }
         ],
@@ -111,6 +121,8 @@ export default [
                         "text": "What about this could be improved?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             },
             {
@@ -124,6 +136,8 @@ export default [
                         "text": "What about this could be improved?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             },
             {
@@ -137,6 +151,8 @@ export default [
                         "text": "What about this could be improved?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             },
             {
@@ -150,6 +166,8 @@ export default [
                         "text": "What about this could be improved?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             },
             {
@@ -163,6 +181,8 @@ export default [
                         "text": "What additional parameters would you like to see?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             }
         ],
@@ -179,6 +199,9 @@ export default [
         "public_name": "Datasaur.ai",
         "partner_name": "Datasaur",
         "partner": "DATASAUR",
+        "calendlyAuth": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjQ2ODY1NDMwLCJqdGkiOiI3ZjRmNzVlOC00ODBhLTQyZjMtOTJhNy0yNDFjZDBmNzYwOTYiLCJ1c2VyX3V1aWQiOiJhZDZlODY2My1mZTk4LTRmMjYtYTgwMS00ZWJjN2U2MGNjOTAifQ.3zsEJsesnJ2Mb5Cpn7TqcxpFLR-5-w4JNnMLuRO8kkc",
+        "calendlyHostLink": "https://calendly.com/mike-boerma/30min",
+        "additionalCalendlyParams": "&background_color=0e213f&text_color=fffffe&primary_color=00a0df",
         "interviews": [
             {
                 "name": "1",
@@ -197,6 +220,8 @@ export default [
                         "text": "What features here are the most useful to you?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             },
             {
@@ -210,6 +235,7 @@ export default [
                         "text": "Do you currently have a text labeling tool? If so, what are your current challenges?"
                     }
                 ],
+                "input_selector_text": "To make the most of our time together, please mention which of your needs you're hoping Datasaur can address?",
                 "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
                 "duration": 180
             }
@@ -219,7 +245,64 @@ export default [
         "integration": true,
         "integration_app_link": "https://datasaur-calendly-v1.web.app/",
         "input_selector_type": "b",
-        "input_selector_text": "To make the most of our time together, please mention which of your needs you're hoping Datasaur can address?",
+        "password": "datasaur.rocks",
+        "email": ["andre@perceptivepanda.com",
+            "josh@perceptivepanda.com",
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
+        ],
+        "x_button": "1"
+    },
+    {
+        "public_name": "smpldv.com",
+        "partner_name": "smpldv",
+        "partner": "SMPLDV",
+        "calendlyAuth": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjQ1NTQ5MTY0LCJqdGkiOiI5Mzk1NGFlOS0zZTNiLTQxYjktYTNiMy00MGMyNTkwZWYxY2EiLCJ1c2VyX3V1aWQiOiJFQUdHRTNDT1M2V1dMTTdXIn0.8EXFqIZFKTICep0tU801cp6J_jTlH-ItGHs4Box_ZfY",
+        "calendlyHostLink": "https://calendly.com/steven-smpldv/panda-test",
+        "additionalCalendlyParams": "&background_color=f7caca&text_color=fffffe&primary_color=93a9d1",
+        "interviews": [
+            {
+                "name": "1",
+                "initial_question": "We'd appreciate feedback about your experience with simpledev so far.",
+                "questions": [
+                    {
+                        "text": "Please tell me what brought you to simpledev?"
+                    },
+                    {
+                        "text": "What type of project are you working on here?"
+                    },
+                    {
+                        "text": "What seems challenging about using simpledev?"
+                    },
+                    {
+                        "text": "What features here are the most useful to you?"
+                    }
+                ],
+                "input_selector_text": "",
+                "thank_you_text": "",
+                "duration": 180
+            },
+            {
+                "name": "2",
+                "initial_question": "We'd appreciate feedback about your experience with simpledev so far.",
+                "questions": [
+                    {
+                        "text": "I'm ready now!  Which of your needs are you hoping simpledev can address?"
+                    },
+                    {
+                        "text": "Do you currently have a text labeling tool? If so, what are your current challenges?"
+                    }
+                ],
+                "input_selector_text": "To make the most of our time together, please mention which of your needs you're hoping Datasaur can address?",
+                "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
+                "duration": 180
+            }
+        ],
+        // "customer_support": "Thank you for sharing your feedback. Would you like customer support to follow up with you?",
+        // "email_send": false,
+        "integration": true,
+        "integration_app_link": "https://datasaur-calendly-v1.web.app/",
+        "input_selector_type": "b",
         "password": "datasaur.rocks",
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
@@ -253,6 +336,8 @@ export default [
                         "text": "Is there anything else you would like to add?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             }
         ],
@@ -285,6 +370,8 @@ export default [
                         "text": "What are the main reasons for your rating?"
                     }
                 ],
+                "input_selector_text": "",
+                "thank_you_text": "",
                 "duration": 180
             },
             {
@@ -304,6 +391,7 @@ export default [
                         "text": "What are the main reasons for your rating?"
                     }
                 ],
+                "input_selector_text": "",
                 "thank_you_text": "Thank you for sharing your insights. We’ll be donating $10 to Develop for Good.",
                 "duration": 180
             },
@@ -324,6 +412,7 @@ export default [
                         "text": "What are the main reasons for your rating?"
                     }
                 ],
+                "input_selector_text": "",
                 "thank_you_text": "Thank you for sharing your insights. Please enter your email to receive our market research study.",
                 "duration": 180
             }
@@ -339,6 +428,9 @@ export default [
         "public_name": "Consider.com",
         "partner_name": "Consider.com",
         "partner": "ABRR1",
+        "calendlyAuth": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjQ0ODU2NTc4LCJqdGkiOiI3YzA2NzRlNy1mZDgzLTRkZjAtYWQ2Ni04M2IxMWMxMzI3Y2UiLCJ1c2VyX3V1aWQiOiI5MTNjYWIyYi05NTIxLTQ2ODMtOTlkMy0xYjQ5OWM1MjIzNWQifQ.8iYHT1sK_sHWP1Ze6Xh0kLIjqTq-n-dyHrNaZC9ruVk",
+        "calendlyHostLink": "https://calendly.com/perceptivepanda-demo/15min",
+        "additionalCalendlyParams": "&background_color=0e213f&text_color=fffffe&primary_color=00a0df",
         "interviews": [
             {
                 "name": "1",
@@ -351,6 +443,7 @@ export default [
                         "text": "What else would you like to focus on during the meeting?"
                     }
                 ],
+                "input_selector_text": "To help us prepare for your appointment, please mention which business needs you’re hoping Consider.com can address.",
                 "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
                 "duration": 180
             }
@@ -358,9 +451,76 @@ export default [
         "integration": true,
         "integration_app_link": "https://panda-demo-f236d.web.app/",
         "input_selector_type": "b",
-        "input_selector_text": "To help us prepare for your appointment, please mention which business needs you’re hoping Consider.com can address.",
         "x_button": "1",
         "password": "ABRR1.rocks",
+        "email": ["andre@perceptivepanda.com",
+            "josh@perceptivepanda.com",
+            "aaron@perceptivepanda.com",
+            "Lori@perceptivepanda.com"
+        ]
+    },
+    {
+        "public_name": "Foqal",
+        "partner_name": "Foqal",
+        "partner": "FOQAL",
+        "calendlyAuth": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjQ0ODU2NTc4LCJqdGkiOiI3YzA2NzRlNy1mZDgzLTRkZjAtYWQ2Ni04M2IxMWMxMzI3Y2UiLCJ1c2VyX3V1aWQiOiI5MTNjYWIyYi05NTIxLTQ2ODMtOTlkMy0xYjQ5OWM1MjIzNWQifQ.8iYHT1sK_sHWP1Ze6Xh0kLIjqTq-n-dyHrNaZC9ruVk",
+        "calendlyHostLink": "https://calendly.com/perceptivepanda-demo/15min",
+        "additionalCalendlyParams": "&background_color=0e213f&text_color=fffffe&primary_color=00a0df",
+        "interviews": [
+            {
+                "name": "1",
+                "initial_question": "",
+                "questions": [
+                    {
+                        "text": "I’m ready now! How many requests does your Helpdesk get in a typical month, and what are the biggest drivers?"
+                    },
+                    {
+                        "text": "Can you describe your stack? (e.g., ticketing system, IDP, HRIS, asset management, etc)"
+                    },
+                    {
+                        "text": "How are you thinking about timing for this project?"
+                    }
+                ],
+                "input_selector_text": "To make the most of our time together, please mention how many requests your Helpdesk gets in a typical month",
+                "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
+                "duration": 180
+            },
+            {
+                "name": "2",
+                "initial_question": "",
+                "questions": [
+                    {
+                        "text": "I’m ready now! Are you currently supporting customers in Slack? If so, what could be improved?"
+                    },
+                    {
+                        "text": "What ticketing system are you currently using (if any)?  What are the most useful features, and which ones do you want to use with Slack?"
+                    }
+                ],
+                "input_selector_text": "To make the most of our time together, please mention if you’re currently supporting customers in Slack?",
+                "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
+                "duration": 180
+            },
+            {
+                "name": "3",
+                "initial_question": "",
+                "questions": [
+                    {
+                        "text": "I’m ready now! Which of your needs are you hoping Foqal can address?"
+                    },
+                    {
+                        "text": "What are the main support tools you currently use and your biggest challenges with them?"
+                    }
+                ],
+                "input_selector_text": "To make the most of our time together, please mention which of your needs you’re hoping Foqal can address?",
+                "thank_you_text": "Thanks!\nYou should now have received an appointment confirmation email.",
+                "duration": 180
+            }
+        ],
+        "integration": true,
+        "integration_app_link": "https://panda-demo-f236d.web.app/",
+        "input_selector_type": "b",
+        "x_button": "1",
+        "password": "FOQAL.rocks",
         "email": ["andre@perceptivepanda.com",
             "josh@perceptivepanda.com",
             "aaron@perceptivepanda.com",

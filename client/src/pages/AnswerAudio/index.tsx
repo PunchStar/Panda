@@ -7,6 +7,7 @@ import micrphoneDark from 'src/assets/images/audio-states/icon-9@3x.png';
 import micrphoneCircleDark from 'src/assets/images/audio-states/inner-circle-9@3x.png';
 import microphoneActive from 'src/assets/images/microphone-active.svg';
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
+import pandaListeningImgFoqal from 'src/assets/images/Panda-Listening Pose-Foqal-v2.png'
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 // import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
@@ -268,7 +269,7 @@ export default function AnswerAudio(props:AnswerAudioProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaDarkTalkImg:pandaListeningImg}/>
+      <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === 'FOQAL'?pandaListeningImgFoqal:darkFlag?pandaDarkTalkImg:pandaListeningImg}/>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       {darkFlag && <DarkBubbleImg src={bubbleDarkImg} />}
       <Message darkFlag={darkFlag}> 

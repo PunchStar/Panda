@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
+import pandaListeningImgFoqal from 'src/assets/images/Panda-Listening Pose-Foqal-v2.png'
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import SpeechBubbleCenter from 'src/assets/images/speech-bubble-center.svg'
 import bubbleDarkImg from 'src/assets/images/thanks-dark/bubble@3x.png';
@@ -29,7 +30,7 @@ export default function Thankyou(props: ThankyouProps) {
       }
       {darkFlag?
       <PandaTalkDarkImg src={pandaDarkImg}/>:
-      <PandaTalkImg src={partner?.toUpperCase() === 'ABRR1' ?pandaListeningImgConsider:pandaListeningImg}/>}
+      <PandaTalkImg src={partner?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partner?.toUpperCase() === 'FOQAL'?pandaListeningImgFoqal:pandaListeningImg}/>}
       <PoweredBy>
         Powered by PerceptivePanda {partner_name !== `` ? `for ` : ``} {partner_name}
       </PoweredBy>

@@ -3,6 +3,7 @@ import styled from "styled-components"
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import pandaListeningImgDark from 'src/assets/images/text-dark/panda-gradient@3x.png'
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
+import pandaListeningImgFoqal from 'src/assets/images/Panda-Listening Pose-Foqal-v2.png'
 // import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
@@ -118,18 +119,18 @@ export default function AnswerText(props:AnswerTextProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1' ?pandaListeningImgConsider:darkFlag?pandaListeningImgDark:pandaListeningImg}/>
+      <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>
       {hidden && <PandaListenImg alt="" src={pandaListeningImg}/>}
       {darkFlag?
       <AnswerBubbleDark>
         <DarkBubbleImg src={bubbleImg} />
-        <Message darkFlag={darkFlag}>
+        <Message darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()}>
         {darkFlag ?<MessageDark>{questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}</MessageDark>:
           questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
         </Message>
       </AnswerBubbleDark>:
       <AnswerBubble>
-        <Message> 
+        <Message darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()}> 
           {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
         </Message>
         <ArrowImg/>
@@ -203,11 +204,16 @@ const ResponseAnswer = styled.div<{darkFlag:boolean}>`
     `}
   }
 `
-const PandaTalkImg = styled.img`
+const PandaTalkImg = styled.img<{partnerId:any}>`
   position: absolute;
   left: 220px;
   top: 180px;
-  height: 208px; z-index: 1;
+  height: 208px;
+  z-index: 1;
+  ${(props) => props.partnerId === "FOQAL" && `
+    top: 230px;
+    height: 156px;
+  `}
 `
 const PandaListenImg = styled.img`
   position: absolute;
@@ -230,10 +236,9 @@ const CloseImg = styled.img<{darkFlag:boolean}>`
     height:10px;
     right:10px;
 
-  `}   
-
+  `}
 `
-const Message = styled.div<{darkFlag?:boolean}>`
+const Message = styled.div<{darkFlag?:boolean, partnerId:any}>`
   position: relative;
   left: 17px;
   top: 3px;
@@ -259,7 +264,10 @@ const Message = styled.div<{darkFlag?:boolean}>`
     border-radius: 0px;
     width: 144px;
     height: 118px;
-  `}  
+  `}
+  ${(props) => props.partnerId === "FOQAL" && `
+    height: 155px;
+  `}
 `
 const MessageDark = styled.span`
   background:none;
