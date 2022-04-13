@@ -112,10 +112,9 @@ export default function InputSelector() {
   useEffect(() => {
     if( error === 'permission_denied' || error === "no_specified_media_found" ) {  
       setMicFlag(false);
-      actions.log_event('deny-permission', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+      actions.log_event(error === 'permission_denied' ?'deny-permission':'audio-not-supported', '', '1', partnerId?.toUpperCase(), interviewId, userId).then(res => {
         let {data} = res;
-        actions.debug_console('result-event-log',data)
-
+        actions.debug_console(error === 'permission_denied' ?'deny-permission':'audio-not-supported',data)
       })
       .catch(() => {
       });
@@ -154,6 +153,13 @@ export default function InputSelector() {
     }
     if(step === 2) {
       stopRecording();
+      actions.log_event('thank-you', '' , '0', partnerId, interviewId, userId).then(res => {
+        let {data} = res;
+        actions.debug_console('result-event-log',data)
+
+      })
+      .catch(() => {
+      }); 
     }
   },[step]);
   return (
