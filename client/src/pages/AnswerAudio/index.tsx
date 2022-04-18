@@ -99,53 +99,53 @@ export default function AnswerAudio(props:AnswerAudioProps) {
       }
   }
   async function request_recording() {
-            get_volume_meter(previewAudioStream);
+    get_volume_meter(previewAudioStream);
 
-            volume_timer = setInterval(function() {
-                let corrected_vol = average_volume * 2;
-                if (corrected_vol >= 100) {
-                    corrected_vol = 99;
-                }
-                const num = Math.floor(9 * corrected_vol / 100);
-                switch(num){
-                  case 1:
-                    setMicVolume(darkFlag?darkMicVolumeImg1:micVolumeImg1);
-                    break;
-                  case 2:
-                    setMicVolume(darkFlag?darkMicVolumeImg2:micVolumeImg2);
-                    break;
-                  case 3:
-                    setMicVolume(darkFlag?darkMicVolumeImg3:micVolumeImg3);
-                    break;
-                  case 4:
-                    setMicVolume(darkFlag?darkMicVolumeImg4:micVolumeImg4);
-                    break;
-                  case 5:
-                    setMicVolume(darkFlag?darkMicVolumeImg5:micVolumeImg5);
-                    break;
-                  case 6:
-                    setMicVolume(darkFlag?darkMicVolumeImg6:micVolumeImg6);
-                    break;
-                  case 7:
-                    setMicVolume(darkFlag?darkMicVolumeImg7:micVolumeImg7);
-                    break; 
-                  case 8:
-                    setMicVolume(darkFlag?darkMicVolumeImg8:micVolumeImg8);
-                    break;
-                  default:
-                    setMicVolume(darkFlag?darkMicVolumeImg:micVolumeImg);
-                    break;
-                }
-                if (num === 0) {
-                  // setRedCircle(true);
-                  setHidden(false);
-              } else {
-                // setRedCircle(false);
-                setHidden(true);
-              }
-            }, 100);
-            setVolumeTimer(volume_timer);
-            return true;
+    volume_timer = setInterval(function() {
+        let corrected_vol = average_volume * 2;
+        if (corrected_vol >= 100) {
+            corrected_vol = 99;
+        }
+        const num = Math.floor(9 * corrected_vol / 100);
+        switch(num){
+          case 1:
+            setMicVolume(darkFlag?darkMicVolumeImg1:micVolumeImg1);
+            break;
+          case 2:
+            setMicVolume(darkFlag?darkMicVolumeImg2:micVolumeImg2);
+            break;
+          case 3:
+            setMicVolume(darkFlag?darkMicVolumeImg3:micVolumeImg3);
+            break;
+          case 4:
+            setMicVolume(darkFlag?darkMicVolumeImg4:micVolumeImg4);
+            break;
+          case 5:
+            setMicVolume(darkFlag?darkMicVolumeImg5:micVolumeImg5);
+            break;
+          case 6:
+            setMicVolume(darkFlag?darkMicVolumeImg6:micVolumeImg6);
+            break;
+          case 7:
+            setMicVolume(darkFlag?darkMicVolumeImg7:micVolumeImg7);
+            break; 
+          case 8:
+            setMicVolume(darkFlag?darkMicVolumeImg8:micVolumeImg8);
+            break;
+          default:
+            setMicVolume(darkFlag?darkMicVolumeImg:micVolumeImg);
+            break;
+        }
+        if (num === 0) {
+          // setRedCircle(true);
+          setHidden(false);
+      } else {
+        // setRedCircle(false);
+        setHidden(true);
+      }
+    }, 100);
+    setVolumeTimer(volume_timer);
+    return true;
       //     } 
       //     else {
       //         return false;

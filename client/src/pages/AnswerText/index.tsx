@@ -106,7 +106,6 @@ export default function AnswerText(props:AnswerTextProps) {
         .then(res => {
           let {data} = res;
           actions.debug_console('result-sendemail',data)
-
         })
         .catch(() => {
         });
@@ -118,7 +117,8 @@ export default function AnswerText(props:AnswerTextProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>
+      {darkFlag && <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>}
+      {!darkFlag &&<PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:pandaListeningImgDark} />}
       {hidden && <PandaListenImg alt="" src={pandaListeningImg}/>}
       {darkFlag?
       <AnswerBubbleDark>
@@ -129,15 +129,17 @@ export default function AnswerText(props:AnswerTextProps) {
         </Message>
       </AnswerBubbleDark>:
       <AnswerBubble>
-        <Message darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()}> 
+        <MessageMain partnerId={partnerId?.toUpperCase()}> 
           {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
-        </Message>
-        <ArrowImg/>
+        </MessageMain>
       </AnswerBubble>
       }
-      <ResponseAnswer darkFlag={darkFlag}>
+      {darkFlag ?<ResponseAnswer>
         <textarea value={commetText} autoFocus onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
-      </ResponseAnswer>
+      </ResponseAnswer>:<ResponseAnswerMain>
+        <textarea value={commetText}  onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
+      </ResponseAnswerMain>
+      }
       <Bottom darkFlag={darkFlag}>
         {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
@@ -163,9 +165,9 @@ export default function AnswerText(props:AnswerTextProps) {
 }
 const AnswerBubble = styled.div`
   position: absolute;
-  top: 50px;
+  top: 146px;
   background-color: transparent;
-  left: 205px;
+  left: 15px;
 `
 const AnswerBubbleDark = styled.div`
   position: absolute;
@@ -181,7 +183,7 @@ const DarkBubbleImg = styled.img`
     height: 154px;
     border: 0;
 `
-const ResponseAnswer = styled.div<{darkFlag:boolean}>`
+const ResponseAnswer = styled.div`
   position: absolute;
   left: 35px;
   top: 35px;
@@ -190,7 +192,6 @@ const ResponseAnswer = styled.div<{darkFlag:boolean}>`
   textarea {
     width: 100%;
     height: 100%;
-    ${(props) => props.darkFlag && `
     background-color: #0f1523;
     border: solid 0.5px #2a64ff;
     border-radius: 1px;
@@ -200,7 +201,34 @@ const ResponseAnswer = styled.div<{darkFlag:boolean}>`
     &:placeholder{
       color:#6f737b!important;
     }
-    `}
+  }
+  ::-webkit-resizer{
+    border:2px solid yellow;
+  }
+`
+const ResponseAnswerMain = styled.div`
+  position: absolute;
+  left: 32px;
+  top: 208px;
+  width: 330px;
+  height: 142px;
+  textarea {
+    width: 100%;
+    border:0px;
+    height: 100%;
+    border: 1px solid #c4c4c4;
+    border-radius: 6px;
+    padding: 10px 10px 15px 15px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    caret-color:#399aff;
+    font-size:13px;
+  }
+  &:focus-visible{
+    outline:0px!important
+  }
+  textarea:focus-visible{
+    outline:0px!important
   }
 `
 const PandaTalkImg = styled.img<{partnerId:any}>`
@@ -214,6 +242,12 @@ const PandaTalkImg = styled.img<{partnerId:any}>`
     height: 156px;
   `}
 `
+const PandaTalkImgMain = styled.img`
+  position: absolute;
+  left: 119px;
+  top: 8px;
+  height: 201px;
+`
 const PandaListenImg = styled.img`
   position: absolute;
   left: 220px;
@@ -224,8 +258,8 @@ const PandaListenImg = styled.img`
 `
 const CloseImg = styled.img<{darkFlag:boolean}>`
   position: absolute;
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 16px;
   top: 10px;
   right: 5px;
   opacity: 0.5;
@@ -267,6 +301,23 @@ const Message = styled.div<{darkFlag?:boolean, partnerId:any}>`
   ${(props) => props.partnerId === "FOQAL" && `
     height: 155px;
   `}
+`
+const MessageMain = styled.div<{partnerId:any}>`
+  position: relative;
+  left: 17px;
+  top: 3px;
+  width: 330px;
+  height: 60px;
+  line-height: 1.2;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 900;
+  background-color: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #c4c4c4;
+  padding: 10px 10px 15px 15px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 `
 const MessageDark = styled.span`
   background:none;
@@ -320,21 +371,22 @@ const ProgressBar = styled.div`
   margin-top: 25px;
 `
 const StepCircle = styled.div<{active?:boolean, darkFlag?:boolean, passed?:boolean}>`
-  background-color: #b1bdd4;
+  background-color: transparent;
+  border:1px solid #b1bdd4;
   height: 20px;
   width: 20px;
-  line-height: 20px;
+  line-height: 19px;
   border-radius: 50%;
   font-size: 10px;
   color: #929292;
   text-align: center;
-  ${(props) => props.passed && `background-color: #399aff;color: #fff;`}
-  ${(props) => props.darkFlag && `background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:17px;`}
-  ${(props) => props.darkFlag && !props.active && props.passed && `background-color: #0f1523; color:#fff;border:1px solid #0ec88f;line-height:17px;`}  
+  ${(props) => props.passed && `border-color:#399aff;background-color: #399aff;color: #fff;`}
+  ${(props) => props.darkFlag && `border-color:#0f1523;background-color: #0f1523; color:#fff;border:1px solid #2a64ff;line-height:17px;`}
+  ${(props) => props.darkFlag && !props.active && props.passed && `border-color:#0f1523;background-color: #0f1523; color:#fff;border:1px solid #0ec88f;line-height:17px;`}  
   ${(props) => props.darkFlag && props.active &&
   `box-shadow: 0 0 4px 0 #934dfc;
   border: solid 0.5px #0ec88f;
-  background-color: #04153e;`}
+  background-color: #04153e;border-color:#04153e;`}
 `
 const StepBar = styled.div<{active?:boolean, circleWidth?:number, darkFlag?:boolean}>`
   background-color: #b1bdd4;
@@ -351,7 +403,7 @@ const Button = styled.span<{darkFlag:boolean, greenColor?:boolean, disabled?:boo
   position: absolute;
   padding: 5px 0 5px 0;
   margin: 0 0 0 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background-color: #4d9ff5;
   cursor: pointer;
   text-align: center;

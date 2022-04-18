@@ -127,14 +127,16 @@ export default function InputSelector() {
       setTimes(timer + 1);
     },1000)
     if(timer > 60){
-      const event_name = step === 0 ? 'input-selector' : (step === 1 && isTextActive) ? 'answer-text':(step === 1 && !isTextActive) ? 'answer-audio': (step === 2)?'thank-you':'';
-      actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
-        let {data} = res;
-        actions.debug_console('result-event-log',data)
+      if (step !== 2) {
+        const event_name = (step === 0 ? 'input-selector' : (step === 1 && isTextActive) ? 'answer-text':'answer-audio');
+        actions.log_event(event_name, questionNum===0?'':questionNum.toString(), '0', partnerId?.toUpperCase(), interviewId, userId).then(res => {
+          let {data} = res;
+          actions.debug_console('result-event-log',data)
 
-      })
-      .catch(() => {
-      });    
+        })
+        .catch(() => {
+        });
+      }
       clearInterval(interval);
     }
     return ()=>clearInterval(interval);
