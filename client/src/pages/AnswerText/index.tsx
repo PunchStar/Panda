@@ -8,6 +8,7 @@ import pandaListeningImgFoqal from 'src/assets/images/Panda-Listening Pose-Foqal
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import bubbleImg from 'src/assets/images/text-dark/bubble@3x.png'
+import quoteImg from 'src/assets/images/quote.png'
 import { Config } from 'src/config/aws';
 import { useParams } from "react-router-dom";
 import closeDarkImg from 'src/assets/images/input-dark/rectangle-x@3x.png'
@@ -118,7 +119,7 @@ export default function AnswerText(props:AnswerTextProps) {
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
       {darkFlag && <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>}
-      {!darkFlag &&<PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:pandaListeningImgDark} />}
+      {!darkFlag &&<PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:pandaListeningImgDark} />}
       {hidden && <PandaListenImg alt="" src={pandaListeningImg}/>}
       {darkFlag?
       <AnswerBubbleDark>
@@ -129,8 +130,9 @@ export default function AnswerText(props:AnswerTextProps) {
         </Message>
       </AnswerBubbleDark>:
       <AnswerBubble>
-        <MessageMain partnerId={partnerId?.toUpperCase()}> 
-          {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
+        <MessageMain partnerId={partnerId?.toUpperCase()}>
+          <PandaQuote alt="" src={quoteImg} />
+          <PandaQuestion>{questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}</PandaQuestion>
         </MessageMain>
       </AnswerBubble>
       }
@@ -209,7 +211,7 @@ const ResponseAnswer = styled.div`
 const ResponseAnswerMain = styled.div`
   position: absolute;
   left: 32px;
-  top: 208px;
+  top: 220px;
   width: 330px;
   height: 142px;
   textarea {
@@ -284,7 +286,7 @@ const Message = styled.div<{darkFlag?:boolean, partnerId:any}>`
   background-color: #ffffff;
   border-radius: 15px;
   border: 1px solid #c4c4c4;
-  padding: 10px 10px 15px 15px;
+  padding: 10px 10px 10px 10px;
   ${(props) => props.darkFlag && `
     color:white!important;
     background-image: linear-gradient(106deg, rgba(49,49,49,0.84), #111 53%, #000 77%);
@@ -307,18 +309,31 @@ const MessageMain = styled.div<{partnerId:any}>`
   left: 17px;
   top: 3px;
   width: 330px;
-  height: 60px;
+  height: 72px;
   line-height: 1.2;
   text-align: left;
   font-size: 12px;
   font-weight: 900;
-  background-color: #ffffff;
+  background-color: #f6f9fe;
   border-radius: 6px;
   border: 1px solid #c4c4c4;
   padding: 10px 10px 15px 15px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 `
+const PandaQuote = styled.img`
+  width: 16px;
+  margin-top: -5px;
+`;
+const PandaQuestion = styled.span`
+  color: #000 !important;
+  text-align: left !important;
+  clear: both;
+  display: -webkit-box;
+  padding-left: 24px;
+  margin-top: -17px;
+  font-size:12.5px!important;
+`;
 const MessageDark = styled.span`
   background:none;
   color:white!important;
@@ -329,12 +344,12 @@ const MessageDark = styled.span`
   transform: translate(-50%, -50%);
 `
 const ArrowImg = styled.div`
-    position: relative;
+  position: relative;
   background-image: url("${arrowImg}");
-    width: 30px;
-    height: 28px;
-    top: 0px;
-    left: 79px;
+  width: 30px;
+  height: 28px;
+  top: 0px;
+  left: 79px;
 `
 const Bottom = styled.div<{darkFlag:boolean}>`
   position: absolute;
