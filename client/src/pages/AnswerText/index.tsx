@@ -4,7 +4,6 @@ import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import pandaListeningImgDark from 'src/assets/images/text-dark/panda-gradient@3x.png'
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
 import pandaListeningImgFoqal from 'src/assets/images/Panda-Listening Pose-Foqal-v2.png'
-// import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import bubbleImg from 'src/assets/images/text-dark/bubble@3x.png'
@@ -26,20 +25,12 @@ interface AnswerTextProps {
 export default function AnswerText(props:AnswerTextProps) {
   const {userId, onNextClick, onLogClick,onClosesClick, darkFlag} = props;
   const [commetText, setCommentText] = useState('');
-  // const [question, setQuestion] = useState("");
   const { partnerId, interviewId } = useParams();
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   const partner_name = CObj.partner_name;
   const [circleWidth, setCircleWidth] =useState(33);
-
-  // const questionArr = [ 
-  //   "",
-  //   "If you were giving Jobox a report card, what would score most highly?",
-  //   "Where is Jobox falling short on understanding your needs?",
-  //   "Is Jobox the primary way you manage all your jobs? If not, what could Jobox do to become your primary way?",
-  // ];
   const hidden = false;
   const [questionCount, setQuestionCount] = useState(1);
   const[lineCount, setLineCount] = useState(0);
@@ -125,44 +116,22 @@ export default function AnswerText(props:AnswerTextProps) {
   }
   return (
     <>
-      {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      {/* {darkFlag && <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>} */}
       <PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} />
-      {/* <RiveComponent className="rive-container" /> */}
       {hidden && <PandaListenImg alt="" src={pandaListeningImg}/>}
-      {/* {darkFlag?
-      <AnswerBubbleDark>
-        <DarkBubbleImg src={bubbleImg} />
-        <Message darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()}>
-        {darkFlag ?<MessageDark>{questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}</MessageDark>:
-          questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
-        </Message>
-      </AnswerBubbleDark>: */}
       <AnswerBubble>
         {darkFlag && <DarkRectangle/>}
-
         <MessageMain darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()} >
-          <PandaQuote alt="" src={quoteImg} darkFlag={darkFlag}/>
+          <PandaQuote alt="" src={quoteImg} count={lineCount} darkFlag={darkFlag}/>
           <PandaQuestion darkFlag={darkFlag}  count={lineCount} id="pandaQuestion">
             {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
           </PandaQuestion>
         </MessageMain>
       </AnswerBubble>
-      {/* } */}
-      {/* {darkFlag ?<ResponseAnswer>
-        <textarea value={commetText} autoFocus onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
-      </ResponseAnswer>: */}
       <ResponseAnswerMain darkFlag={darkFlag}>
         <textarea  id="textbox" value={commetText}  onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}
                 />
-                {/* <textarea  id="textbox" value={commetText}  onChange={e=>{onUsernameChange(e)}} placeholder={'Type your answer here'}
-                onFocus={onUsernameFocus}
-                onBlur={() => (isCheckingInput!.value = false)}
-                ref={inputRef}
-                /> */}
       </ResponseAnswerMain>
-      {/* } */}
       <Bottom darkFlag={darkFlag}>
         {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
@@ -369,10 +338,12 @@ ${(props) => props.partnerId === "FOQAL" && `
   height: 155px;
 `}
 `
-const PandaQuote = styled.img<{darkFlag?:boolean}>`
-  width: 16px;
-  margin-top: -5px;
+const PandaQuote = styled.img<{darkFlag?:boolean,count:number}>`
+  width: 14px;
+  margin-top: -6px;
   ${(props)=> props.darkFlag && `    width: 12px;
+  margin-top: -12px;`}
+  ${(props)=> props.count>2 && `    width: 12px;
   margin-top: -12px;`}
 `;
 const PandaQuestion = styled.span<{darkFlag?:boolean,count:number}>`
