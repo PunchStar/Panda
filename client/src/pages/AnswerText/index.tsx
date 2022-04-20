@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from "react"
+import React, { useState, useEffect , useRef,  ChangeEvent,  SyntheticEvent } from "react"
 import styled from "styled-components"
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import pandaListeningImgDark from 'src/assets/images/text-dark/panda-gradient@3x.png'
@@ -13,8 +13,27 @@ import { Config } from 'src/config/aws';
 import { useParams } from "react-router-dom";
 import closeDarkImg from 'src/assets/images/input-dark/rectangle-x@3x.png'
 import * as actions from '../../actions';
-
+import $ from "jquery"
+import {
+  useRive,
+  useStateMachineInput,
+  Layout,
+  Fit,
+  Alignment,
+  UseRiveParameters,
+  RiveState,
+  StateMachineInput,
+} from 'rive-react';
+// import pandaLiv from './panda_teddy_12.riv';
 import axios from 'axios';
+
+const STATE_MACHINE_NAME = 'Login Machine';
+const LOGIN_PASSWORD = 'teddy';
+const LOGIN_TEXT = 'Login';
+var wrapCounter = 1;
+var wrapOffset = 0;
+var lengthCheck;
+var lengthOfTextBox = 1;
 
 interface AnswerTextProps {
   userId: string,
@@ -24,6 +43,15 @@ interface AnswerTextProps {
   onLogClick: (flag:number,questionNumber:number) => void;
 }
 export default function AnswerText(props:AnswerTextProps) {
+  const { rive, RiveComponent }: RiveState = useRive({
+    src: "panda_teddy_12.riv",
+    // stateMachines: STATE_MACHINE_NAME,
+    autoplay: true,
+    // layout: new Layout({
+    //   fit: Fit.Cover,
+    //   alignment: Alignment.Center,
+    // }),
+  });
   const {userId, onNextClick, onLogClick,onClosesClick, darkFlag} = props;
   const [commetText, setCommentText] = useState('');
   // const [question, setQuestion] = useState("");
@@ -33,7 +61,32 @@ export default function AnswerText(props:AnswerTextProps) {
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   const partner_name = CObj.partner_name;
   const [circleWidth, setCircleWidth] =useState(33);
-  
+  const inputRef = useRef(null);
+  const isCheckingInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'isChecking'
+  );
+  const numLookInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'numLook'
+  );
+  const trigSuccessInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'trigSuccess'
+  );
+  const trigFailInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'trigFail'
+  );
+  const isHandsUpInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'trigFail'
+  );
   // const questionArr = [ 
   //   "",
   //   "If you were giving Jobox a report card, what would score most highly?",
@@ -41,7 +94,9 @@ export default function AnswerText(props:AnswerTextProps) {
   //   "Is Jobox the primary way you manage all your jobs? If not, what could Jobox do to become your primary way?",
   // ];
   const hidden = false;
+  const [inputLookMultiplier, setInputLookMultiplier] = useState(0);
   const [questionCount, setQuestionCount] = useState(1);
+  const[lineCount, setLineCount] = useState(0);
   const [url, setUrl] = useState([]);
   const createSigned = async() =>{
     axios.defaults.baseURL = Config.api_url;
@@ -71,6 +126,7 @@ export default function AnswerText(props:AnswerTextProps) {
     let totalWidth = 200 - questionArrObj.length * 20;
     totalWidth /= questionArrObj.length-1;
     setCircleWidth(totalWidth);
+    countLines();
   },[questionArrObj, circleWidth])
   useEffect(()=>{
     createSigned();
@@ -114,12 +170,82 @@ export default function AnswerText(props:AnswerTextProps) {
     uploadFile();
     // await stopRecording();
   }
+  function textWidth(txt:any, font:any,padding:any) {
+    var $span = $('<span></span>');
+    $span.css({
+      font:font,
+      position:'absolute',
+      top: -1000,
+      left:-1000,
+      padding:padding
+    }).text(txt);
+    $span.appendTo('body');
+    return $span.width();
+  }
+  const onUsernameFocus = () => {
+    console.log("dddfocus'", rive)
+    isCheckingInput!.value = true;
+
+    if (numLookInput!.value !== commetText.length * inputLookMultiplier) {
+      numLookInput!.value = commetText.length * inputLookMultiplier;
+    }
+  };
+  const onUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+    const newVal = e.target.value;
+    setCommentText(newVal);
+    if (!isCheckingInput!.value) {
+      isCheckingInput!.value = true;
+    }
+    var numChars = newVal.length - ((wrapCounter-1)*lengthOfTextBox);
+    var $txt:any=$('#textbox'),i = 1;
+    var font = $txt.css('font');
+    
+    var padding = $txt.css('padding');
+    // var realTxtWidth = wrapCounter * $txt.width();
+    var txtwidth = (wrapCounter * $txt.width() || 0) - wrapOffset;
+    var txt = $txt.val().split('\n');
+    $(txt).each(function(){
+      var w = textWidth(this,font,padding);
+      if(w?w:0>txtwidth){
+        if(wrapCounter === 1) {
+          lengthCheck = e.target.value;
+
+          lengthOfTextBox = lengthCheck.length; //actual length of box is closer to 30 than 32
+        }
+        wrapCounter++;
+        // if (typeof(lengthofTextBox) !== 'undefined' && lengthofTextBox != null) {
+        //   wrapOffset = wrapOffset + Math.round(lengthofTextBox * .75);
+        // }
+      }
+      i++;
+    });
+
+
+    numLookInput!.value = numChars * inputLookMultiplier;
+  };
+  useEffect(() => {
+    if (inputRef?.current && !inputLookMultiplier) {
+      setInputLookMultiplier(
+        (inputRef.current as HTMLInputElement).offsetWidth / 100
+      );
+    }
+  }, [inputRef]);
+  function countLines(){
+    var el = document.getElementById('pandaQuestion')
+    var divHeight = el?.offsetHeight || 0;
+    var lines = divHeight  / 15;
+    console.log('lines', lines);
+    setLineCount(lines);
+  }
+  // return <RiveComponent/>
   return (
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
       {darkFlag && <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>}
       {!darkFlag &&<PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:pandaListeningImgDark} />}
+      <RiveComponent className="rive-container" />
       {hidden && <PandaListenImg alt="" src={pandaListeningImg}/>}
       {darkFlag?
       <AnswerBubbleDark>
@@ -130,16 +256,24 @@ export default function AnswerText(props:AnswerTextProps) {
         </Message>
       </AnswerBubbleDark>:
       <AnswerBubble>
-        <MessageMain partnerId={partnerId?.toUpperCase()}>
+        <MessageMain partnerId={partnerId?.toUpperCase()} >
           <PandaQuote alt="" src={quoteImg} />
-          <PandaQuestion>{questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}</PandaQuestion>
+          <PandaQuestion count={lineCount} id="pandaQuestion">
+            {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
+            </PandaQuestion>
         </MessageMain>
       </AnswerBubble>
       }
       {darkFlag ?<ResponseAnswer>
         <textarea value={commetText} autoFocus onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
       </ResponseAnswer>:<ResponseAnswerMain>
-        <textarea value={commetText}  onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
+        <textarea  id="textbox" value={commetText}  onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}
+                />
+                {/* <textarea  id="textbox" value={commetText}  onChange={e=>{onUsernameChange(e)}} placeholder={'Type your answer here'}
+                onFocus={onUsernameFocus}
+                onBlur={() => (isCheckingInput!.value = false)}
+                ref={inputRef}
+                /> */}
       </ResponseAnswerMain>
       }
       <Bottom darkFlag={darkFlag}>
@@ -211,9 +345,9 @@ const ResponseAnswer = styled.div`
 const ResponseAnswerMain = styled.div`
   position: absolute;
   left: 32px;
-  top: 220px;
+  top: 195px;
   width: 330px;
-  height: 142px;
+  height: 166px;
   textarea {
     width: 100%;
     border:0px;
@@ -309,7 +443,7 @@ const MessageMain = styled.div<{partnerId:any}>`
   left: 17px;
   top: 3px;
   width: 330px;
-  height: 72px;
+  height: 47px;
   line-height: 1.2;
   text-align: left;
   font-size: 12px;
@@ -325,14 +459,17 @@ const PandaQuote = styled.img`
   width: 16px;
   margin-top: -5px;
 `;
-const PandaQuestion = styled.span`
+const PandaQuestion = styled.span<{count:number}>`
   color: #000 !important;
   text-align: left !important;
   clear: both;
   display: -webkit-box;
   padding-left: 24px;
+  line-height:15px!important;
   margin-top: -17px;
   font-size:12.5px!important;
+  ${(props) => props.count > 2 && `font-size:10px!important`}   
+
 `;
 const MessageDark = styled.span`
   background:none;
