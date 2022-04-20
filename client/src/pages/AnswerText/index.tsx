@@ -119,7 +119,7 @@ export default function AnswerText(props:AnswerTextProps) {
   function countLines(){
     var el = document.getElementById('pandaQuestion')
     var divHeight = el?.offsetHeight || 0;
-    var lines = divHeight  > 29 ? 3: 2;
+    var lines = divHeight  > 23 ? 3: 2;
     actions.debug_console('lines', lines);
     setLineCount(lines);
   }
@@ -381,9 +381,9 @@ const PandaQuestion = styled.span<{darkFlag?:boolean,count:number}>`
   padding-left: 24px;
   line-height: 15px! important;
   margin-top: -17px;
-  font-size: 13px !important;
+  font-size: 12.5px !important;
   font-family: 'Soleil';
-  ${(props) => props.count > 2 && `font-size: 10px !important`}   
+  ${(props) => props.count > 2 && `font-size: 10px !important;line-height:12px!important`}   
   ${(props) => props.darkFlag && `color: #FFF !important; padding-left: 20px;`}   
 `;
 const MessageDark = styled.span`
