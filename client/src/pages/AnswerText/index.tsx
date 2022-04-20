@@ -243,30 +243,33 @@ export default function AnswerText(props:AnswerTextProps) {
     <>
       {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      {darkFlag && <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>}
-      {!darkFlag &&<PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:pandaListeningImgDark} />}
-      <RiveComponent className="rive-container" />
+      {/* {darkFlag && <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>} */}
+      <PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} />
+      {/* <RiveComponent className="rive-container" /> */}
       {hidden && <PandaListenImg alt="" src={pandaListeningImg}/>}
-      {darkFlag?
+      {/* {darkFlag?
       <AnswerBubbleDark>
         <DarkBubbleImg src={bubbleImg} />
         <Message darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()}>
         {darkFlag ?<MessageDark>{questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}</MessageDark>:
           questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
         </Message>
-      </AnswerBubbleDark>:
+      </AnswerBubbleDark>: */}
       <AnswerBubble>
-        <MessageMain partnerId={partnerId?.toUpperCase()} >
+        {darkFlag && <DarkRectangle/>}
+
+        <MessageMain darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()} >
           <PandaQuote alt="" src={quoteImg} />
-          <PandaQuestion count={lineCount} id="pandaQuestion">
+          <PandaQuestion darkFlag={darkFlag}  count={lineCount} id="pandaQuestion">
             {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
-            </PandaQuestion>
+          </PandaQuestion>
         </MessageMain>
       </AnswerBubble>
-      }
-      {darkFlag ?<ResponseAnswer>
+      {/* } */}
+      {/* {darkFlag ?<ResponseAnswer>
         <textarea value={commetText} autoFocus onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
-      </ResponseAnswer>:<ResponseAnswerMain>
+      </ResponseAnswer>: */}
+      <ResponseAnswerMain darkFlag={darkFlag}>
         <textarea  id="textbox" value={commetText}  onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}
                 />
                 {/* <textarea  id="textbox" value={commetText}  onChange={e=>{onUsernameChange(e)}} placeholder={'Type your answer here'}
@@ -275,7 +278,7 @@ export default function AnswerText(props:AnswerTextProps) {
                 ref={inputRef}
                 /> */}
       </ResponseAnswerMain>
-      }
+      {/* } */}
       <Bottom darkFlag={darkFlag}>
         {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
@@ -342,7 +345,7 @@ const ResponseAnswer = styled.div`
     border:2px solid yellow;
   }
 `
-const ResponseAnswerMain = styled.div`
+const ResponseAnswerMain = styled.div<{darkFlag?:boolean}>`
   position: absolute;
   left: 32px;
   top: 195px;
@@ -359,6 +362,18 @@ const ResponseAnswerMain = styled.div`
     border-top-right-radius: 0px;
     caret-color:#399aff;
     font-size:13px;
+    ${(props) => props.darkFlag && `
+        background-color: #0f1523;
+        border: solid 0.5px #2a64ff;
+        border-radius: 1px;
+        color:white;
+        padding: 10px 8px!important;
+        font-size:12px !important;
+        border-top:0px;
+        &:placeholder{
+          color:#6f737b!important;
+        }
+    `}
   }
   &:focus-visible{
     outline:0px!important
@@ -438,7 +453,7 @@ const Message = styled.div<{darkFlag?:boolean, partnerId:any}>`
     height: 155px;
   `}
 `
-const MessageMain = styled.div<{partnerId:any}>`
+const MessageMain = styled.div<{darkFlag?:boolean,partnerId:any}>`
   position: relative;
   left: 17px;
   top: 3px;
@@ -454,12 +469,27 @@ const MessageMain = styled.div<{partnerId:any}>`
   padding: 10px 10px 15px 15px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
+  ${(props) => props.darkFlag && `
+    color:white!important;
+    background-image: linear-gradient(106deg, rgba(49,49,49,0.84), #111 53%, #000 77%);
+    border:0px;
+    color: white!important;
+    border-radius: 0px;
+    left: 24px;
+    top: 6px;
+    width: 309px;
+    height: 36px;
+    padding: 8px 8px 11px 7px;
+  `}
+${(props) => props.partnerId === "FOQAL" && `
+  height: 155px;
+`}
 `
 const PandaQuote = styled.img`
   width: 16px;
   margin-top: -5px;
 `;
-const PandaQuestion = styled.span<{count:number}>`
+const PandaQuestion = styled.span<{darkFlag?:boolean,count:number}>`
   color: #000 !important;
   text-align: left !important;
   clear: both;
@@ -469,7 +499,7 @@ const PandaQuestion = styled.span<{count:number}>`
   margin-top: -17px;
   font-size:12.5px!important;
   ${(props) => props.count > 2 && `font-size:10px!important`}   
-
+  ${(props) => props.darkFlag && `color: #FFF!important;padding-left: 20px;`}   
 `;
 const MessageDark = styled.span`
   background:none;
@@ -614,4 +644,15 @@ const PoweredBy = styled.span`
   letter-spacing: -0.18px;
   text-align: center;
   color: #999!important;
+`
+const DarkRectangle = styled.div`
+  position: absolute;
+  width: 330px;
+  height: 49px;
+  left: 17px;
+  border-style: solid;
+  border-width: 0.5px;
+  border-image-source:linear-gradient(106deg, #934dfc 14%, #0064ff 42%, #0ec88f 72%);
+  border-image-slice:1;
+  background-color: #05010d;  
 `
