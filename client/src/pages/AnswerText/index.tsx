@@ -536,7 +536,7 @@ const LabelProgress = styled.span`
   left: 35px!important;
   top: 5px!important;
   width: 90px!important;
-  font-family: 'Muli', sans-serif!important;
+  font-family: 'Soleil', sans-serif!important;
   font-size: 8px!important;
   font-weight: bold!important;
   font-stretch: normal!important;
