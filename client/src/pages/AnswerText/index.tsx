@@ -143,7 +143,7 @@ export default function AnswerText(props:AnswerTextProps) {
         {darkFlag && <DarkRectangle/>}
 
         <MessageMain darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()} >
-          <PandaQuote alt="" src={quoteImg} />
+          <PandaQuote alt="" src={quoteImg} darkFlag={darkFlag}/>
           <PandaQuestion darkFlag={darkFlag}  count={lineCount} id="pandaQuestion">
             {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
           </PandaQuestion>
@@ -363,15 +363,17 @@ const MessageMain = styled.div<{darkFlag?:boolean,partnerId:any}>`
     top: 6px;
     width: 309px;
     height: 36px;
-    padding: 8px 8px 11px 7px;
+    padding: 9px 8px 11px 7px;
   `}
 ${(props) => props.partnerId === "FOQAL" && `
   height: 155px;
 `}
 `
-const PandaQuote = styled.img`
+const PandaQuote = styled.img<{darkFlag?:boolean}>`
   width: 16px;
   margin-top: -5px;
+  ${(props)=> props.darkFlag && `    width: 12px;
+  margin-top: -12px;`}
 `;
 const PandaQuestion = styled.span<{darkFlag?:boolean,count:number}>`
   color: #000 !important;
@@ -383,7 +385,7 @@ const PandaQuestion = styled.span<{darkFlag?:boolean,count:number}>`
   margin-top: -17px;
   font-size: 12.5px !important;
   font-family: 'Soleil';
-  ${(props) => props.count > 2 && `font-size: 10px !important;line-height:12px!important`}   
+  ${(props) => props.count > 2 && `font-size: 10px !important;line-height:12px!important;`}   
   ${(props) => props.darkFlag && `color: #FFF !important; padding-left: 20px;`}   
 `;
 const MessageDark = styled.span`
@@ -414,7 +416,6 @@ const Bottom = styled.div<{darkFlag:boolean}>`
   opacity: 1.0;
   border-top: solid 1px #ccc;
   ${(props) => props.darkFlag && `background-color: #0f1523;color: #fff;border-top:0px solid!important;`}   
-
 `
 const LabelProgress = styled.span`
   position: absolute!important;
@@ -492,24 +493,22 @@ const Button = styled.span<{darkFlag:boolean, greenColor?:boolean, disabled?:boo
   line-height: 20px; 
   ${(props) => props.darkFlag  &&`
     color:white!important;
-      padding-top:6px;
-      text-transform: uppercase;
-      font-size:10px!important;
-  height: 26px;
-  background:transparent;
+    padding-top:6px;
+    text-transform: uppercase;
+    font-size:10px!important;
+    height: 26px;
+    background:transparent;
     &:before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50px;
-    padding: 1px;
-    background: linear-gradient(105deg, #0ec88f 7%, #0064ff 51%,#934dfc 93%);
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    `}
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50px;
+      padding: 1px;
+      background: linear-gradient(105deg, #0ec88f 7%, #0064ff 51%,#934dfc 93%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }`}
     ${(props)=> props.greenColor && ' background-color: #4bc33d!important;'}
     ${(props)=> props.disabled && ` opacity: 0.2;
     cursor: default;
