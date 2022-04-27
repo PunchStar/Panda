@@ -1,9 +1,10 @@
-import React, { useState, useEffect,ChangeEvent, useRef  } from "react"
+import React, { useState, useEffect , useRef,  ChangeEvent,  SyntheticEvent } from "react"
 import styled from "styled-components"
 import pandaListeningImg from 'src/assets/images/Panda-Listening Pose 1-v12.png'
 import pandaListeningImgDark from 'src/assets/images/text-dark/panda-gradient@3x.png'
 import pandaListeningImgConsider from 'src/assets/images/Panda-Listening Pose-Turtleneck-v4.png'
 import pandaListeningImgFoqal from 'src/assets/images/Panda-Listening Pose-Foqal-v2.png'
+// import pandaTalkingImg from 'src/assets/images/Panda-Talking Pose 1-v12.png'
 import closeImg from 'src/assets/images/x.svg'
 import arrowImg from 'src/assets/images/arrow.svg'
 import bubbleImg from 'src/assets/images/text-dark/bubble@3x.png'
@@ -12,16 +13,25 @@ import { Config } from 'src/config/aws';
 import { useParams } from "react-router-dom";
 import closeDarkImg from 'src/assets/images/input-dark/rectangle-x@3x.png'
 import * as actions from '../../actions';
-import axios from 'axios';
-import { useRive , useStateMachineInput,RiveState,StateMachineInput, Layout, Fit, Alignment} from '@rive-app/react-canvas';
-import RiveAudioPanda  from 'src/assets/panda_teddy_12.riv'
 import $ from "jquery"
+import {
+  useRive,
+  useStateMachineInput,
+  Layout,
+  Fit,
+  Alignment,
+  UseRiveParameters,
+  RiveState,
+  StateMachineInput,
+} from 'rive-react';
+// import pandaLiv from './panda_teddy_12.riv';
+import axios from 'axios';
 
 const STATE_MACHINE_NAME = 'Login Machine';
 const LOGIN_PASSWORD = 'teddy';
 const LOGIN_TEXT = 'Login';
 var wrapCounter = 1;
-var wrapOffset = -30;
+var wrapOffset = 0;
 var lengthCheck;
 var lengthOfTextBox = 1;
 
@@ -33,52 +43,58 @@ interface AnswerTextProps {
   onLogClick: (flag:number,questionNumber:number) => void;
 }
 export default function AnswerText(props:AnswerTextProps) {
-  const { rive: riveInstance, RiveComponent }: RiveState = useRive({
-    src: RiveAudioPanda,
-    stateMachines: STATE_MACHINE_NAME,
+  const { rive, RiveComponent }: RiveState = useRive({
+    src: "panda_teddy_12.riv",
+    // stateMachines: STATE_MACHINE_NAME,
     autoplay: true,
     // layout: new Layout({
-    //   alignment:Alignment.CenterLeft
+    //   fit: Fit.Cover,
+    //   alignment: Alignment.Center,
     // }),
   });
-  const isCheckingInput: StateMachineInput | null = useStateMachineInput(
-    riveInstance,
-    STATE_MACHINE_NAME,
-    'isChecking'
-  );
-  const numLookInput: StateMachineInput | null = useStateMachineInput(
-    riveInstance,
-    STATE_MACHINE_NAME,
-    'numLook'
-  );
-  const trigSuccessInput: StateMachineInput | null = useStateMachineInput(
-    riveInstance,
-    STATE_MACHINE_NAME,
-    'trigSuccess'
-  );
-  const trigFailInput: StateMachineInput | null = useStateMachineInput(
-    riveInstance,
-    STATE_MACHINE_NAME,
-    'trigFail'
-  );
-  const isHandsUpInput: StateMachineInput | null = useStateMachineInput(
-    riveInstance,
-    STATE_MACHINE_NAME,
-    'trigFail'
-  );
-  const [inputLookMultiplier, setInputLookMultiplier] = useState(0);
-  const inputRef = useRef(null);
-
-
   const {userId, onNextClick, onLogClick,onClosesClick, darkFlag} = props;
   const [commetText, setCommentText] = useState('');
+  // const [question, setQuestion] = useState("");
   const { partnerId, interviewId } = useParams();
   const interviewArr =  Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0]['interviews'];
   const questionArrObj = interviewArr.filter(item => item.name === interviewId)[0]['questions'];
   const CObj = Config.partner.filter(item => item.partner === partnerId?.toUpperCase())[0];
   const partner_name = CObj.partner_name;
   const [circleWidth, setCircleWidth] =useState(33);
+  const inputRef = useRef(null);
+  const isCheckingInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'isChecking'
+  );
+  const numLookInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'numLook'
+  );
+  const trigSuccessInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'trigSuccess'
+  );
+  const trigFailInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'trigFail'
+  );
+  const isHandsUpInput: StateMachineInput | null = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'trigFail'
+  );
+  // const questionArr = [ 
+  //   "",
+  //   "If you were giving Jobox a report card, what would score most highly?",
+  //   "Where is Jobox falling short on understanding your needs?",
+  //   "Is Jobox the primary way you manage all your jobs? If not, what could Jobox do to become your primary way?",
+  // ];
   const hidden = false;
+  const [inputLookMultiplier, setInputLookMultiplier] = useState(0);
   const [questionCount, setQuestionCount] = useState(1);
   const[lineCount, setLineCount] = useState(0);
   const [url, setUrl] = useState([]);
@@ -106,14 +122,6 @@ export default function AnswerText(props:AnswerTextProps) {
     .catch(() => {
     });
   }
-  useEffect(() => {
-    if (inputRef?.current && !inputLookMultiplier) {
-      console.log('<<<<<<<<<<<<<<<<<<', inputRef)
-      setInputLookMultiplier(
-        (inputRef.current as HTMLInputElement).offsetWidth / 100
-      );
-    }
-  }, [inputRef]);
   useEffect(()=>{
     let totalWidth = 200 - questionArrObj.length * 20;
     totalWidth /= questionArrObj.length-1;
@@ -162,102 +170,115 @@ export default function AnswerText(props:AnswerTextProps) {
     uploadFile();
     // await stopRecording();
   }
+  function textWidth(txt:any, font:any,padding:any) {
+    var $span = $('<span></span>');
+    $span.css({
+      font:font,
+      position:'absolute',
+      top: -1000,
+      left:-1000,
+      padding:padding
+    }).text(txt);
+    $span.appendTo('body');
+    return $span.width();
+  }
+  const onUsernameFocus = () => {
+    console.log("dddfocus'", rive)
+    isCheckingInput!.value = true;
+
+    if (numLookInput!.value !== commetText.length * inputLookMultiplier) {
+      numLookInput!.value = commetText.length * inputLookMultiplier;
+    }
+  };
+  const onUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+    const newVal = e.target.value;
+    setCommentText(newVal);
+    if (!isCheckingInput!.value) {
+      isCheckingInput!.value = true;
+    }
+    var numChars = newVal.length - ((wrapCounter-1)*lengthOfTextBox);
+    var $txt:any=$('#textbox'),i = 1;
+    var font = $txt.css('font');
+    
+    var padding = $txt.css('padding');
+    // var realTxtWidth = wrapCounter * $txt.width();
+    var txtwidth = (wrapCounter * $txt.width() || 0) - wrapOffset;
+    var txt = $txt.val().split('\n');
+    $(txt).each(function(){
+      var w = textWidth(this,font,padding);
+      if(w?w:0>txtwidth){
+        if(wrapCounter === 1) {
+          lengthCheck = e.target.value;
+
+          lengthOfTextBox = lengthCheck.length; //actual length of box is closer to 30 than 32
+        }
+        wrapCounter++;
+        // if (typeof(lengthofTextBox) !== 'undefined' && lengthofTextBox != null) {
+        //   wrapOffset = wrapOffset + Math.round(lengthofTextBox * .75);
+        // }
+      }
+      i++;
+    });
+
+
+    numLookInput!.value = numChars * inputLookMultiplier;
+  };
+  useEffect(() => {
+    if (inputRef?.current && !inputLookMultiplier) {
+      setInputLookMultiplier(
+        (inputRef.current as HTMLInputElement).offsetWidth / 100
+      );
+    }
+  }, [inputRef]);
   function countLines(){
     var el = document.getElementById('pandaQuestion')
     var divHeight = el?.offsetHeight || 0;
-    var lines = divHeight  > 23 ? 3: 2;
-    actions.debug_console('lines', lines);
+    var lines = divHeight  / 15;
+    console.log('lines', lines);
     setLineCount(lines);
   }
-
-  function textWidth(txt:any, font:any,padding:any) {
-    var newSapn = document.createElement('span');
-    newSapn.style.font = font;
-    newSapn.style.position = 'absolute';
-    newSapn.style.top = '-1000px';
-    newSapn.style.left = '-1000px';
-    newSapn.style.padding = padding;
-    newSapn.textContent = txt; 
-    document.getElementsByTagName('body')[0].appendChild(newSapn);
-    return newSapn.offsetWidth;
-  }
-
+  // return <RiveComponent/>
   return (
     <>
+      {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      {/* <PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} /> */}
-      <PandaTalkImgMainRiv>
-        <RiveComponent />
-      </PandaTalkImgMainRiv>
+      {/* {darkFlag && <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} partnerId={partnerId?.toUpperCase()}/>} */}
+      <PandaTalkImgMain src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === "FOQAL"?pandaListeningImgFoqal:darkFlag?pandaListeningImgDark:pandaListeningImg} />
+      {/* <RiveComponent className="rive-container" /> */}
       {hidden && <PandaListenImg alt="" src={pandaListeningImg}/>}
+      {/* {darkFlag?
+      <AnswerBubbleDark>
+        <DarkBubbleImg src={bubbleImg} />
+        <Message darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()}>
+        {darkFlag ?<MessageDark>{questionArrObj[questionCount>questionArrObj.length?questionArrObj.length - 1:questionCount- 1]['text']}</MessageDark>:
+          questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
+        </Message>
+      </AnswerBubbleDark>: */}
       <AnswerBubble>
         {darkFlag && <DarkRectangle/>}
+
         <MessageMain darkFlag={darkFlag} partnerId={partnerId?.toUpperCase()} >
-          <PandaQuote alt="" src={quoteImg} count={lineCount} darkFlag={darkFlag}/>
+          <PandaQuote alt="" src={quoteImg} />
           <PandaQuestion darkFlag={darkFlag}  count={lineCount} id="pandaQuestion">
             {questionArrObj[questionCount>questionArrObj.length ? questionArrObj.length - 1 : questionCount - 1]['text']}
           </PandaQuestion>
         </MessageMain>
       </AnswerBubble>
+      {/* } */}
+      {/* {darkFlag ?<ResponseAnswer>
+        <textarea value={commetText} autoFocus onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}/>
+      </ResponseAnswer>: */}
       <ResponseAnswerMain darkFlag={darkFlag}>
-        <textarea  
-            id="textbox"
-            name="commetText"
-            value={commetText}
-            // onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}
-            onBlur={() => (isCheckingInput!.value = false)}
-            // onChange={(e) =>onUsernameChange(e)}
-            onChange = {(e) => {
-              // console.log('1',e.target.value)
-              const newVal = e.target.value;
-              setCommentText(newVal);
-              if (!isCheckingInput!.value) {
-                isCheckingInput!.value = true;
-              }
-              var numChars = newVal.length - ((wrapCounter-1)*lengthOfTextBox);
-              var txt4 = document.getElementById('textbox'),i = 1;
-              var font = e.target.style.font;
-              var padding = e.target.style.padding;
-              console.log('============================')
-              // var txtwidth = (wrapCounter * width) - wrapOffset;
-              var txtwidth = (wrapCounter * e.target.clientWidth) - wrapOffset *wrapCounter;
-              console.log('wrapCounter',wrapCounter)
-              console.log('wrapOffset',wrapOffset)
-              console.log('txtwidth',txtwidth)
-              console.log('============================')
-              // var txt = $('#textbox')?.val()?.split('\n') ||'';
-              var txt = e.target.value.split('\n') ||'';
-              txt.forEach(element => {
-                
-              // });
-              // (function(){
-                var w = textWidth(element,font,padding);
-                if(w>txtwidth){
-                  if(wrapCounter === 1) {
-                    lengthCheck = e.target.value;
-
-                    lengthOfTextBox = lengthCheck.length; //actual length of box is closer to 30 than 32
-                  }
-                  wrapCounter++;
-                  // if (typeof(lengthofTextBox) !== 'undefined' && lengthofTextBox != null) {
-                  //   wrapOffset = wrapOffset + Math.round(lengthofTextBox * .75);
-                  // }
-                }
-                i++;
-              });
-              numLookInput!.value = numChars * inputLookMultiplier;
-            }}
-            onFocus={()=>{
-                console.log('---- onusernamefocus ---- ')
-                isCheckingInput!.value = true;
-            
-                if (numLookInput!.value !== commetText.length * inputLookMultiplier) {
-                  numLookInput!.value = commetText.length * inputLookMultiplier;
-                }
-            }}
-            ref={inputRef}
-             /> 
+        <textarea  id="textbox" value={commetText}  onChange={e=> setCommentText(e.target.value)} placeholder={'Type your answer here'}
+                />
+                {/* <textarea  id="textbox" value={commetText}  onChange={e=>{onUsernameChange(e)}} placeholder={'Type your answer here'}
+                onFocus={onUsernameFocus}
+                onBlur={() => (isCheckingInput!.value = false)}
+                ref={inputRef}
+                /> */}
       </ResponseAnswerMain>
+      {/* } */}
       <Bottom darkFlag={darkFlag}>
         {!darkFlag &&<LabelProgress>Progress</LabelProgress>}
         <ProgressBar>
@@ -378,17 +399,6 @@ const PandaTalkImgMain = styled.img`
   top: 8px;
   height: 201px;
 `
-const PandaTalkImgMainRiv = styled.div`
-  position: absolute;
-  left: 62px;
-  top: -97px;
-  height: 201px;
-  div {
-    max-width: 170px;
-    width: 100%;
-    margin: 0 auto;
-  }
-`
 const PandaListenImg = styled.img`
   position: absolute;
   left: 220px;
@@ -469,19 +479,15 @@ const MessageMain = styled.div<{darkFlag?:boolean,partnerId:any}>`
     top: 6px;
     width: 309px;
     height: 36px;
-    padding: 9px 8px 11px 7px;
+    padding: 8px 8px 11px 7px;
   `}
 ${(props) => props.partnerId === "FOQAL" && `
   height: 155px;
 `}
 `
-const PandaQuote = styled.img<{darkFlag?:boolean,count:number}>`
-  width: 14px;
-  margin-top: -6px;
-  ${(props)=> props.darkFlag && `    width: 12px;
-  margin-top: -12px;`}
-  ${(props)=> props.count>2 && `    width: 12px;
-  margin-top: -12px;`}
+const PandaQuote = styled.img`
+  width: 16px;
+  margin-top: -5px;
 `;
 const PandaQuestion = styled.span<{darkFlag?:boolean,count:number}>`
   color: #000 !important;
@@ -489,12 +495,11 @@ const PandaQuestion = styled.span<{darkFlag?:boolean,count:number}>`
   clear: both;
   display: -webkit-box;
   padding-left: 24px;
-  line-height: 15px! important;
+  line-height:15px!important;
   margin-top: -17px;
-  font-size: 12.5px !important;
-  font-family: 'Soleil';
-  ${(props) => props.count > 2 && `font-size: 10px !important;line-height:12px!important;`}   
-  ${(props) => props.darkFlag && `color: #FFF !important; padding-left: 20px;`}   
+  font-size:12.5px!important;
+  ${(props) => props.count > 2 && `font-size:10px!important`}   
+  ${(props) => props.darkFlag && `color: #FFF!important;padding-left: 20px;`}   
 `;
 const MessageDark = styled.span`
   background:none;
@@ -524,6 +529,7 @@ const Bottom = styled.div<{darkFlag:boolean}>`
   opacity: 1.0;
   border-top: solid 1px #ccc;
   ${(props) => props.darkFlag && `background-color: #0f1523;color: #fff;border-top:0px solid!important;`}   
+
 `
 const LabelProgress = styled.span`
   position: absolute!important;
@@ -601,22 +607,24 @@ const Button = styled.span<{darkFlag:boolean, greenColor?:boolean, disabled?:boo
   line-height: 20px; 
   ${(props) => props.darkFlag  &&`
     color:white!important;
-    padding-top:6px;
-    text-transform: uppercase;
-    font-size:10px!important;
-    height: 26px;
-    background:transparent;
+      padding-top:6px;
+      text-transform: uppercase;
+      font-size:10px!important;
+  height: 26px;
+  background:transparent;
     &:before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 50px;
-      padding: 1px;
-      background: linear-gradient(105deg, #0ec88f 7%, #0064ff 51%,#934dfc 93%);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-    }`}
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    padding: 1px;
+    background: linear-gradient(105deg, #0ec88f 7%, #0064ff 51%,#934dfc 93%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    `}
     ${(props)=> props.greenColor && ' background-color: #4bc33d!important;'}
     ${(props)=> props.disabled && ` opacity: 0.2;
     cursor: default;

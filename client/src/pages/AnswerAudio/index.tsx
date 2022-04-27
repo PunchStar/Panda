@@ -35,6 +35,8 @@ import closeDarkImg from 'src/assets/images/input-dark/rectangle-x@3x.png'
 import pandaDarkTalkImg from 'src/assets/images/audio-dark/panda-gradient@3x.png'
 import bubbleDarkImg from 'src/assets/images/audio-dark/bubble-full@3x.png';
 import * as actions from '../../actions';
+import { useRive , useStateMachineInput, Layout, Fit} from '@rive-app/react-canvas';
+import RiveAudioPanda  from 'src/assets/audio_panda_teddy_07.riv'
 
 // declare var MediaRecorder: any;
 import { Config } from 'src/config/aws';
@@ -47,7 +49,48 @@ import { Config } from 'src/config/aws';
   onLogClick: (flag:number,questionNumber:number) => void;
   onClosesClick: (flag:boolean, questionNumber:number ) => void;
 }
+
+const STATEMACHINE = "Login Machine"
+const LISTENING = "isListening"
+const BLINK = "trigBlink"
+const FOOTTAP = "trigFoottap"
+const SUCCESS = "trigSuccess"
+const FAIL = "trigFail";
+
 export default function AnswerAudio(props:AnswerAudioProps) {
+  const { rive, RiveComponent } = useRive({
+    src: RiveAudioPanda,
+    stateMachines: STATEMACHINE,
+    autoplay: true,
+    layout: new Layout({ fit: Fit.Contain }),
+});
+// state machine constants
+const BLINKB = useStateMachineInput( 
+  rive, 
+  STATEMACHINE, 
+  BLINK 
+  );
+const FOOTTAPB = useStateMachineInput( 
+  rive, 
+  STATEMACHINE, 
+  FOOTTAP 
+      );
+const SUCCESSB = useStateMachineInput( 
+  rive, 
+  STATEMACHINE, 
+  SUCCESS 
+          );
+const FAILB = useStateMachineInput( 
+  rive, 
+  STATEMACHINE, 
+  FAIL 
+  );
+const LISTENINGB = useStateMachineInput( 
+  rive, 
+  STATEMACHINE, 
+  LISTENING
+      );
+
   const {userId, onNextClick, onLogClick, onClosesClick, darkFlag} = props;
   // const [url, setUrl] = useState([]);
   const {
@@ -110,30 +153,39 @@ export default function AnswerAudio(props:AnswerAudioProps) {
         switch(num){
           case 1:
             setMicVolume(darkFlag?darkMicVolumeImg1:micVolumeImg1);
+            SUCCESSB?.fire();
             break;
           case 2:
             setMicVolume(darkFlag?darkMicVolumeImg2:micVolumeImg2);
+            SUCCESSB?.fire();
             break;
           case 3:
             setMicVolume(darkFlag?darkMicVolumeImg3:micVolumeImg3);
+            SUCCESSB?.fire();
             break;
           case 4:
             setMicVolume(darkFlag?darkMicVolumeImg4:micVolumeImg4);
+            SUCCESSB?.fire();
             break;
           case 5:
             setMicVolume(darkFlag?darkMicVolumeImg5:micVolumeImg5);
+            SUCCESSB?.fire();
             break;
           case 6:
             setMicVolume(darkFlag?darkMicVolumeImg6:micVolumeImg6);
+            SUCCESSB?.fire();
             break;
           case 7:
             setMicVolume(darkFlag?darkMicVolumeImg7:micVolumeImg7);
+            SUCCESSB?.fire();
             break; 
           case 8:
             setMicVolume(darkFlag?darkMicVolumeImg8:micVolumeImg8);
+            SUCCESSB?.fire();
             break;
           default:
             setMicVolume(darkFlag?darkMicVolumeImg:micVolumeImg);
+            FOOTTAPB?.fire()
             break;
         }
         if (num === 0) {
@@ -245,9 +297,11 @@ export default function AnswerAudio(props:AnswerAudioProps) {
   },[mediaBlobUrl])
   return (
     <>
-      {/* <video src={mediaBlobUrl || ''} controls loop/> */}
       <CloseImg onClick={onCloseClick} src={darkFlag?closeDarkImg:closeImg} darkFlag={darkFlag}/>
-      <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === 'FOQAL'?pandaListeningImgFoqal:darkFlag?pandaDarkTalkImg:pandaListeningImg}/>
+      {/* <PandaTalkImg src={partnerId?.toUpperCase() === 'ABRR1'?pandaListeningImgConsider:partnerId?.toUpperCase() === 'FOQAL'?pandaListeningImgFoqal:darkFlag?pandaDarkTalkImg:pandaListeningImg}/> */}
+      <PandaTalkImgRiv>
+          <RiveComponent/>
+      </PandaTalkImgRiv>
       {hidden && <PandaListenImg src={pandaListeningImg}/>}
       {darkFlag && <DarkBubbleImg src={bubbleDarkImg} />}
       <Message darkFlag={darkFlag}> 
@@ -295,6 +349,12 @@ const PandaTalkImg = styled.img`
   position: absolute;
   left: 220px;
   top: 180px;
+  height: 208px; z-index: 1;
+`
+const PandaTalkImgRiv = styled.div`
+  position: absolute;
+  left: 71px;
+  top: 77px;
   height: 208px; z-index: 1;
 `
 const DarkBubbleImg = styled.img`
